@@ -3,7 +3,7 @@
 
 // Imports
 const bcrypt = require('bcrypt');
-const jwtAuth = require('../middleware/auth');
+const jwt = require('jsonwebtoken');
 const models = require ('../models');
 
 // Constants
@@ -76,16 +76,20 @@ login: function (req, res){
     }
 
     models.User.findOne({
-        attributes: ['email'],
         where: { email: email }
     })
     .then(function(userFound) {
+        console.log(userFound.id);
         if(userFound){
         bcrypt.compare(password, userFound.password, function(errBycrypt, resBycrypt) {
             if(resBycrypt) {
                 return res.status(200).json({
                     'userId':userFound.id,
-                    'token': jwtAuth.makeTokenForUser(userFound)
+                    'token': jwt.sign(
+                        {userId: userFound.id, admin: userFound.admin},
+                        'lskfj354fdlkgrin26ffchilk13g4g6d',
+                        {expiresIn: '24h'})
+
                 });
         } else {
                 return res.status(403).json({'error': 'invalid password'});    
