@@ -1,12 +1,12 @@
 //app.js
 
 // Imports
-var express     = require('express');
-var bodyParser  = require('body-parser');
-var apiRouter   = require('./apiRouter').router;
+const express     = require('express');
+const bodyParser  = require('body-parser');
+const routeUsers   = require('./routes/routeUsers').router;
 
 // Instantiate server
-var server = express();
+const server = express();
 
 // Body Parser configuration
 server.use(bodyParser.urlencoded({ extended: true }));
@@ -18,7 +18,7 @@ server.get('/', function (req, res) {
     res.status(200).send('<h1>Server listening OK!!!</h1>');
 });
 
-server.use('/api/', apiRouter);
+server.use('/api/', routeUsers);
 
 // Launch server
 server.listen(8080, function() {
