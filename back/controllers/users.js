@@ -1,9 +1,8 @@
 // routes - usersCtrl.js
-//
-
 // Imports
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const jwtAuth = require ('../middleware/auth')
 const models = require ('../models');
 
 // Constants
@@ -102,22 +101,102 @@ login: function (req, res){
     .catch(function(err) {
         return res.status(500).json({'error': 'unable to verify user'});
     });
-}
-}
+  },
 
-//delete
-exports.deleteUser = (req, res, next) => {
-    const id = req.params.id;
+  //display user
+  displayUser: function(req, res) {
+    // Getting auth header
+    const headerAuth  = req.headers['authorization'];
+    const userId      = jwtAuth.getUserId(headerAuth);
+
+    if (userId < 0)
+      return res.status(400).json({ 'error': 'wrong token' });
+
+    models.User.findOne({
+      attributes: [ 'id', 'email', 'username'],
+      where: { id: userId }
+    }).then(function(user) {
+      if (user) {
+        res.status(201).json(user);
+      } else {
+        res.status(404).json({ 'error': 'user not found' });
+      }
+    }).catch(function(err) {
+      res.status(500).json({ 'error': 'cannot fetch user' });
+    });
+  },
+
+///////modify user
+  modifyUser: function(req, res) {
+    // Getting auth header
+    const headerAuth  = req.headers['authorization'];
+    const userId      = jwtAuth.getUserId(headerAuth);
+
+    // Params
+    const username = req.body.username;
+      models.User.findOne({
+          attributes: ['id', 'username'],
+          where: { id: userId }
+        }).then(function(userFound) {
+          if (userFound) {
+            res.status(201).json(userFound);
+          } else {
+            res.status(404).json({ 'error': 'user not found' });
+          }
+        }).catch(function(err) {
+          res.status(500).json({ 'error': 'cannot fetch user' });
+        });
+      },
+      function(userFound) {
+        if(userFound) {
+          userFound.update({
+            username: (username ? username : userFound.username)
+          }).then(function(userFound) {
+            if (userFound) {
+              res.status(201).json(userFound);
+            }
+          }).catch(function(err) {
+            res.status(500).json({ 'error': 'cannot update user' });
+          });
+        } else {
+          res.status(404).json({ 'error': 'user not found' });
+        }
+      },
+    
+    //// delete user
+deleteUser: function (req, res) {
+  // Getting auth header
+  const headerAuth  = req.headers['authorization'];
+  const userId      = jwtAuth.getUserId(headerAuth);
+  
+  const deleteUser = req.body.id;
+  models.User.findOne ({
+    attributes: [ 'id', 'email', 'password'],
+    where: { id: userId }
+  }).then(function(user) {
+    if (user) {
+      res.status(201).json(user);
+    } else {
+      res.status(404).json({ 'error': 'user not found' });
+    }
+  }).catch(function(err) {
+    res.status(500).json({ 'error': 'cannot fetch user' });
+  });
+  
+  }
+  /*/exports.deleteUser = (req, res, next) => {
+    const id = req.body.id;
     Users.delete({
       where: { user_id: id }
     })
       .then(num => {
         if (num == 1) {
-          res.send({ message: "User delete!"
+          res.send({
+            message: "Utilisateur supprimé!"
           });
         } else {
           res.send({
-            message: `Impossible delete id=${id}. `
+            message: `Impossible de supprimer id=${id}. `
           });
         }
       })
@@ -126,5 +205,7 @@ exports.deleteUser = (req, res, next) => {
           message: "Could not delete Users with id=" + id
         });
       });
-  };
+  };/*/
   
+  };
+
