@@ -12,18 +12,18 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       models.Message.belongsTo(models.User, {
-        foreingKey: {
-          allowNull:false
-        }
+        foreignKey: 'userId',
+        allowNull: false
       })
     }
   };
   Message.init({
     idUSERS: DataTypes.INTEGER,
     title: DataTypes.STRING,
-    content: DataTypes.STRING,
-    attachment: DataTypes.STRING,
-    likes: DataTypes.INTEGER
+    text: DataTypes.STRING,
+    image: DataTypes.STRING,
+    like: DataTypes.STRING,
+    dislike: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Message',
