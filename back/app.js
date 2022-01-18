@@ -9,8 +9,8 @@ const path = require('path');
 
 
 // Importation des routes
-const userRoutes = require('./routes/user.js');
-//const postRoutes = require('./routes/post.js');
+const userRoutes = require('./routes/user');
+const messageRoutes = require('./routes/message');
 
 
 // Middlewares permettant l'analyse du corps de la requête
@@ -37,18 +37,11 @@ const db = mysql.createConnection({
 
 
 // Ajoût des routes
-app.use('/api/users', userRoutes);
-//app.use('/api/posts', postRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/messages', messageRoutes);
 
 
 // Gestion des requêtes vers la route '/images'
 app.use('/images', express.static(path.join(__dirname, 'images')));
-
-
-// Ecoute et lie l'application au port 3000
-app.listen(3000);
-console.log('Server en écoute.');
-
-
 
  module.exports = app;

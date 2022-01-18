@@ -11,8 +11,8 @@ const EMAIL_REGEX     = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(
 const PASSWORD_REGEX  = /^(?=.*\d).{4,8}$/;
 
 //------controllers---------
-//---  SINGUP - create user
-exports.singup = (req, res, next) => {
+//---  SIGNUP - create user
+exports.signup = (req, res, next) => {
   console.log(req.body);
   //parametre
   const email = req.body.email;
@@ -20,7 +20,7 @@ exports.singup = (req, res, next) => {
   const firstname = req.body.firstname;
   const lastname = req.body.lastname;
   const profile = req.body.profile;
-  const photo = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+  //const photo = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
         
         if (email == null || firstname == null || lastname == null || password == null){
             return res.status (400).json({'error': 'missing parameters'});
@@ -53,8 +53,8 @@ exports.singup = (req, res, next) => {
                           password: hash,
                           firstname: firstname,
                           lastname: lastname,
-                          profile: profile,
-                          photo: photo,
+                         // profile: profile,
+                         // photo: photo,
                           isAdmin: 0
                       })
                       .then((newUser) => {
