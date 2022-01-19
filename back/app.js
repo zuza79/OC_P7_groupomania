@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
+
 // Autorise l'accès à l'API et l'envoie de requêtes
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -29,7 +30,7 @@ app.use((req, res, next) => {
 
 // Connexion à la base de données
 const db = mysql.createConnection({
-    host: 'localhost',
+    host: '127.0.0.1',
     database: 'groupomania_sql_db',
     user: 'root',
     password: 'Pra123ha*'

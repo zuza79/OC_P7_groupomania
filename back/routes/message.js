@@ -14,8 +14,8 @@ const messageCtrl = require('../controllers/message.js');
 
 // Déclaration des routes message
 router.post('/new', auth, multer, messageCtrl.createMessage);
-router.get('/', auth, messageCtrl.getAllMessage);
-router.get('/:id', auth, messageCtrl.getUserMessage);
+router.get('/', auth, multer, messageCtrl.getAllMessage);
+router.get('/:id', auth, multer, messageCtrl.getUserMessage);
 router.put('/:id', auth, messageCtrl.addLike);
 
 

@@ -67,7 +67,7 @@ exports.getAllMessage = (req, res, next) => {
         offset: (!isNaN(offset)) ? offset : null,
         include: [{
             model: models.User,
-            attributes: ['id','firstname', 'lastname', 'photo', 'profile']
+            attributes: ['id','firstname', 'lastname', 'image', 'profile']
         }]
 
         
@@ -101,7 +101,7 @@ exports.getUserMessage = (req, res, next) => {
         offset: (!isNaN(offset)) ? offset : null,
         include: [{
             model: models.User,
-            attributes: ['id','firstname', 'lastname', 'photo']
+            attributes: ['id','firstname', 'lastname', 'image']
         }]
     }).then(messages => {
         if(messages){

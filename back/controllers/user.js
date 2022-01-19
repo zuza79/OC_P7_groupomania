@@ -20,8 +20,7 @@ exports.signup = (req, res, next) => {
   const firstname = req.body.firstname;
   const lastname = req.body.lastname;
   const profile = req.body.profile;
-  //const photo = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-        
+         
         if (email == null || firstname == null || lastname == null || password == null){
             return res.status (400).json({'error': 'missing parameters'});
         }
@@ -53,8 +52,7 @@ exports.signup = (req, res, next) => {
                           password: hash,
                           firstname: firstname,
                           lastname: lastname,
-                         // profile: profile,
-                         // photo: photo,
+                          profile: profile,
                           isAdmin: 0
                       })
                       .then((newUser) => {
@@ -120,7 +118,7 @@ exports.login = (req, res, next) => {
   exports.getOneUser = (req, res, next) => {
     const userId = req.params.id;
     models.User.findOne({
-        attributes: [ 'id', 'email', 'firstname', 'lastname', 'photo', 'profile' ],
+        attributes: [ 'id', 'email', 'firstname', 'lastname', 'profile' ],
         where: { id: userId }
     }).then((user) => {
         if(user){
@@ -140,24 +138,23 @@ exports.updateUser = (req, res, next) => {
   const firstname = req.body.firstname;
   const lastname = req.body.lastname;
   const profile = req.body.profile;
-  const photo = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null;
- 
+   
  // find user and check in DB
  models.User.findOne({
-  attributes: ['id', 'email', 'firstname', 'lastname', 'profile', 'photo'],
+  attributes: ['id', 'email', 'firstname', 'lastname', 'profile'],
   where: { id: userId }
 })
   .then(user => {
       if(user) {
 
-          // delete photo
-          if(photo != null) {
-              const photoName = user.photo.split('/images/')[1];
-              fs.unlink(`images/${photoName}`, (error) => {
+          // delete image
+          if(image != null) {
+              const imageName = user.image.split('/images/')[1];
+              fs.unlink(`images/${imageName}`, (error) => {
                   if(error){
                       console.log("Delete failed : " + error);
                   } else {
-                      console.log("Delete photo !");
+                      console.log("Delete image !");
                   };
               });
           };
@@ -168,7 +165,7 @@ exports.updateUser = (req, res, next) => {
               firstname: (firstname ? firstname : user.firstname),
               lastname: (lastname ? lastname : user.lastname),
               profile: (profile ? profile : user.profile),
-              photo: (photo ? photo : user.photo)
+            
           })
           .then(userUpdated => {
               if(userUpdated){
@@ -199,13 +196,13 @@ exports.deleteUser = (req, res, next) => {
   models.User.findOne({ where: { id: userId } })
       .then(user => {
 
-          // delete photo user
-          let userPhotoName = user.photo.split('/images/')[1];
-          fs.unlink(`images/${userPhotoName}`, (error) => {
+          // delete image user
+          let userImageName = user.image.split('/images/')[1];
+          fs.unlink(`images/${userImageName}`, (error) => {
               if(error){
-                  console.log("Failed to delete photo : " + error);
+                  console.log("Failed to delete image : " + error);
               } else {
-                  console.log("Photo was deleted successful !");
+                  console.log("image was deleted successful !");
               };
           });
           // delete message
@@ -215,15 +212,15 @@ exports.deleteUser = (req, res, next) => {
           })
               .then((messages) => {
 
-                  // delete photo from message
+                  // delete image from message
                   for(i = 0; i < messages.length; i++){
                       if(messages[i].dataValues.imageContent){
                           console.log(messages[i].dataValues.imageContent.split('images/')[1]);
                           fs.unlink(`images/${messages[i].dataValues.imageContent.split('images/')[1]}`, (error) => {
                               if(error){
-                                  console.log("Failed to delete photo : " + error);
+                                  console.log("Failed to delete image : " + error);
                               } else {
-                                  console.log("Photo was deleted successful !");
+                                  console.log("image was deleted successful !");
                               };
                           })
                       }

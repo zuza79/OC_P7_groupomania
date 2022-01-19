@@ -1,7 +1,6 @@
 // Importation de multer
 const multer = require('multer');
 
-
 // Création du dictionnaire MIME_TYPES
 const MIME_TYPES = {
     'image/jpg': 'jpg',

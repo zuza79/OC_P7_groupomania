@@ -24,10 +24,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      image: {
+      /*image: {
         allowNull: true,
         type: Sequelize.STRING
       },
+      */
       like: {
         allowNull: false,
         type: Sequelize.STRING
