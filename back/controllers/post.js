@@ -7,8 +7,8 @@ const models = require('../models');
 
 
 // ----->Controllers<-----
-// create new message
-exports.createMessage = (req, res, next) => {
+// create new post
+exports.createPost = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
     const userId = jwtAuth.getUserId(headerAuth);
     const textContent = req.body.textContent;    
@@ -34,14 +34,14 @@ exports.createMessage = (req, res, next) => {
     })
     .then(user => {
         if(user) {
-            models.Message.create({
+            models.Post.create({
                 textContent: textContent,
                 imageContent: imageContent,
                 like: 0,
                 dislike: 0,
                 UserId: user.id
             })
-            res.status(201).json({"message": "Nouveau post créé avec succès !"})
+            res.status(201).json({"post": "Nouveau post créé avec succès !"})
                     
         } else {
             res.status(404).json({'erreur' : 'Utilisateur introuvable'});
@@ -53,14 +53,14 @@ exports.createMessage = (req, res, next) => {
 };
 
 
-// display all message
-exports.getAllMessage = (req, res, next) => {
+// display all post
+exports.getAllPost = (req, res, next) => {
     const fields = req.query.fields;
     const limit = parseInt(req.query.limit);
     const offset = parseInt(req.query.offset);
     const order = req.query.order;
 
-    models.Message.findAll({
+    models.Post.findAll({
         order: [(order != null) ? order.split(':') : ['id', 'DESC']],
         attributes: (fields !== '*' && fields != null) ? fields.split(',') : null,
         limit: (!isNaN(limit)) ? limit : null,
@@ -71,11 +71,11 @@ exports.getAllMessage = (req, res, next) => {
         }]
 
         
-    }).then(messages => {
-        if(messages){
-            res.status(200).json(messages);
+    }).then(posts => {
+        if(posts){
+            res.status(200).json(posts);
         } else {
-            res.status(404).json({ "erreur": "Aucun message trouvé"});
+            res.status(404).json({ "erreur": "Aucun post trouvé"});
         }
     }).catch(err => {
         console.log(err);
@@ -84,8 +84,8 @@ exports.getAllMessage = (req, res, next) => {
 };
 
 
-// Récupération des messages d'un utilisateur
-exports.getUserMessage = (req, res, next) => {
+// Récupération des posts d'un utilisateur
+exports.getUserPost = (req, res, next) => {
     const userId = req.params.id;
     
     const fields = req.query.fields;
@@ -93,7 +93,7 @@ exports.getUserMessage = (req, res, next) => {
     const offset = parseInt(req.query.offset);
     const order = req.query.order;
 
-    models.Message.findAll({
+    models.Post.findAll({
         where: {userId: userId},
         order: [(order != null) ? order.split(':') : ['id', 'DESC']],
         attributes: (fields !== '*' && fields != null) ? fields.split(',') : null,
@@ -103,11 +103,11 @@ exports.getUserMessage = (req, res, next) => {
             model: models.User,
             attributes: ['id','firstname', 'lastname', 'image']
         }]
-    }).then(messages => {
-        if(messages){
-            res.status(200).json(messages);
+    }).then(posts => {
+        if(posts){
+            res.status(200).json(posts);
         } else {
-            res.status(404).json({ "erreur": "Aucun message trouvé"});
+            res.status(404).json({ "erreur": "Aucun post trouvé"});
         }
     }).catch(err => {
         console.log(err);
@@ -121,13 +121,13 @@ exports.addLike = (req, res, next) => {
     const postId = req.params.id;
     console.log('body: ' + req.body.like);
 
-    models.Message.findOne({ where: { id: messageId } })
-        .then(message => {
-            console.log(message.dataValues);
-            message.update({
+    models.Post.findOne({ where: { id: postId } })
+        .then(post => {
+            console.log(post.dataValues);
+            post.update({
                 like: req.body.like
             })
-                .then(() => res.status(200).json({ message: 'Données mises à jour !' }))
+                .then(() => res.status(200).json({ post: 'Données mises à jour !' }))
                 .catch((err) => res.status(500).json({ err }))
         })
         .catch(() => res.status(404).json({ error: 'Post introuvable !' }));

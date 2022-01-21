@@ -10,7 +10,7 @@ const path = require('path');
 
 // Importation des routes
 const userRoutes = require('./routes/user');
-const messageRoutes = require('./routes/message');
+const postRoutes = require('./routes/post');
 
 
 // Middlewares permettant l'analyse du corps de la requête
@@ -39,7 +39,7 @@ const db = mysql.createConnection({
 
 // Ajoût des routes
 app.use('/api/user', userRoutes);
-app.use('/api/messages', messageRoutes);
+app.use('/api/posts', postRoutes);
 
 
 // Gestion des requêtes vers la route '/images'

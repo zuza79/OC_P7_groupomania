@@ -20,9 +20,10 @@ exports.signup = (req, res, next) => {
   const firstname = req.body.firstname;
   const lastname = req.body.lastname;
   const profile = req.body.profile;
+  const image = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
          
-        if (email == null || firstname == null || lastname == null || password == null){
-            return res.status (400).json({'error': 'missing parameters'});
+       if (email == null || firstname == null || lastname == null || password == null){
+        return res.status (400).json({'error': 'missing parameters'});
         }
         if (firstname.length > 20 || firstname.length < 2) {
           return res.status(400).json({ 'erreur': 'firstname invalide (doit être entre 2 et 20 caractères)' })
@@ -53,6 +54,7 @@ exports.signup = (req, res, next) => {
                           firstname: firstname,
                           lastname: lastname,
                           profile: profile,
+                          image : image,
                           isAdmin: 0
                       })
                       .then((newUser) => {
@@ -118,7 +120,7 @@ exports.login = (req, res, next) => {
   exports.getOneUser = (req, res, next) => {
     const userId = req.params.id;
     models.User.findOne({
-        attributes: [ 'id', 'email', 'firstname', 'lastname', 'profile' ],
+        attributes: [ 'id', 'email', 'firstname', 'lastname', 'image', 'profile' ],
         where: { id: userId }
     }).then((user) => {
         if(user){
@@ -133,15 +135,15 @@ exports.login = (req, res, next) => {
 exports.updateUser = (req, res, next) => {
   const headerAuth = req.headers['authorization'];
   const userId = jwtAuth.getUserId(headerAuth);
-
-  const email = req.body.email
+  const image = req.body.image;
+  const email = req.body.email;
   const firstname = req.body.firstname;
   const lastname = req.body.lastname;
   const profile = req.body.profile;
    
  // find user and check in DB
  models.User.findOne({
-  attributes: ['id', 'email', 'firstname', 'lastname', 'profile'],
+  attributes: ['id', 'email', 'firstname', 'lastname', 'profile', 'image'],
   where: { id: userId }
 })
   .then(user => {
@@ -165,7 +167,7 @@ exports.updateUser = (req, res, next) => {
               firstname: (firstname ? firstname : user.firstname),
               lastname: (lastname ? lastname : user.lastname),
               profile: (profile ? profile : user.profile),
-            
+              image: (image ? image : user.image),
           })
           .then(userUpdated => {
               if(userUpdated){
@@ -205,18 +207,18 @@ exports.deleteUser = (req, res, next) => {
                   console.log("image was deleted successful !");
               };
           });
-          // delete message
-          models.Message.findAll({
+          // delete post
+          models.Post.findAll({
               attributes: ['imageContent'],
               where: { userId: user.id }
           })
-              .then((messages) => {
+              .then((posts) => {
 
-                  // delete image from message
-                  for(i = 0; i < messages.length; i++){
-                      if(messages[i].dataValues.imageContent){
-                          console.log(messages[i].dataValues.imageContent.split('images/')[1]);
-                          fs.unlink(`images/${messages[i].dataValues.imageContent.split('images/')[1]}`, (error) => {
+                  // delete image from post
+                  for(i = 0; i < posts.length; i++){
+                      if(posts[i].dataValues.imageContent){
+                          console.log(posts[i].dataValues.imageContent.split('images/')[1]);
+                          fs.unlink(`images/${posts[i].dataValues.imageContent.split('images/')[1]}`, (error) => {
                               if(error){
                                   console.log("Failed to delete image : " + error);
                               } else {
@@ -226,8 +228,8 @@ exports.deleteUser = (req, res, next) => {
                       }
                   }
                   
-                  // delete all message
-                  models.Message.destroy({ where: {userId: userId} })
+                  // delete all post
+                  models.Post.destroy({ where: {userId: userId} })
                       .then(() => {
 
                           // delete user in DB
