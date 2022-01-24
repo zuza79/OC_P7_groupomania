@@ -1,28 +1,25 @@
 const express = require("express");
 const bodyParser = require('body-parser');  
-
 const path = require("path");
-const helmet = require("helmet");
+const sequelize = require('./config/config');
 
+//security
+const helmet = require("helmet");
+const dotenv = require ('dotenv');
+const resul = dotenv.config();
+
+//import routes
 const userRoutes = require("./routes/user");
 const postRoutes = require("./routes/post");
 const commentRoutes = require("./routes/comment");
 
-////SEQUELIZE
-const { Sequelize, DataTypes } = require('sequelize');
-require("dotenv").config()    
-const sequelize = new Sequelize(`${process.env.DATABASE}`, `${process.env.USER}`, `${process.env.PASSWORD}`, {
-  host: 'localhost',
-  dialect: 'mysql',
-});
-module.exports = sequelize;
-
+////connect to SEQUELIZE
 const connect = async function () {
   try {
     await sequelize.authenticate();
     console.log('SQL en écoute');
   } catch (error) {
-    console.error('echeque de connection', error);
+    console.error('Echeque de connection', error);
   }
 };
 connect();
@@ -38,9 +35,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//transform JSON 
 app.use(bodyParser.json()) 
- 
 app.use(express.json()); 
 
 app.use("/images", express.static(path.join(__dirname, 'images')));
