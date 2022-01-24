@@ -1,48 +1,51 @@
-// Importation d'express et création de l'application
-const express = require('express');
+const express = require("express");
+const bodyParser = require('body-parser');  
+
+const path = require("path");
+const helmet = require("helmet");
+
+const userRoutes = require("./routes/user");
+const postRoutes = require("./routes/post");
+const commentRoutes = require("./routes/comment");
+
+////SEQUELIZE
+const { Sequelize, DataTypes } = require('sequelize');
+require("dotenv").config()    
+const sequelize = new Sequelize(`${process.env.DATABASE}`, `${process.env.USER}`, `${process.env.PASSWORD}`, {
+  host: 'localhost',
+  dialect: 'mysql',
+});
+module.exports = sequelize;
+
+const connect = async function () {
+  try {
+    await sequelize.authenticate();
+    console.log('SQL en écoute');
+  } catch (error) {
+    console.error('echeque de connection', error);
+  }
+};
+connect();
+
 const app = express();
 
+app.use(helmet());
 
-// Importation des modules
-const mysql = require('mysql')
-const path = require('path');
-
-
-// Importation des routes
-const userRoutes = require('./routes/user');
-const postRoutes = require('./routes/post');
-
-
-// Middlewares permettant l'analyse du corps de la requête
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-
-
-// Autorise l'accès à l'API et l'envoie de requêtes
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    next();
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+  next();
 });
 
+//transform JSON 
+app.use(bodyParser.json()) 
+ 
+app.use(express.json()); 
 
-// Connexion à la base de données
-const db = mysql.createConnection({
-    host: '127.0.0.1',
-    database: 'groupomania_sql_db',
-    user: 'root',
-    password: 'Pra123ha*'
-})
+app.use("/images", express.static(path.join(__dirname, 'images')));
+app.use("/api/auth", userRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/comments", commentRoutes);
 
-
-// Ajoût des routes
-app.use('/api/user', userRoutes);
-app.use('/api/posts', postRoutes);
-
-
-// Gestion des requêtes vers la route '/images'
-app.use('/images', express.static(path.join(__dirname, 'images')));
-
- module.exports = app;
+module.exports = app;

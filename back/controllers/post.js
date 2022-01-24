@@ -1,134 +1,177 @@
-// Importation des modules
-const jwtAuth = require('../middleware/auth');
+// controllers post
+// create, modify, delete, display one/all post
+// display all post by user, modify post by admin
+const Post = require('../models/post');
+const User = require('../models/user');
+const fs = require('fs');
+const { DATE } = require('sequelize/dist');
 
-
-// Importation des modèles
-const models = require('../models');
-
-
-// ----->Controllers<-----
-// create new post
 exports.createPost = (req, res, next) => {
-    const headerAuth = req.headers['authorization'];
-    const userId = jwtAuth.getUserId(headerAuth);
-    const textContent = req.body.textContent;    
-    let imageContent = req.file
-
-    if(!textContent && !imageContent) {
-        res.status(400).json({ 'erreur': 'paramètre manquant' });
-    };
-
-    if(textContent){
-        if(textContent.length > 150) {
-            res.status(400).json({ 'erreur': 'Texte trop long (150 caractères maximum)' })
-        };
-    } else {
-        imageContent = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-        if(imageContent.length > 150) {
-            res.status(400).json({ 'erreur': 'Nom de l\'image invalide' })
-        };
-    }
-
-    models.User.findOne({
-        where: { id: userId }
-    })
-    .then(user => {
-        if(user) {
-            models.Post.create({
-                textContent: textContent,
-                imageContent: imageContent,
-                like: 0,
-                dislike: 0,
-                UserId: user.id
-            })
-            res.status(201).json({"post": "Nouveau post créé avec succès !"})
-                    
-        } else {
-            res.status(404).json({'erreur' : 'Utilisateur introuvable'});
-        };
-    })
-    .catch(err => {
-        res.status(500).json({ 'err': 'ERREUR !!!' });
-    });
-};
-
-
-// display all post
-exports.getAllPost = (req, res, next) => {
-    const fields = req.query.fields;
-    const limit = parseInt(req.query.limit);
-    const offset = parseInt(req.query.offset);
-    const order = req.query.order;
-
-    models.Post.findAll({
-        order: [(order != null) ? order.split(':') : ['id', 'DESC']],
-        attributes: (fields !== '*' && fields != null) ? fields.split(',') : null,
-        limit: (!isNaN(limit)) ? limit : null,
-        offset: (!isNaN(offset)) ? offset : null,
-        include: [{
-            model: models.User,
-            attributes: ['id','firstname', 'lastname', 'image', 'profile']
-        }]
-
-        
-    }).then(posts => {
-        if(posts){
-            res.status(200).json(posts);
-        } else {
-            res.status(404).json({ "erreur": "Aucun post trouvé"});
-        }
-    }).catch(err => {
-        console.log(err);
-        res.status(500).json({ "erreur": "Champs invalides"});
-    });
-};
-
-
-// Récupération des posts d'un utilisateur
-exports.getUserPost = (req, res, next) => {
-    const userId = req.params.id;
-    
-    const fields = req.query.fields;
-    const limit = parseInt(req.query.limit);
-    const offset = parseInt(req.query.offset);
-    const order = req.query.order;
-
-    models.Post.findAll({
-        where: {userId: userId},
-        order: [(order != null) ? order.split(':') : ['id', 'DESC']],
-        attributes: (fields !== '*' && fields != null) ? fields.split(',') : null,
-        limit: (!isNaN(limit)) ? limit : null,
-        offset: (!isNaN(offset)) ? offset : null,
-        include: [{
-            model: models.User,
-            attributes: ['id','firstname', 'lastname', 'image']
-        }]
-    }).then(posts => {
-        if(posts){
-            res.status(200).json(posts);
-        } else {
-            res.status(404).json({ "erreur": "Aucun post trouvé"});
-        }
-    }).catch(err => {
-        console.log(err);
-        res.status(500).json({ "erreur": "Champs invalides"});
-    });
-};
-
-exports.addLike = (req, res, next) => {
-    const headerAuth = req.headers['authorization'];
-    const userId = jwtAuth.getUserId(headerAuth);
-    const postId = req.params.id;
-    console.log('body: ' + req.body.like);
-
-    models.Post.findOne({ where: { id: postId } })
-        .then(post => {
-            console.log(post.dataValues);
-            post.update({
-                like: req.body.like
-            })
-                .then(() => res.status(200).json({ post: 'Données mises à jour !' }))
-                .catch((err) => res.status(500).json({ err }))
+    if (req.file) {
+        Post.create({
+            title: req.body.title,
+            content: req.body.content,
+            image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`,
+            user_id: req.body.user_id
         })
-        .catch(() => res.status(404).json({ error: 'Post introuvable !' }));
+        .then(() => res.status(201).json({message: 'Post créé !'}))
+        .catch( error => res.status(400).json({error}));
+    } else {
+        Post.create({
+            title: req.body.title,
+            content: req.body.content,
+            user_id: req.body.user_id
+        })
+        .then(() => res.status(201).json({message: 'Post créé !'}))
+        .catch( error => res.status(400).json({error}));
+    }
+    
 };
+//// modify post
+exports.modifyPost = (req, res, next) => {
+    if (req.file) {
+
+        Post.findOne({ where: { id: req.params.id }})
+        .then(post => {
+            if (post.image) {
+            const filename = post.image.split('/images/posts/')[1];
+            fs.unlink(`images/posts/${filename}`, () => {
+                const modifyPost = {
+                    title: req.body.title,
+                    content: req.body.content,
+                    updated_date: Date.now(),
+                    moderate: false,
+                    image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`
+                };
+    
+                Post.update(modifyPost , { where: { id: req.params.id } })
+            
+                    .then(() => res.status(200).json({message : 'Post modifié !'}))
+                    .catch( error => res.status(400).json({error}));
+            })} else {
+                const modifyPost = {
+                    title: req.body.title,
+                    content: req.body.content,
+                    updated_date: Date.now(),
+                    moderate: false,
+                    image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`
+                };
+        
+                Post.update(modifyPost , { where: { id: req.params.id } })
+        
+                    .then(() => res.status(200).json({message : 'Post modifié !'}))
+                    .catch( error => res.status(400).json({error}));
+            }
+        })
+        .catch(error => res.status(500).json({ error }));
+
+    } else {
+        Post.findOne({ where: { id: req.params.id }})
+        .then(post => {
+            if (post.image) {
+                const filename = post.image.split('/images/posts/')[1];
+                fs.unlink(`images/posts/${filename}`, () => {
+                    const modifyPost = {
+                        title: req.body.title,
+                        content: req.body.content,
+                        updated_date: Date.now(),
+                        moderate: false,
+                        image: ''
+                    };
+
+                    Post.update(modifyPost , { where: { id: req.params.id } })
+
+                        .then(() => res.status(200).json({message : 'Post modifié !'}))
+                        .catch( error => res.status(400).json({error}));
+                })
+            } else {
+                const modifyPost = {
+                    title: req.body.title,
+                    content: req.body.content,
+                    updated_date: Date.now(),
+                    moderate: false,
+                };
+        
+                Post.update(modifyPost , { where: { id: req.params.id } })
+        
+                    .then(() => res.status(200).json({message : 'Post modifié !'}))
+                    .catch( error => res.status(400).json({error}));
+            }
+        })
+        .catch(error => res.status(500).json({ error }));
+    }
+}
+
+////// delete post
+exports.deletePost = (req, res, next) => {
+    Post.findOne({ where: { id: req.params.id }})
+        .then(post => {
+            if (post.image != null) {
+                const filename = post.image.split('/images/posts/')[1];
+                fs.unlink(`images/posts/${filename}`, () => {
+                    Post.destroy({ where: { id: req.params.id } })
+
+                    .then(() => res.status(200).json({message : 'Post supprimé !'}))
+                    .catch( error => res.status(400).json({error}));
+                })
+            
+        
+            } else {
+                Post.destroy({ where: { id: req.params.id } })
+
+                .then(() => res.status(200).json({message : 'Post supprimé !'}))
+                .catch( error => res.status(400).json({error}));
+            }
+        })
+}
+//// display all post
+exports.getAllPosts = (req, res, next) => {
+    
+    Post.findAll({ 
+        include: [{
+            model : User
+        }],
+        order: [["id", "DESC"]]})
+
+    .then( post => res.status(200).json(post))
+    .catch( error => res.status(400).json({error}))
+};
+//// display one post
+exports.getOnePost = (req, res, nest) => {
+    Post.findOne({
+        include: [{
+            model : User
+        }], 
+        where: { id: req.params.id }})
+    .then( post => res.status(200).json(post))
+    .catch( error => res.status(400).json({error}))
+}
+////// display all post of user
+exports.getPostsUser = (req, res, next) => {
+    Post.findAll({
+        where: {
+            user_id : req.params.user_id
+        },
+        include: [{
+            model : User,
+        }],
+        order: [["created_date", "ASC"]]})
+
+    .then( posts => res.status(200).json(posts))
+    .catch( error => res.status(400).json({error}))
+};
+//// modify post by administrateur
+exports.moderatePost = (req, res, nest) => {
+    Post.findOne({ where: { id: req.params.id }})
+    .then(() => {
+        const moderation = {
+            moderate : req.body.moderate
+        };
+
+        Post.update(moderation, { where: { id: req.params.id }})
+        .then(() => { res.status(201).json({ message: 'Moderation effectué !' })})
+        .catch(error => res.status(400).json({ error }));
+
+    })
+    .catch(error => res.status(500).json({ error }));
+}

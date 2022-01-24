@@ -15,15 +15,15 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'userId',
         allowNull: false
       })
+
     }
   };
   Post.init({
-    idUSERS: DataTypes.INTEGER,
     title: DataTypes.STRING,
-    text: DataTypes.STRING,
-    image: DataTypes.STRING,
-    like: DataTypes.STRING,
-    dislike: DataTypes.STRING
+    content: DataTypes.TEXT,
+    user_id: DataTypes.SMALLINT,
+    moderate: DataTypes.BOOLEAN,
+    image: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Post',
