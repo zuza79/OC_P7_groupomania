@@ -4,7 +4,7 @@
 const Post = require('../models/post');
 const User = require('../models/user');
 const fs = require('fs');
-const { DATE } = require('sequelize/dist');
+//const { DATE } = require('sequelize/dist');
 
 exports.createPost = (req, res, next) => {
     if (req.file) {
