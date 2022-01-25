@@ -1,17 +1,11 @@
 {
   "name": "front",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "node": "^17.3.1",
-    "sass": "^1.49.0",
-    "vue": "^2.6.14"
-  },
-  "devDependencies": {},
-  "description": ""
+  "license": "ISC"
 }
