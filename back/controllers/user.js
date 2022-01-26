@@ -18,12 +18,12 @@ schema
 
 ////////// SIGNUP
   exports.signup = (req, res, next) => {
-    //if (!emailValidator.validate(req.body.email)){
-    //    return res.status(401).json({message: 'Veuillez saisir votre email valide'});
-    //}
-    //if (!schema.validate(req.body.password)){
-    //    return res.status(401).json({message: 'Le mot de passe doit contenir min 3 et max 15 caractères avec au moins un chiffre, une minuscule, une majuscule !!!'});
-    //};
+    if (!emailValidator.validate(req.body.email)){
+        return res.status(401).json({message: 'Veuillez saisir votre email valide'});
+    }
+    if (!schema.validate(req.body.password)){
+        return res.status(401).json({message: 'Le mot de passe doit contenir min 3 et max 15 caractères avec au moins un chiffre, une minuscule, une majuscule !!!'});
+    };
     
     bcrypt.hash(req.body.password, 10)
         .then(hash =>{

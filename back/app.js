@@ -17,7 +17,7 @@ const commentRoutes = require("./routes/comment");
 const connect = async function () {
   try {
     await sequelize.authenticate();
-    console.log('SQL en écoute');
+    console.log('SQL connect');
   } catch (error) {
     console.error('Echeque de connection', error);
   }
