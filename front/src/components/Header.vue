@@ -1,6 +1,6 @@
 <template>
   <header class="nav">
-    <a href="/"><img src="../assets/logoGroupomania.png" alt="Logo Groupomania" /></a>
+    <a href="/"><img src="../assets/images/logo.png" alt="Logo Groupomania" /></a>
     <nav>
       <router-link to="/signup" class="link" aria-label="Inscription">Inscription</router-link>
       <router-link to="/login" class="link" aria-label="Connection">Se connecter</router-link>
@@ -18,6 +18,7 @@ header {
 
 img {
   height: 60px;
+  width: 60px;
 }
 
 .link {

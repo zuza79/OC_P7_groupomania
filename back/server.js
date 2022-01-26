@@ -49,4 +49,4 @@ const normalizePort = val => {
   });
   
   server.listen(port);
-  console.log('Server en écoute.');
+  console.log('Server connect');

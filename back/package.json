@@ -6,6 +6,8 @@
     "email-validator": "^2.0.4",
     "express": "^4.17.2",
     "filename": "^0.5.0",
+    "hash": "^0.2.1",
+    "hash.js": "^1.1.7",
     "helmet": "^5.0.2",
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.4",

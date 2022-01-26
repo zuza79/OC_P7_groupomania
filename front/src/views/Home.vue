@@ -1,9 +1,8 @@
 <template>
   <div>
     <Header />
+    <h1>Bienvenue sur le Groupoman le reseau social de notre entreprise <strong>Groupomania</strong></h1>
     
-    <h1>Bienvenue chez GROUPOGRAM le réseau social de notre l'entreprise <strong>GROUPOMANIA</strong></h1>
-       
     <Footer />
   </div>
 </template>
@@ -13,21 +12,42 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 export default {
-  name: 'home',
+  name: 'Home',
   components: {
     Header,
     Footer
-  },
+  }
+                
 }
 
 </script>
 
 <style scoped>
 h1 {
-  color: #71b6ad;
+  color: #fd2d01;
   padding: 70px 0 50px 0;
-  font-size: 20px;
+  font-size: 2rem;
 }
+
+h3 {
+  color: #fd2d01;
+}
+
+h4{
+  margin-top: 50px;
+  color: #fd2d01;
+  font-size: 1.2rem;
+}
+
+.tab{
+  display: flex;
+  justify-content: center;
+}
+
+
+
 @media screen and (max-width:768px) {
+
+  
 }
 </style>
