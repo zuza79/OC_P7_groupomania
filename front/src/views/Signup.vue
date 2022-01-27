@@ -45,13 +45,75 @@ export default {
       email: '',
       password: '',
     }
-  }
+  },
+methods: {
+    signup() {
+      const data = {
+          nom: this.nom,
+          prenom: this.prenom,
+          email: this.email,
+          password: this.password
+      };
+
+      const regexText = /^[a-zA-Z-\s]+$/;
+      const regexEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/; // eslint-disable-line
+      const regexPassword = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{3,50}$/;
+
+      if (this.nom === "") {
+          alert("Veuillez remplir votre nom");
+      } else if (regexText.test(this.nom) === false) {
+          alert("Veuillez vérifier que l'écriture de votre nom soit uniquement en lettre");}
+      
+      if (this.prenom === "") {
+          alert("Veuillez remplir votre prénom");
+      } else if (regexText.test(this.prenom) === false) {
+          alert("Veuillez vérifier que l'écriture de votre prénom soit uniquement en lettre");}
+
+      if (this.email === "") {
+          alert("Veuillez remplir votre adresse email");
+      } else if (regexEmail.test(this.email) === false) {
+          alert("Veuillez écrire une adresse email valide");}
+
+      if (this.password === "") {
+          alert("Veuillez remplir votre mot de passe");
+      } else if (regexPassword.test(this.password) === false) {
+          alert("Veuillez vérifier l'écriture de votre mot de passe, il doit contenir au moins une majuscule, une minuscule ainsi qu'un chiffre");
+      }else if ((regexText.test(this.nom) === true) && regexText.test(this.prenom) === true && regexEmail.test(this.email) === true && regexPassword.test(this.password) === true ) {
+
+          fetch("http://localhost:8080/api/auth/signup", {
+              method: "POST",
+              headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+          })
+          .then(response => {
+            if(response.ok) {
+              return response.json()
+            } else {
+              return response.text()
+              .then((text) => {
+                throw new Error(text)}
+              )
+            }
+          })  
+          .then(() => {
+              alert("Votre inscription est bien prise en compte");
+              this.$router.push("/login");
+          })
+          .catch(alert)
+      }
+    }
+  }  
 }
 </script>
 
 
 <style scoped>
-
+form{
+    width: 50%;
+}
 h1 {
     width: 30%;
     font-size: 2rem;

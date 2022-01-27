@@ -2,7 +2,7 @@
   <div>
     <Header />
     <div class="login">
-      <h1>Se connecter</h1>
+      <h1>Connection</h1>
       <form>
         <ul>
           <li>
@@ -35,11 +35,55 @@ export default {
       email: '',
       password: '',
     }
+  },
+methods: {
+    login() {
+        
+      let data = {
+          email: this.email,
+          password: this.password
+      };
+
+      fetch("http://localhost:8080/api/auth/login", {
+          method: "POST",
+          headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      })
+      
+      .then( response => {
+        if(response.ok) {
+          return response.json()
+        } else {
+          return response.text()
+          .then((text) => {
+            throw new Error(text)}
+          )
+        }
+      })  
+        
+      .then((value) => {
+        const token = JSON.stringify(value.token);
+        const userId = JSON.stringify(value.userId);
+        const role = JSON.stringify(value.role);
+        localStorage.setItem("userToken", token);
+        localStorage.setItem("userId", userId);
+        localStorage.setItem("role", role);
+        this.$router.push("/allposts");
+      })
+      .catch(alert)
+    }
   }
 }
 </script>
 
 <style scoped>
+
+form{
+    width: 50%;
+}
 
 h1 {
     margin: 30px 0 50px 0;
@@ -74,6 +118,7 @@ button {
 
 input {
   font-size: 1.2rem;
+  
 }
 
 .login {

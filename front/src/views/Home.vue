@@ -29,21 +29,29 @@ export default {
 <style scoped>
 h1 {
   color: black;
-  font-size: 2rem;
+  font-size: 1.5rem;
+  padding: 0px;
 }
+h2 {
+  color: black;
+  font-size: 1.2rem;
+  padding: 0px;
+  }
 .tab{
   display: flex;
   justify-content: center;
 }
 
 .link {
-  color: blue;
+  height: 20px;
+  color: black;
   font-weight: bolder;
   margin: 10px;
+  padding : 10px 50px 10px 10px;
   font-size: 1.2rem;
   text-decoration: none;
-  background: #ffd7d7;
-    border: 2px solid #fd2d01;
+  background: gray;
+    border: 2px solid brown;
     border-radius: 20px;
 }
 

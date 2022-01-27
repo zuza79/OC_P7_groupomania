@@ -1,6 +1,6 @@
 <template>
   <header id="imgLogo">
-    <a href="/"><img id="imgLogo" src="../assets/images/logoGroupomania.png" alt="Logo Groupomania" /></a>
+    <a href="/"><img id="imgLogo" src="../assets/images/logoMono.png" alt="Logo Groupomania" /></a>
     <nav>
       
     </nav>
@@ -16,7 +16,7 @@ header {
 }
 
 #imgLogo {
-  height: 200px;
+  height: 150px;
   display: block;
  margin: 0px auto
 }

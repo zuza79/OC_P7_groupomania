@@ -13,7 +13,7 @@ const userRoutes = require("./routes/user");
 const postRoutes = require("./routes/post");
 const commentRoutes = require("./routes/comment");
 
-////connect to SEQUELIZE
+/*///connect to SEQUELIZE
 const connect = async function () {
   try {
     await sequelize.authenticate();
@@ -23,7 +23,7 @@ const connect = async function () {
   }
 };
 connect();
-
+*/
 const app = express();
 
 app.use(helmet());

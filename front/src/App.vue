@@ -5,6 +5,9 @@
 </template>
 
 <style>
+body{
+  margin: 0px;
+}
 .app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -12,6 +15,7 @@
   padding: 0 10vw 0 10vw;
   text-align: center;
   color: #000000;
+  background: rgba(207, 203, 203, 0.877);
 }
 
 @media screen and (max-width:1024px) {

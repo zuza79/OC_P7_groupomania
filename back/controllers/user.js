@@ -1,29 +1,27 @@
 // controllers - user
 // singup, save, login, delete, display one/all, modify
-// Importation des modules
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs')
 
 // Importation des modèles
 const models = require('../models')
-
+const User = models.User;
 
 // Création des Regex
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const passwordRegex = /^(?=.*\d).{4,8}$/;
 
-
-// -----> Controllers <-----
 //////// SIGNUP
 exports.signup = (req, res, next) => {
-    console.log(req.body);
-    const email = req.body.email;
-    const password = req.body.password;
-    const nom = req.body.nom;
-    const prenom = req.body.prenom;
+    console.log(req.body.user);
+    const user= JSON.parse(req.body.user);
+    const email =user.email;
+    const password = user.password;
+    const nom = user.nom;
+    const prenom = user.prenom;
     const image = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-
+    console.log(image);
     if(email == null || password == null || nom == null || prenom == null) {
         return res.status(400).json({ 'erreur': 'paramètres manquants' });
     } 
@@ -40,7 +38,7 @@ exports.signup = (req, res, next) => {
         return res.status(400).json({ 'erreur': 'mot de passe invalide (doit contenir entre 4 et 8 caractères et au moins un chiffre)'})
     }
 
-    models.user.findOne({
+    User.findOne({
         attributes: ['email'],
         where: { email: email }
     })
@@ -73,25 +71,20 @@ exports.signup = (req, res, next) => {
     })
     .catch(err => {
         return res.status(500).json({ err });
-    })
-};
+    })};
 
 ////////// LOGIN
 exports.login = (req, res, next) => {
-    user.findOne({ where: {email: req.body.email} })
+    User.findOne({ where: {email: req.body.email} })
             .then(user => {
-
-            if (!user) {
+                if (!user) {
                 return res.status(401).json('Utilisateur non trouvé !');
-            }
-            
+            }        
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
-
                     if (!valid) {
                         return res.status(401).json('Mot de passe incorrect !');
                     }
-
                     res.status(200).json({
                         userId: user.id,
                         image: user.image,
@@ -109,7 +102,7 @@ exports.login = (req, res, next) => {
 };
 /////////////// DELETE
 exports.delete = (req, res, next) => {
-    user.findOne({ where: { id: req.params.id }})
+    User.findOne({ where: { id: req.params.id }})
     .then(User => {
         if (User.image != null) {
             const filename = User.image.split('/images/profiles/')[1];
@@ -129,7 +122,7 @@ exports.delete = (req, res, next) => {
 }
 ////// DISPLAY ONE USER
 exports.getOneUser = (req, res, next) => {
-    user.findOne({ where: { id: req.params.id } })
+    User.findOne({ where: { id: req.params.id } })
         .then(user => res.status(200).json(user))
         .catch(error => res.status(400).json({error}));
 };
@@ -143,15 +136,15 @@ exports.getAllUsers = (req, res, next) => {
 exports.modifyUser = (req, res, next) => {
     if (req.file) {
 
-        user.findOne({ where: { id: req.params.id }})
+        User.findOne({ where: { id: req.params.id }})
         .then(User => {
             if (User.image) {
             const filename = User.image.split('/images/profiles/')[1];
             fs.unlink(`images/profiles/${filename}`, () => {
                 const modifyUser = {
-                    nom: req.body.nom,
-                    prenom: req.body.prenom,
-                    email: req.body.email,
+                    nom: user.nom,
+                    prenom: user.prenom,
+                    email: user.email,
                     image: `${req.protocol}://${req.get('host')}/images/profiles/${req.file.filename}`
                 };
         user.update(modifyUser , { where: { id: req.params.id } })
@@ -160,9 +153,9 @@ exports.modifyUser = (req, res, next) => {
                     .catch( error => res.status(400).json({error}));
             })} else {
                 const modifyUser = {
-                    nom: req.body.nom,
-                    prenom: req.body.prenom,
-                    email: req.body.email,
+                    nom: user.nom,
+                    prenom: user.prenom,
+                    email: user.email,
                     image: `${req.protocol}://${req.get('host')}/images/profiles/${req.file.filename}`
                 };
         
@@ -173,15 +166,15 @@ exports.modifyUser = (req, res, next) => {
             }
         })
     } else {
-        user.findOne({ where: { id: req.params.id }})
+        User.findOne({ where: { id: req.params.id }})
         .then(User => {
             if (User.image) {
                 const filename = User.image.split('/images/profiles/')[1];
                 fs.unlink(`images/profiles/${filename}`, () => {
                     const modifyUser = {
-                        nom: req.body.nom,
-                        prenom: req.body.prenom,
-                        email: req.body.email,
+                        nom: user.nom,
+                        prenom: user.prenom,
+                        email: user.email,
                         image: ''
                     };
 
@@ -192,9 +185,9 @@ exports.modifyUser = (req, res, next) => {
                 })
             } else {
                 const modifyUser = {
-                    nom: req.body.nom,
-                    prenom: req.body.prenom,
-                    email: req.body.email,
+                    nom: user.nom,
+                    prenom: user.prenom,
+                    email: user.email,
                     image: ''
                 };
         
@@ -207,10 +200,10 @@ exports.modifyUser = (req, res, next) => {
     }
     
     const modifyUser = {
-        nom: req.body.nom,
-        prenom: req.body.prenom,
-        email: req.body.email,
-        image: req.body.image,
+        nom: user.nom,
+        prenom: user.prenom,
+        email: user.email,
+        image: user.image,
     };
 
     user.update(modifyUser, { where: { id: req.params.id }
