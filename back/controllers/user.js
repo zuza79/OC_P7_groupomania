@@ -1,46 +1,79 @@
 // controllers - user
 // singup, save, login, delete, display one/all, modify
+// Importation des modules
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const passwordValidator = require('password-validator');
-const emailValidator = require('email-validator');
-const fs = require('fs');
+const fs = require('fs')
 
-const user = require('../models/');
+// Importation des modèles
+const models = require('../models')
 
-const schema = new passwordValidator(); //min 3, max 15, 1 uppercace, 1 lowercace, 1 number
-schema
-  .is().min(3)
-  .is().max(15)
-  .has().uppercase(1)
-  .has().lowercase(1)
-  .has().digits(1)
 
-////////// SIGNUP
-  exports.signup = (req, res, next) => {
-    if (!emailValidator.validate(req.body.email)){
-        return res.status(401).json({message: 'Veuillez saisir votre email valide'});
+// Création des Regex
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const passwordRegex = /^(?=.*\d).{4,8}$/;
+
+
+// -----> Controllers <-----
+//////// SIGNUP
+exports.signup = (req, res, next) => {
+    console.log(req.body);
+    const email = req.body.email;
+    const password = req.body.password;
+    const nom = req.body.nom;
+    const prenom = req.body.prenom;
+    const image = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+
+    if(email == null || password == null || nom == null || prenom == null) {
+        return res.status(400).json({ 'erreur': 'paramètres manquants' });
+    } 
+    if (nom.length > 20 || nom.length < 2) {
+        return res.status(400).json({ 'erreur': 'prénom invalide (doit être entre 2 et 20 caractères)' })
+    } 
+    if (prenom.length > 20 || prenom.length < 2) {
+        return res.status(400).json({ 'erreur': 'nom invalide (doit être entre 2 et 20 caractères)' })
+    } 
+    if(!emailRegex.test(email)) {
+        return res.status(400).json({ 'erreur': 'email invalide' })
+    } 
+    if (!passwordRegex.test(password)) {
+        return res.status(400).json({ 'erreur': 'mot de passe invalide (doit contenir entre 4 et 8 caractères et au moins un chiffre)'})
     }
-    if (!schema.validate(req.body.password)){
-        return res.status(401).json({message: 'Le mot de passe doit contenir min 3 et max 15 caractères avec au moins un chiffre, une minuscule, une majuscule !!!'});
-    };
-    
-    bcrypt.hash(req.body.password, 10)
-        .then(hash =>{
-            user.create({
-                nom: req.body.nom,
-                prenom: req.body.prenom,
-                email: req.body.email,
-                password: hash,
-                image: req.body.image,
-                role: req.body.role
-            });
-            
-            user.save()
-                .then(() => res.status(201).json({message: 'Utilisateur créé !'}))
-                .catch(() => res.status(400).json('Votre adresse email est déjà utilisé !'));
-        })
-        .catch(error => res.status(500).json({message : 'Problem de serveur'}));
+
+    models.user.findOne({
+        attributes: ['email'],
+        where: { email: email }
+    })
+    .then(user => {
+        if(!user) {
+
+            bcrypt.hash(password, 10)
+                .then(hash => {
+                    const newUser = models.User.create({
+                        email: email,
+                        password: hash,
+                        nom: nom,
+                        prenom: prenom,
+                        image: image,
+                        role: 0
+                    })
+                    .then((newUser) => {
+                        return res.status(201).json({ 'userId': newUser.id })
+                    })
+                    .catch(err => {
+                        return res.status(500).json({ err })
+                    })
+                }).catch(err => {
+                    return res.status(500).json({ err })
+                })
+
+        } else {
+            return res.status(409).json({ 'error': 'user already exist' });
+        }
+    })
+    .catch(err => {
+        return res.status(500).json({ err });
+    })
 };
 
 ////////// LOGIN

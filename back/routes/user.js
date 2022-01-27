@@ -5,7 +5,7 @@ const userCtrl = require('../controllers/user');
 const multerProfile = require('../middleware/multer-profile')
 const auth = require('../middleware/auth')
 
-router.post('/signup', userCtrl.signup);
+router.post('/signup', multerProfile, userCtrl.signup);
 router.post('/login', userCtrl.login);
 router.delete('/:id', auth, multerProfile, userCtrl.delete);
 router.get('/:id', auth, userCtrl.getOneUser);

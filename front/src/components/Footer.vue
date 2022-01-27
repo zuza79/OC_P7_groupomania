@@ -1,14 +1,12 @@
 
 <template>
   <footer>
-    <ul>
-        <li>
-            <p><img src="../assets/images/logoGroupomania.png" alt="Logo Groupomania"></p>
-        </li>
-        <li>
-            <a href="contact: administrateur@groupomania.com" aria-label="Envoyer un mail à l'administrateur" > Contacter l'administrateur</a>
-        </li>
-    </ul>
+    
+      <div class="contact">
+        <i class="far fa-envelope"></i>
+        <a href="contact: administrateur@groupomania.com" aria-label="Envoyer mail à l'administrateur" > Aide et contact</a>
+      </div>  
+    
     <div class="copyright">
       <p>2022 ©Groupomania ©Groupoman by ZuzanaTC </p>
     </div>
@@ -25,9 +23,6 @@ ul {
     
 }
 
-li {
-  width: 200px;
-}
 
 a {
   font-size: 1.2rem;
@@ -45,6 +40,10 @@ img {
 
 .copyright{
   font-size: 1rem;
+}
+.contact{
+  padding-top: 50px;
+  padding-bottom: 50px;
 }
 
 @media screen and (max-width:768px) {

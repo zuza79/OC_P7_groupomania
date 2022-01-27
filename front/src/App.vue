@@ -1,28 +1,22 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Bienvenue chez Groupoman notre réseau social"/>
-  </div>
+  <section class="app">
+    <router-view></router-view>
+  </section>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
-</script>
-
 <style>
-#app {
+.app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: 0 10vw 0 10vw;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: #000000;
+}
+
+@media screen and (max-width:1024px) {
+  .app {
+    padding: 0;
+  }
 }
 </style>
