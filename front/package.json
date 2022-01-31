@@ -11,13 +11,15 @@
   "main": "babel.config.js",
   "dependencies": {
     "@vue/cli": "^4.5.15",
+    "axios": "^0.25.0",
     "dotenv": "^14.3.2",
     "vue": "^2.6.14",
     "vue-router": "^3.5.3",
-    "vuejs-emoji": "^0.1.8"
+    "vuejs-emoji": "^0.1.8",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
-    "@vue/cli-service": "~4.5.15",
+    "@vue/cli-service": "^3.12.1",
     "vue-template-compiler": "^2.6.11"
   },
   "license": "ISC"
