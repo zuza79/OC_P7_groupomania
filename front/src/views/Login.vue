@@ -3,23 +3,29 @@
     <Header />
     <div class="login">
       <h1>Connection</h1>
+      <p>Veuillez saisir votre email de chez Groupomania et votre mot de pass.
       <form>
         <ul>
           <li>
-            <input type="email" v-model="email" placeholder="Email" size="50" required aria-label="Email de connection">
+            <input type="email" v-model="email" placeholder="jean.dupont@groupomania.com" size="50" required aria-label="Email de connection">
           </li>
           <li>
-            <input type="password" v-model="password" placeholder="Password" size="50" required aria-label="Mot de passe de connection">
+            <input type="password" v-model="password" placeholder="Pass2word" size="50" required aria-label="Mot de passe de connection">
           </li>
         </ul>  
       </form>
-      <button @click="login()" type="submit" aria-label="Se connecter">Se connecter</button>
+      <div class="alert alert-danger" v-if="loginFailure">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Email ou mot de passe incorrect
+      </div>
+      <button @click.prevent="login()" type="submit" aria-label="Se connecter">Valider</button>
     </div>
     <Footer />
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
@@ -34,17 +40,17 @@ export default {
     return {
       email: '',
       password: '',
+      loginFailure: false
     }
   },
 methods: {
     login() {
-        
       let data = {
           email: this.email,
           password: this.password
       };
 
-      fetch("http://localhost:8080/api/auth/login", {
+      axios.post("http://localhost:3000/api/auth/login", {
           method: "POST",
           headers: {
           'Accept': 'application/json',
@@ -73,7 +79,10 @@ methods: {
         localStorage.setItem("role", role);
         this.$router.push("/allposts");
       })
-      .catch(alert)
+      .catch((err) => {
+                    console.log("erreur : " + err);
+                    this.loginFailure = true;
+                })
     }
   }
 }
@@ -82,16 +91,7 @@ methods: {
 <style scoped>
 
 form{
-    width: 50%;
-}
-
-h1 {
-    margin: 30px 0 50px 0;
-    width: 50%;
-    font-size: 2rem;
-    background: #ffd7d7;
-    border: 2px solid #fd2d01;
-    border-radius: 20px;
+    width: 80%;
 }
 
 ul {
@@ -109,16 +109,17 @@ li {
 button {
   margin-top: 30px;
   padding: 5px 30px ;
-  border: 2px solid #fd2d01;
+  border: 2px solid black;
   border-radius: 20px;
-  background: #ffd7d7;
+  background: gray;
   font-size: 1rem;
+  font-weight: bolder;
   cursor: pointer;
 }
 
 input {
   font-size: 1.2rem;
-  
+  text-align: center;
 }
 
 .login {
@@ -130,30 +131,12 @@ input {
 ::placeholder {
   text-align: center;
 }
+/*------------ desktop-----------------*/
+@media screen and (min-width: 950px) {
 
-@media screen and (max-width:1024px) {
-
-    h1 {
-        font-size: 1.5rem;
-    }
-    
-    input,
-    ::placeholder {
-        font-size: 1rem;
-    }
-
-
+  h1{
+    width:  25%;
+  }
 }
 
-@media screen and (max-width:768px) {
-
-    h1 {
-        font-size: 1.2rem;
-    }
-
-    input,
-    ::placeholder {
-        font-size: 0.8rem;
-    }
-}
 </style>

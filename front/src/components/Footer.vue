@@ -22,16 +22,19 @@ ul {
     list-style: none;
     
 }
+footer{
+  padding-top: 20px;
+  padding-bottom: 30px;
+}
 
-
-a {
-  font-size: 1.2rem;
+a, p {
+  font-size: 12px;
   color: #000000;
   text-decoration: none;
 }
 
 a:hover {
-  color: #fd2d01;
+  color:black;
 }
 
 img {
@@ -42,30 +45,20 @@ img {
   font-size: 1rem;
 }
 .contact{
-  padding-top: 50px;
-  padding-bottom: 50px;
+  margin-top: 0px;
+  padding-top: 0px;
+  padding-bottom: 00px;
 }
 
-@media screen and (max-width:768px) {
-  a {
-    font-size: 0.7rem;
-  }
-
-  ul {
-    margin: 0
-  }
-  
-  li {
-    width: 150px;
-  }
-
-  img {
-    height: 15vw;
-  }
-
-  .copyright{
-  font-size: 0.8rem;
-  }
+/*------------ desktop-----------------*/
+@media screen and (min-width: 950px) {
+.contact{
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.copyright{
+  padding-bottom: 0;
+}
 }
 
 </style>

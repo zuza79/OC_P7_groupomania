@@ -3,23 +3,24 @@
     <Header />
     <div class="signup">
       <h1>Inscription</h1>
+      <p>Veillez saisir les informations demander et outiliser votre email professionel par example "jean.dupont@groupomania.com"</p>
       <form>
         <ul>
           <li>
-            <input type="text" v-model="nom" placeholder="Nom" size="50" required aria-label="Nom">
+            <input type="text" v-model="nom" placeholder="dupont" size="50" required aria-label="Nom">
           </li>
           <li>
-            <input type="text" v-model="prenom" placeholder="Prénom" size="50" required aria-label="Prénom">
+            <input type="text" v-model="prenom" placeholder="jean" size="50" required aria-label="Prénom">
           </li>
           <li>
-            <input type="email" v-model="email" placeholder="Email" size="50" required aria-label="Email">
+            <input type="email" v-model="email" placeholder="jean.dupont@groupomania.com" size="50" required aria-label="Email">
           </li>
           <li>
-            <input type="password" v-model="password" placeholder="Password" size="50" required aria-label="Mot de passe">
+            <input type="password" v-model="password" placeholder="Pass2word" size="50" required aria-label="Mot de passe">
           </li>
         </ul>
       </form>   
-      <button @click="signup()" type="submit" aria-label="S'inscrire">S'inscrire</button>
+      <button @click.prevent="signup()" type="submit" aria-label="Inscription">Valider inscription</button>
     </div>
     <Footer />
   </div>
@@ -27,12 +28,13 @@
 
 
 <script>
+import axios from 'axios'
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 export default {
 
-  name: 'signup',
+  name: 'Signup',
   components: {
     Header,
     Footer
@@ -44,15 +46,17 @@ export default {
       prenom: '',
       email: '',
       password: '',
+      image:'',
     }
   },
 methods: {
     signup() {
-      const data = {
+      let data = {
           nom: this.nom,
           prenom: this.prenom,
           email: this.email,
-          password: this.password
+          password: this.password,
+          image: this.image
       };
 
       const regexText = /^[a-zA-Z-\s]+$/;
@@ -80,7 +84,7 @@ methods: {
           alert("Veuillez vérifier l'écriture de votre mot de passe, il doit contenir au moins une majuscule, une minuscule ainsi qu'un chiffre");
       }else if ((regexText.test(this.nom) === true) && regexText.test(this.prenom) === true && regexEmail.test(this.email) === true && regexPassword.test(this.password) === true ) {
 
-          fetch("http://localhost:8080/api/auth/signup", {
+          axios.post("http://localhost:3000/api/auth/signup", data, {
               method: "POST",
               headers: {
               'Accept': 'application/json',
@@ -112,19 +116,14 @@ methods: {
 
 <style scoped>
 form{
-    width: 50%;
-}
-h1 {
-    width: 30%;
-    font-size: 2rem;
-    background: #ffd7d7;
-    border: 2px solid #fd2d01;
-    border-radius: 20px;
+    width: 80%;
+    
 }
 
 ul {
 list-style: none;
 padding: 0;
+
 }
 
 li {
@@ -132,18 +131,20 @@ li {
   flex-direction: column;
   justify-content: flex-start;
   margin-bottom: 30px;
+  
 }
 
 input {
   font-size: 1.2rem;
+  text-align: center;
 }
 
 button {
   margin-top: 10px;
   padding: 5px 30px ;
-  border: 2px solid #fd2d01;
+  border: 2px solid black;
   border-radius: 20px;
-  background: #ffd7d7;
+  background: gray;
   font-size: 1rem;
   font-weight: bolder;
   cursor: pointer;
@@ -154,36 +155,23 @@ button {
   flex-direction: column;
   align-items: center;
 }
+footer{
+  padding: 0;
+}
 
 ::placeholder {
-  text-align: center;
+  text-align: center;}
+/*------------ desktop-----------------*/
+@media screen and (min-width: 950px) {
+
+  h1{
+    width:  25%;
+  }
 }
 
 
-@media screen and (max-width:1024px) {
-
-    h1 {
-        font-size: 1.5rem;
-    }
-    
-    input,
-    ::placeholder {
-        font-size: 1rem;
-    }
 
 
-}
 
-@media screen and (max-width:768px) {
-
-    h1 {
-        font-size: 1.2rem;
-    }
-
-    input,
-    ::placeholder {
-        font-size: 0.8rem;
-    }
-}
 
 </style>

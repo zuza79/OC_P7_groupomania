@@ -16,8 +16,9 @@ header {
 }
 
 #imgLogo {
-  height: 150px;
+  width: 60%;
   display: block;
- margin: 0px auto
+ padding-top: 10px;
+ margin: auto;
 }
 </style>

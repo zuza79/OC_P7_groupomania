@@ -7,9 +7,9 @@ const auth = require('../middleware/auth')
 
 router.post('/signup', multerProfile, userCtrl.signup);
 router.post('/login', multerProfile, userCtrl.login);
-router.delete('/:id', auth, multerProfile, userCtrl.delete);
-router.get('/:id', auth, userCtrl.getOneUser);
-router.put('/:id',auth, multerProfile, userCtrl.modifyUser);
+//router.delete('/profile/:id', auth, multerProfile, userCtrl.delete);
+router.get('/profile/:id', auth, userCtrl.getOneUser);
+router.put('/profile/:id',auth, multerProfile, userCtrl.modifyUser);
 //router.put('/admin/:id',auth, userCtrl.AdminModifyUser) à faire
 router.get('/',auth, userCtrl.getAllUsers);
 //router.put('/profile/:id',auth, userCtrl.modifyPassword) à faire
