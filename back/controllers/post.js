@@ -4,23 +4,27 @@
 const Post = require('../models/post');
 const User = require('../models/user');
 const fs = require('fs');
+
+
+
 //const { DATE } = require('sequelize/dist');
 
 exports.createPost = (req, res, next) => {
+    const post= JSON.parse(req.body.post);
     if (req.file) {
         Post.create({
-            title: req.body.title,
-            content: req.body.content,
+            title: post.title,
+            content: post.content,
             image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`,
-            user_id: req.body.user_id
+            user_id: post.user_id
         })
         .then(() => res.status(201).json({message: 'Post créé !'}))
         .catch( error => res.status(400).json({error}));
     } else {
         Post.create({
-            title: req.body.title,
-            content: req.body.content,
-            user_id: req.body.user_id
+            title: post.title,
+            content: post.content,
+            user_id: post.user_id
         })
         .then(() => res.status(201).json({message: 'Post créé !'}))
         .catch( error => res.status(400).json({error}));

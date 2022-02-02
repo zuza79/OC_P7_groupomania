@@ -1,4 +1,4 @@
-// Importation de jsonwebtoken
+/*/ Importation de jsonwebtoken
 const jwt = require('jsonwebtoken');
 
 
@@ -40,3 +40,4 @@ module.exports = {
         return userId;
     }
 }
+*/

@@ -105,9 +105,11 @@ User.findOne({
                         return res.status(401).json({ message: 'Mot de passe incorrect !'} )
                     }
                     res.status(200).json({
-                        userId: User.id,      
+                        userId: user.id,
+                        image: user.image,
+                        role: user.role,     
                         token: jwt.sign(   
-                            { userId: User.id},   
+                            { userId: user.id},   
 //4. console log
                      console.log('console log 4. user.id :' + User.id),
                       console.log('console log 4. userId :' + userId),       
@@ -161,6 +163,7 @@ exports.getAllUsers = (req, res, next) => {
 };
 ////// MODIFY USER AND UPDATE
 exports.modifyUser = (req, res, next) => {
+    
     if (req.file) {
 
         User.findOne({ where: { id: req.params.id }})
@@ -168,6 +171,7 @@ exports.modifyUser = (req, res, next) => {
             if (User.image) {
             const filename = User.image.split('/images/profiles/')[1];
             fs.unlink(`images/profiles/${filename}`, () => {
+                const user= JSON.parse(req.body.user);
                 const modifyUser = {
                     nom: user.nom,
                     prenom: user.prenom,
@@ -198,13 +202,14 @@ exports.modifyUser = (req, res, next) => {
             if (User.image) {
                 const filename = User.image.split('/images/profiles/')[1];
                 fs.unlink(`images/profiles/${filename}`, () => {
+                   
                     const modifyUser = {
-                        nom: user.nom,
-                        prenom: user.prenom,
-                        email: user.email,
+                        nom: req.body.nom,
+                        prenom: req.body.prenom,
+                        email: req.body.email,
                         image: ''
                     };
-
+                    //const user= JSON.parse(req.body.user);
                     user.update(modifyUser , { where: { id: req.params.id } })
 
                         .then(() => res.status(200).json({message : 'Utilisateur modifié !'}))
@@ -238,3 +243,52 @@ exports.modifyUser = (req, res, next) => {
         .then(()=> res.status(200).json({message : 'Utilisateur modifié !'}))
         .catch((error)=> res.status(400).json({error}));
 };
+
+//admin modify user
+exports.AdminModifyUser = (req, res, next) => {
+    
+    const modifyUser = {
+        nom: req.body.nom,
+        prenom: req.body.prenom,
+        email: req.body.email,
+        role: req.body.role
+    };
+
+    user.update(modifyUser, { where: { id: req.params.id }
+        })
+        .then(() => res.status(200).json({message : 'Utilisateur modifié !'}))
+        .catch((error)=> res.status(400).json({error}));
+};
+
+//modify password
+exports.modifyPassword = (req, res, next) => {
+    user.findOne({ where: { id: req.params.id }})
+    .then(User => {
+        bcrypt.compare(req.body.oldPassword, User.password)
+            .then(valid => {
+
+            if (!valid) {
+                return res.status(401).json("Mot de passe actuel incorrect");
+            }
+
+            if (!schema.validate(req.body.password)) {
+                return res.status(401).json('Le nouveau mot de passe doit avoir une longueur de 3 à 50 caractères avec au moins un chiffre, une minuscule, une majuscule !!!')
+            }
+
+                bcrypt.hash(req.body.password, 10)
+                .then(hash => {
+                    const newPassword = {
+                        password : hash
+                    };
+
+                    user.update(newPassword, { where: { id: req.params.id }})
+                    .then(() => { res.status(201).json({ message: 'Mot de passe modifié !' })})
+                    .catch(error => res.status(400).json({ error }));
+
+                })
+                .catch(error => res.status(500).json({ error }));
+            })
+            .catch(error => res.status(500).json({ error }));
+    })
+    .catch(error => res.status(500).json({ error }));
+}

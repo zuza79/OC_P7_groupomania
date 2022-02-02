@@ -6,15 +6,12 @@
             <form>
                 <ul>
                     <li>
-                        <label for="nom">Nom</label>
                         <input type="text" v-model="user.nom" placeholder="Nom" size="50" required aria-label="Nom de l'utilisateur">
                     </li>
                     <li>
-                        <label for="prenom">Prénom</label>
                         <input type="text" v-model="user.prenom" placeholder="Prenom" size="50" required aria-label="Prénom de l'utilisateur">
                     </li>
                     <li>
-                        <label for="email">Email</label>
                         <input type="email" v-model="user.email" placeholder="Email" size="50" required aria-label="Email de l'utilisateur">
                     </li>
                     </ul>
@@ -23,7 +20,7 @@
                     <div class="modifyImage" id="modifyImage">
                         <img v-if="user.image" src="user.image" alt="Photo de profil" class="file" width="150px" height="150px" border-radius="15px">
                         <label v-if="!user.image" for="file" class="label-file" aria-label="Inserer votre photo de profil" >Inserer <br>votre photo de profil</label>
-                        <button v-else @click="deletefile()" class="label-file" aria-label="Supprimer la photo de profil"> Supprimer votre photo de profil</button>
+                        <button v-else @click="deletefile()" class="button label-file btnDelete" aria-label="Supprimer la photo de profil"> <i class="far fa-trash-alt"></i>Supprimer</button>
                         <input type="file" accept="image/jpeg, image/jpg, image/png, image/webp" v-on:change="uploadFile" id="file" class="input-file" aria-label="Photo de profil">
                     </div>
                     <div class="modifyPassword">
@@ -38,7 +35,7 @@
             </nav>
                 <div class="submit">
                     <button @click="updateUser()" class="button" id ="validation" aria-label="Modifier le compte de cet utilisateur"><i class="fas fa-edit"></i> Enregistrer les modifications</button>
-                    <button @click="deleteUser()" class="button espacement" id="btnDelete" aria-label="Supprimer le compte de cet utilisateur"><i class="far fa-trash-alt"></i> Supprimer le compte</button>
+                    <button @click="deleteUser()" class="button espacement btnDelete" aria-label="Supprimer le compte de cet utilisateur"><i class="far fa-trash-alt"></i> Supprimer le compte</button>
                 </div>
             
         </div>
@@ -316,7 +313,7 @@ input {
 }
 .modify{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     padding: 0 10px 0 10px;
 }
@@ -358,7 +355,7 @@ input {
 #validation{
     background-color: rgb(105, 206, 105);
 }
-#btnDelete{
+.btnDelete{
     background-color: indianred;
     font-weight: bolder;
 }

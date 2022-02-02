@@ -50,6 +50,11 @@ export default {
     }
   },
 methods: {
+  // message confir/err
+        signupMessage(message){
+            this.message = message;
+        },
+  //create new user
     signup() {
       let data = {
           nom: this.nom,
@@ -57,9 +62,9 @@ methods: {
           email: this.email,
           password: this.password,
           image: this.image
-      };
+      }
 
-      const regexText = /^[a-zA-Z-\s]+$/;
+     /* const regexText = /^[a-zA-Z-\s]+$/;
       const regexEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/; // eslint-disable-line
       const regexPassword = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{3,50}$/;
 
@@ -83,34 +88,19 @@ methods: {
       } else if (regexPassword.test(this.password) === false) {
           alert("Veuillez vérifier l'écriture de votre mot de passe, il doit contenir au moins une majuscule, une minuscule ainsi qu'un chiffre");
       }else if ((regexText.test(this.nom) === true) && regexText.test(this.prenom) === true && regexEmail.test(this.email) === true && regexPassword.test(this.password) === true ) {
-
+*/
           axios.post("http://localhost:3000/api/auth/signup", data, {
-              method: "POST",
+             // method: "POST",
               headers: {
-              'Accept': 'application/json',
+             // 'Accept': 'application/json',
               'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(data)
+              }
           })
-          .then(response => {
-            if(response.ok) {
-              return response.json()
-            } else {
-              return response.text()
-              .then((text) => {
-                throw new Error(text)}
-              )
-            }
-          })  
-          .then(() => {
-              alert("Votre inscription est bien prise en compte");
-              this.$router.push("/login");
-          })
-          .catch(alert)
-      }
-    }
-  }  
-}
+
+              .then(() => this.signupMessage('OK'))
+                .catch(() => this.signupMessage('erreur'))
+        }
+    }}
 </script>
 
 

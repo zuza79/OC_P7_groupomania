@@ -20,10 +20,11 @@ export default new Vuex.Store({
     async getUser(state){
       const userId = localStorage.getItem('userId');
       const token = localStorage.getItem('userToken');
-      const role = localStorage.getItem('role');
-      await axios.get(`http://localhost:3000/api/users/profile/${userId}`, {
+     // const role = localStorage.getItem('role');
+      await axios.get(`http://localhost:3000/api/auth/profile/${userId}`, {
         headers: {
-          'authorization': `Bearer ${token}`
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       }).then(res => {
         console.log(res.data);
