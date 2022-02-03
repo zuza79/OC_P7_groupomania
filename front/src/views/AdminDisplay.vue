@@ -5,7 +5,7 @@
         <div id = "admin">
             <nav class="menu">   
                 <a class="menuLink" href="#AncreUsers">Utilisateurs</a>
-                <a class="menuLink" href="#AncrePosts">Posts</a>
+                <a class="menuLink" href="#AncrePosts">Messages</a>
                 <a class="menuLink" href="#AncreComments">Commentaires</a>
             </nav>  
             
@@ -13,7 +13,7 @@
             <div class="title">Utilisateurs</div>  
             <article class="adminBloc" id="AncreUsers">
                 <div>
-                    <input v-model="search" class="search" type="search" placeholder="Rechercher un utilisateur par nom ..." size=40 aria-label=" Barre de recherche d'un utilisateur par nom">
+                    <input v-model="search" class="search" type="search" placeholder="Rechercher par nom ..." size=40 aria-label=" Barre de recherche d'un utilisateur par nom">
                 </div>
                 <table>
                     <tr>
@@ -35,8 +35,8 @@
                             </select>
                         </td>
                         <td><img v-if="user.image" :src="user.image" alt="photo de profil"></td>
-                        <button @click="modifyUser(index)" aria-label="Modifier cet utilisateur"><i class="fas fa-edit"></i></button>
-                        <button @click="deleteUser(index)" aria-label="Supprimer cet utilisateur"><i class="far fa-trash-alt"></i></button>
+                        <button @click="modifyUser(index)" aria-label="Modifier cet utilisateur" class="btnSave"><i class="fas fa-edit"></i></button>
+                        <button @click="deleteUser(index)" aria-label="Supprimer cet utilisateur" class="btnDelete"><i class="far fa-trash-alt"></i></button>
                     </tr>
                 </table>
                 <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
@@ -44,7 +44,7 @@
         </div>
 
         <div class ="posts">
-            <div class="title">Posts</div>
+            <div class="title">Messages</div>
             <article class="adminBloc" id="AncrePosts">
                 <table>
                     <tr>
@@ -60,7 +60,8 @@
                         <td><input type="text" v-model="post.title" required aria-label="Titre du post"></td>
                         <td><textarea type="text" v-model="post.content" required aria-label="Message du post"></textarea></td>
                         <td><img v-if="post.image" :src="post.image" alt="Image du post"></td>
-                        <button @click="deletePost(index)" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i></button>
+                        <router-link :to="`/post/modify/${this.id_param}`" aria-label="Modifier ce post" v-if="post.modify === false" class="btnSave"><i class="fas fa-check"></i></router-link>
+                        <button @click="deletePost(index)" aria-label="Supprimer ce post" class="btnDelete"><i class="far fa-trash-alt"></i></button>
                     </tr>
                 </table>
                 <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
@@ -82,7 +83,7 @@
                         <td><input type="text" v-model="comment.user.prenom" required aria-label="Prénom de l'auteur du commentaire"></td>
                         <td><input type="text" v-model="comment.post.title" required aria-label="Titre du post"></td>
                         <td><textarea type="text" v-model="comment.content" rows="3" cols="50" required aria-label="Commentaire"></textarea></td>
-                        <button @click="deleteComments(index)" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
+                        <button @click="deleteComments(index)" aria-label="Supprimer ce commentaire" class="btnDelete"><i class="far fa-trash-alt"></i></button>
                     </tr>
                 </table>
                 <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
@@ -233,6 +234,7 @@ export default {
             .then(data => (this.posts = data))
             .catch(alert)
         },
+        
     //delete post
         deletePost(index) {
             const token = JSON.parse(localStorage.getItem("userToken"))
@@ -303,6 +305,10 @@ export default {
 </script>
 
 <style scoped>
+h1, .nav{
+    margin: 0 auto 0 auto;
+    padding: 0;
+}
 .menu{
     margin: 5px;
   display: flex;
@@ -324,14 +330,15 @@ export default {
     border-radius: 20px;
 }
 .title{
-    color:rgb(58, 69, 218);
+    color:rgb(5, 5, 100);
     font-weight: bolder;
     font-size: 18px;
     margin-top: 20px;
 }
 .search {
-    margin-bottom: 10px;
-    margin-top: 10px;
+    margin: 10px auto 10px auto;
+    font-size: 14px;
+    text-align: center;
     width: 80%;
     height: 30px;
     border: 2px solid black;
@@ -346,34 +353,10 @@ table {
     height: 20px;
     margin: 5px auto 15px auto;
     font-size: 14px;
-    background: #66c4e0;
+    background: #b4c4d6;
     border: 1px solid black;
     border-radius: 20px;
     
-}
-
-.button{
-    margin: 10px 0 30px 0;
-    padding: 5px 3vw ;
-    border: 2px solid black;
-    border-radius: 10px;
-    background: #ffd7d7;
-    font-size: 1vw;
-    cursor: pointer;
-    text-decoration: none;
-    color: #000000;
-}
-
-button {
-    margin-top: 10px;
-    padding: 5px 5px ;
-    border: 2px solid black;
-    border-radius: 10px;
-    background: #ffd7d7;
-    font-size: 1vw;
-    cursor: pointer;
-    text-decoration: none;
-    color: #000000;
 }
 
 input,
@@ -381,20 +364,7 @@ textarea {
     font-size: 1vw;
 }
 
-.fa-home
-{
-    width: 50px;
-    height: 50px;
-    position: relative;
-    border-radius: 100%;
-    background: gray;
-    
-    cursor: pointer; 
-    
-     text-align: center;
-     color: green;   
-     
-    }
+
 
 
 </style>

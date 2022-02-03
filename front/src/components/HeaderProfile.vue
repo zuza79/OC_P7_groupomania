@@ -4,9 +4,11 @@
         <nav>
             <router-link to="/admin/users" v-if="role === 0" aria-label="Administration"><i class="fas fa-user-lock link"></i></router-link>
             <router-link to="/moderate/posts" v-else-if="role === 1" aria-label="Administration"><i class="fas fa-user-lock link"></i></router-link>
-            <router-link class="link" to="/profile" aria-label="Profil">Mon compte</router-link>
+            <router-link class="link" to="/profile" aria-label="Profil">Mon profil</router-link>
+            <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
             <a class="link disconnect" @click="disconnectUser()">Déconexion</a>
         </nav>
+
     </header>
 </template>
 
@@ -44,6 +46,11 @@ header {
   align-items: center;
   justify-content: space-between;
 }
+nav{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
 img {
   height: 100px;
@@ -75,7 +82,7 @@ img {
 .nav a {
   font-weight: bold;
   color: #000000;
-  gap: 50px;
+
 }
 
 .nav a.router-link-exact-active {
@@ -83,8 +90,23 @@ img {
 }
 
 i {
-    font-size: 3rem;
+    font-size: 1.5rem;
 }
+.fa-home
+{
+    width: 50px;
+    height: 50px;
+    position: relative;
+    border-radius: 100%;
+    background: gray;
+    cursor: pointer; 
+    text-align: center;
+     color: white;   
+    display: flex;
+    justify-content: center; 
+    margin: auto;
+    align-items: center;
+    }
 @media screen and (max-width:1024px) {
   header {
     flex-direction: column;

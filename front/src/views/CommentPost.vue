@@ -4,7 +4,7 @@
             <section>
                 <div class="header">
                     <div>
-                        <h1>{{ post.title }}</h1>
+                        <h2>{{ post.title }}</h2>
                     </div>
                     <div>
                         <div class="info">
@@ -12,9 +12,8 @@
                                 Publier par 
                                 <b>{{ post.user.nom }} 
                                 <span v-if="post.user.role != 0">{{ post.user.prenom }} </span></b>     
-                                <!--<img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
-                                <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
-                                -->
+                                <img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
+                                <img class="photo-profil" v-else src="../assets/images/avatar.jpg" alt="photo de profil"><br>
                                 le <b>{{ dateFormat(post.created_date) }}</b>
                                 à <b>{{ hourFormat(post.created_date) }}</b><br>
                             </p>
@@ -29,8 +28,8 @@
 
                 <div class="content">
                     <p class="modif">
-                    <button @click="modifyPost()" v-if="post.user_id === id" class="button" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier ce post</button>
-                    <button @click="deletePost()" v-if="post.user_id === id || role === 1" class="button espacement" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer ce post</button>
+                    <button @click="modifyPost()" v-if="post.user_id === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier</button>
+                    <button @click="deletePost()" v-if="post.user_id === id || role === 1" class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer</button>
                     </p>
                     <hr v-if="post.user_id === id || role === 1">
                     <img v-if="post.image" :src="post.image" alt="Image du post">
@@ -46,13 +45,12 @@
                                 <b>{{ comment.user.nom }} 
                                 <span v-if="comment.user.role != 0">{{ comment.user.prenom }} </span></b> 
                                 <img class="photo-profil" v-if="comment.user.image" :src="comment.user.image" alt="photo de profil">
-                                <!--<img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
-                                -->
+                                <img class="photo-profil" v-else src="../assets/images/avatar.jpg" alt="photo de profil"><br>
                                 le <b>{{ dateFormat(comment.date) }}</b>
                                 à <b>{{ hourFormat(comment.date) }}</b>
                             </p>
                             <p>
-                                <button v-if="comment.user_id === id || role === 1" @click="deleteComment(index)" class="button-comment" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
+                                <button v-if="comment.user_id === id || role === 1" @click="deleteComment(index)" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
                             </p>
                         </div>                        
                         <hr>
@@ -61,11 +59,11 @@
                     <button v-on:click="hide" class="comment-button" aria-label="Cacher commentaire">Cacher le<span v-if="comments.length >= 2">s</span> commentaire<span v-if="comments.length >= 2">s</span></button>
                 </article>
 
-                <button v-if="displayCreateComment === false" v-on:click="show2" class="button" aria-label="Ecrire un commentaire">Ecrire un commentaire</button>
+                <button v-if="displayCreateComment === false" v-on:click="show2" class="button" aria-label="Ecrire un commentaire"><i class="far fa-edit"></i><br>Rédigér un commentaire</button>
                 <article v-if="displayCreateComment" class="createcomment">
-                    <textarea v-model="commentaire" placeholder="Commentaire" cols="60" rows="5" aria-label="Message du commentaire"></textarea>
-                    <button @click="createComment()" class="buttonenvoyer" aria-label="Envoyer le commentaire">Envoyer le commentaire</button>
-                    <button v-on:click="hide2" class="buttonannuler" aria-label="Annuler le commentaire">Annuler le commentaire</button>
+                    <textarea v-model="commentaire" placeholder="Rédiger votre commentaire..." cols="60" rows="5" aria-label="Message du commentaire"></textarea>
+                    <button @click="createComment()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
+                    <button v-on:click="hide2" class="btnDelete" aria-label="Annuler le commentaire"><i class="fas fa-comment-slash"></i>Annuler</button>
                 </article>
 
             </section>
@@ -293,6 +291,7 @@ textarea {
 }
 
 .createcomment {
+    width: 80%;
     display: flex;
     flex-direction: column;
 }
@@ -365,11 +364,11 @@ img {
 .photo-profil {
     width: 50px;
     height: 50px;
-    border: 2px solid black;
     border-radius: 30px;
 }
 
 
+/*
 @media screen and (max-width:1024px) {
 
     
@@ -407,5 +406,5 @@ img {
     }
 
 }
-
+*/
 </style>

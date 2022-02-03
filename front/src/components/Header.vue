@@ -1,15 +1,13 @@
+<!-- tout est ok -->
 <template>
   <header id="imgLogo">
     <a href="/"><img id="imgLogo" src="../assets/images/logoMono.png" alt="Logo Groupomania" /></a>
-    <nav>
-      
-    </nav>
   </header>
 </template>
 
-
 <style scoped>
 header {
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -19,6 +17,7 @@ header {
   width: 60%;
   display: block;
  padding-top: 10px;
- margin: auto;
+ margin-left: auto;
+ margin-right: auto;
 }
 </style>

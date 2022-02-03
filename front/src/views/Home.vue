@@ -2,15 +2,16 @@
   <div>
     <Header />
     <body>
-    <h1>Bienvenue chez GROUPOMAN</h1>
+    <h1><p>Bienvenue chez </p>GROUPOMAN</h1>
     <h2>Réseau social de notre entreprise</h2> 
-    
+   
     <nav class="routerLink">
     <router-link to="/signup" class="link" aria-label="Inscription">Inscription</router-link>
     <router-link to="/login" class="link" aria-label="Connection">Connection</router-link>
     </nav>
     </body>     
     <Footer />
+  
   </div>
 </template>
 
@@ -33,18 +34,23 @@ export default {
 body{
   margin-bottom: 100px;
 }
-
+p{
+  font-size: 30px;
+}
 h2 {
+  width: 70%;
   color: black;
-  font-size: 1.2rem;
+  font-size: 25px;
   padding: 0px;
-  margin-bottom: 50px;
+  margin:0 auto 50px auto;
   }
 .tab{
   display: flex;
   justify-content: center;
 }
 .routerLink{
+   width: 70%;
+   margin: auto;
   padding-top: 50px;
 }
 .link {
@@ -64,7 +70,8 @@ h2 {
   color: black;
 
 }
-.nav {
+nav {
+   width: 70%;
   padding: 20px 5vw;
   font-size: 1vw;
 }

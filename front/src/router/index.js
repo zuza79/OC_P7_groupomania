@@ -8,6 +8,9 @@ import Allposts from '../views/Allposts.vue'
 import AdminDisplay from '../views/AdminDisplay.vue'
 import Post from '../views/Post.vue'
 import CommentPost from '../views/CommentPost.vue'
+import ModifyPost from '../views/ModifyPost.vue'
+import ModifyComment from '../views/ModifyComment.vue'
+
 
 Vue.use(VueRouter)
 
@@ -48,10 +51,21 @@ const routes = [
     component: Post
   },
   {
-    path: '/commentpost',
+    path: '/post/comment',
     name: 'CommentPost',
     component: CommentPost
-  }
+  },
+  {
+    path: '/post/modify',
+    name: 'ModifyPost',
+    component: ModifyPost
+  }, 
+  {
+    path: '/comment/modify',
+    name: 'ModifyComment',
+    component: ModifyComment
+  },
+
 
 ]
 

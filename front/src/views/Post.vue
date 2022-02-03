@@ -3,26 +3,27 @@
         <HeaderProfile />
             
             <section>
-                <h1>Création d'un post</h1>
+                <h1><i class="far fa-edit"></i><br>Rédiger votre message</h1>
                 <form>
                     <ul>
                         <li>
                             <input type="text" v-model="titre" placeholder="Titre" size="50" required aria-label="Titre du post">
+                        </li>
+                        <li>
+                            <textarea v-model="contenu" placeholder="Rédiger votre message..." rows="10" cols="60" required aria-label="Message du post"></textarea>
                         </li>
                         <li v-if="image">
                             <img :src="image" alt="Image du post" class="file">
                         </li>
                         <li>
                             <label v-if="!image" for="file" class="label-file" aria-label="Choisir une photo pour ce post"></label>
-                            <button v-else @click="deletefile()" class="label-file" aria-label="Supprimer cette photo du post"><i class="far fa-trash-alt"></i> Supprimer image</button>
+                            <button v-else @click="deletefile()" class="btnDelete label-file" aria-label="Supprimer cette photo du post"><i class="far fa-trash-alt"></i> Supprimer image</button>
                             <input type="file" accept="image/jpeg, image/jpg, image/png, image/webp" v-on:change="uploadFile" id="file" class="input-file" aria-label="Image du post">
                         </li>
-                        <li>
-                            <textarea v-model="contenu" placeholder="Voici votre message..." rows="10" cols="60" required aria-label="Message du post"></textarea>
-                        </li>
+                        
                     </ul>
                 </form>
-                <button @click="createPost()" class="button" aria-label="Créer ce post">Créer le post</button>
+                <button @click="createPost()" class="btnSave" aria-label="Envoyer le message">Envoyer</button>
                 <div>
                 <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
                 </div>
@@ -257,6 +258,7 @@ textarea {
 img {
     width: 70%;
     border-radius: 30px;
+    margin: auto;
 }
 
 .content img {

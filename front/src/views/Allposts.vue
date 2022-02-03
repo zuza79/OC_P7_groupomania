@@ -2,9 +2,9 @@
     <div>
         <HeaderProfile />
         <h1>Le Flash Actu Groupomania</h1>
-        <button @click="post()" class="button" >Nouveau post</button>
+        <button @click="post()" class="button" ><h2><i class="far fa-edit"></i><br>Rédiger nouveau message</h2></button>
         <div>
-            <input v-model="search" class="search" type="search" placeholder="Rechercher un post par utilisateur ..." size=50 aria-label="Barre de recherche par utilisateur">
+            <input v-model="search" class="search" type="search" placeholder="Rechercher une publication par auteur ..." size=50 aria-label="Barre de recherche par utilisateur">
         </div>
         <article v-if="posts.length == 0">
             <p>Oups! Aucune publication pour instant!</p>
@@ -106,8 +106,8 @@ export default {
 <style scoped>
 
 h2 {
-    font-size: 1.3vw;
-    margin: 30px 0 10px 0;
+    font-size: 15px;
+    margin: 0 auto 0 auto;
 }
 
 .info {

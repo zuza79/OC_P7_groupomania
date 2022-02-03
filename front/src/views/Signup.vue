@@ -3,7 +3,8 @@
     <Header />
     <div class="signup">
       <h1>Inscription</h1>
-      <p>Veillez saisir les informations demander et outiliser votre email professionel par example "jean.dupont@groupomania.com"</p>
+      <h2>Nous sommes ravis de vous accueillir chez Groupomania.</h2>
+      <p>Veillez saisir les informations demander et outiliser votre email professionel par example: "jean.dupont@groupomania.com"</p>
       <form>
         <ul>
           <li>
@@ -20,7 +21,7 @@
           </li>
         </ul>
       </form>   
-      <button @click.prevent="signup()" type="submit" aria-label="Inscription">Valider inscription</button>
+      <button @click.prevent="signup()" type="submit" aria-label="Inscription" class="btnSave"><i class="fas fa-edit"></i> Enregistrer </button>
     </div>
     <Footer />
   </div>
@@ -63,9 +64,9 @@ methods: {
           password: this.password,
           image: this.image
       }
-
-     /* const regexText = /^[a-zA-Z-\s]+$/;
-      const regexEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/; // eslint-disable-line
+      
+      const regexText = /^[a-zA-Z-\s]+$/;
+      const regexEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/; 
       const regexPassword = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{3,50}$/;
 
       if (this.nom === "") {
@@ -88,7 +89,7 @@ methods: {
       } else if (regexPassword.test(this.password) === false) {
           alert("Veuillez vérifier l'écriture de votre mot de passe, il doit contenir au moins une majuscule, une minuscule ainsi qu'un chiffre");
       }else if ((regexText.test(this.nom) === true) && regexText.test(this.prenom) === true && regexEmail.test(this.email) === true && regexPassword.test(this.password) === true ) {
-*/
+
           axios.post("http://localhost:3000/api/auth/signup", data, {
              // method: "POST",
               headers: {
@@ -100,7 +101,9 @@ methods: {
               .then(() => this.signupMessage('OK'))
                 .catch(() => this.signupMessage('erreur'))
         }
-    }}
+    }
+    }
+}
 </script>
 
 
@@ -108,6 +111,13 @@ methods: {
 form{
     width: 80%;
     
+}
+h2{
+color:rgb(5, 5, 100);
+}
+p{
+  font-size: 12px;
+  margin: 0;
 }
 
 ul {
@@ -129,17 +139,11 @@ input {
   text-align: center;
 }
 
-button {
-  margin-top: 10px;
-  padding: 5px 30px ;
-  border: 2px solid black;
-  border-radius: 20px;
-  background: gray;
-  font-size: 1rem;
-  font-weight: bolder;
-  cursor: pointer;
+/*
+.btnSave{
+    background-color: rgb(105, 206, 105);
 }
-
+*/
 .signup {
   display: flex;
   flex-direction: column;
@@ -150,14 +154,19 @@ footer{
 }
 
 ::placeholder {
-  text-align: center;}
+  text-align: center;
+  }
+
+
 /*------------ desktop-----------------*/
-@media screen and (min-width: 950px) {
+/*@media screen and (min-width: 950px) {
 
   h1{
     width:  25%;
   }
+
 }
+*/
 
 
 
