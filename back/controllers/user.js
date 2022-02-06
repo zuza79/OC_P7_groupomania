@@ -1,29 +1,27 @@
 // controllers - user
-// singup, save, login, delete, display one/all, modify
+// singup, login, delete, display one/all, modify
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-//const jwtUtils = require('../utils/jwt.utils');
 const hash = require('hash.js');
 const fs = require('fs')
 
-// Importation des modèles
 const models = require('../models')
 const User = models.User;
 
-// Création des Regex
+// Regex
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const passwordRegex = /^(?=.*\d).{4,8}$/;
 
 //////// SIGNUP
 exports.signup = (req, res, next) => {
-    const user= JSON.parse(req.body.user);
-    const email = user.email;
+    console.log("console log signup backend  " +JSON.stringify(req.body.user));
+        const user= req.body.user;
+  //const user= JSON.parse(req.body.user); 
+  const email = user.email;
     const password = user.password;
     const nom = user.nom;
     const prenom = user.prenom;
-    const image = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
    
-    console.log(image);
     if(email == null || password == null || nom == null || prenom == null) {
         return res.status(400).json({ 'erreur': 'paramètres manquants' });
     } 
@@ -39,14 +37,13 @@ exports.signup = (req, res, next) => {
     if (!passwordRegex.test(password)) {
         return res.status(400).json({ 'erreur': 'mot de passe invalide (doit contenir entre 4 et 8 caractères et au moins un chiffre)'})
     }
-
+  
     User.findOne({
         attributes: ['email'],
         where: { email: email }
     })
     .then(user => {
         if(!user) {
-
             bcrypt.hash(password, 10)
                 .then(hash => {
                     const newUser = models.User.create({
@@ -54,7 +51,7 @@ exports.signup = (req, res, next) => {
                         password: hash,
                         nom: nom,
                         prenom: prenom,
-                        image: image,
+                       // image: image,
                         role: 0
                     })
                     .then((newUser) => {
@@ -67,63 +64,55 @@ exports.signup = (req, res, next) => {
                     return res.status(500).json({ err })
                 })
 
-        } else {
+       } else {
             return res.status(409).json({ 'error': 'user already exist' });
         }
     })
-    .catch(err => {
+    .catch(err => { console.log("erreur signUp" +err);
         return res.status(500).json({ err });
-    })};
-
-////////// LOGIN
-exports.login = (req, res, next) => {
-  const email = req.body.email;
-  
-  //1. console log
-  console.log('console log 1. const email : ' + req.body.email);
-  console.log('console log 1. const mp: '+ req.body.password);   
-    if(email == null || req.body.password == null) {
-     return res.status(400).json({ 'erreur': 'paramètres manquants' });
-    }
-User.findOne({
-    where: { email: email }
     })
-    .then(user => {
-        if(!user) {
-        return res.status(401).json({ 'erreur': 'utilisateur non trouvé'})
-        }
-// 2. console log
-    console.log('console log 2. findOne  email : ' + email);
-    console.log ('console log 2. findOne email user : ' + email);
-    
-    bcrypt.compare(req.body.password, user.password)
-//3. console.log
-    console.log('console log 3. bcrypt compare mp :' + req.body.password);
-    console.log('console log 3. bcrypt compare mp user: ' + user.password)
+};
+
+///////// LOGIN
+exports.login = (req, res, next) => {
+    console.log("console login backend debut"  +JSON.stringify(req.body));
+    const user= req.body.user;
+    const email = user.email;
+    const password = user.password;
+ 
+   if(email == null || password == null) {
+        return res.status(400).json({ 'erreur': 'paramètres manquants' });
+  }
+  
+    User.findOne({ where: {email: email} })
+       .then(user => {
+        if (!user) {
+            return res.status(401).json('Utilisateur non trouvé !');
+        } 
+    bcrypt.compare(password, user.password)
+    console.log('console log  bcrypt u mp: ' + user.password)
+    console.log('console log  bcrypt rqbd mp user: ' + password)
                     .then(valid => {
                     if(!valid) {
                         return res.status(401).json({ message: 'Mot de passe incorrect !'} )
                     }
                     res.status(200).json({
                         userId: user.id,
-                        image: user.image,
                         role: user.role,     
-                        token: jwt.sign(   
-                            { userId: user.id},   
-//4. console log
-                     console.log('console log 4. user.id :' + User.id),
-                      console.log('console log 4. userId :' + userId),       
-                            'RANDOM_TOKEN_SECRET',   
-                            { expiresIn: '24h'}    
+                        token: jwt.sign(  {  
+                             userId: user.id,   
+                             role: user.role,    
+                            token : 'RANDOM_TOKEN_SECRET',   
+                            expiresIn: '24h'}    
                             )
-                    });
+                         });
                      })
                 .catch(err => {
                     res.status(500).json({ err })
                 });
         })
-        .catch(err => {
-            res.status(500).json({ err })
+        .catch(err => { console.log("erreur login  " +err);
+        return res.status(500).json({ err });
         });
 }
 
@@ -148,7 +137,7 @@ exports.delete = (req, res, next) => {
             .catch( error => res.status(400).json({error}));
         }
     })
-}
+};
 ////// DISPLAY ONE USER
 exports.getOneUser = (req, res, next) => {
     User.findOne({ where: { id: req.params.id } })
