@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import HeaderProfile from "../components/HeaderProfile";
 import Footer from "../components/Footer";
 
@@ -72,12 +73,8 @@ export default {
         getPosts() {
             const token = JSON.parse(localStorage.getItem("userToken"))
 
-            axios.post('http://localhost:3000/api/posts/', {
-                method: "GET",
-                headers: {
-                    'authorization': `Bearer ${token}`
-                }
-            })
+            axios.get('http://localhost:3000/api/posts/', {user: data})
+                
             
             .then(response => response.json())
             .then(data => (this.posts = data))

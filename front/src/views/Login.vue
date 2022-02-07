@@ -18,7 +18,7 @@
                     <i class="fas fa-exclamation-triangle me-2"></i>
                     Email ou mot de passe incorrect
       </div>
-      <button @click.prevent="login()" type="submit" aria-label="Se connecter">Valider</button>
+      <button @click.prevent="login()" type="submit" aria-label="Se connecter" class="btnSave">Valider</button>
     </div>
     <Footer />
   </div>
@@ -50,27 +50,20 @@ methods: {
           password: this.password
       };
 
-      axios.post("http://localhost:3000/api/auth/login", {
-          method: "POST",
-          headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-      })
+      axios.post("http://localhost:3000/api/auth/login", {user: data})
+       
       
-      .then( response => {
-        if(response.ok) {
-          return response.json()
-        } else {
-          return response.text()
-          .then((text) => {
-            throw new Error(text)}
-          )
-        }
-      })  
+     .then((res) => {
+                    localStorage.setItem('userId', parseInt(res.data.userId));
+                    localStorage.setItem('token', res.data.token);
+                    this.$router.push('/allposts')
+                })
+                .catch((err) => {
+                    console.log("erreur : " + err);
+                    this.loginFailure = true;
+                })  
         
-      .then((value) => {
+   /*   .then((value) => {
         const token = JSON.stringify(value.token);
         const userId = JSON.stringify(value.userId);
         const role = JSON.stringify(value.role);
@@ -83,8 +76,10 @@ methods: {
                     console.log("erreur : " + err);
                     this.loginFailure = true;
                 })
+       */          
     }
   }
+ 
 }
 </script>
 
@@ -106,16 +101,6 @@ li {
   margin-bottom: 30px;
 }
 
-button {
-  margin-top: 30px;
-  padding: 5px 30px ;
-  border: 2px solid black;
-  border-radius: 20px;
-  background: gray;
-  font-size: 1rem;
-  font-weight: bolder;
-  cursor: pointer;
-}
 
 input {
   font-size: 1.2rem;
@@ -130,6 +115,10 @@ input {
 
 ::placeholder {
   text-align: center;
+}
+.alert{
+  color:red;
+  font-weight: bolder;
 }
 /*------------ desktop-----------------*/
 @media screen and (min-width: 950px) {

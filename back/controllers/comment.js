@@ -2,9 +2,11 @@
 const Comment = require('../models/comment');
 const Post = require('../models/post');
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
 
 //create comment
 exports.createComment = (req, res, next) => {
+    console.log("console log create comment  " +JSON.stringify(req.body.comment));
     Comment.create({
             content: req.body.content,
             user_id: req.body.user_id,

@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'userId',
         allowNull: false
       })
+      models.Post.belongsTo(models.Comment, {
+        foreignKey: 'userId',
+        allowNull: false
+      })
 
     }
   };

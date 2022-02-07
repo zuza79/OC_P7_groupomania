@@ -11,6 +11,6 @@ router.delete('/:id',auth,multerPosts, postCtrl.deletePost)
 router.get('/', auth, postCtrl.getAllPosts)
 router.get('/:id',  postCtrl.getOnePost) 
 router.get('/:user_id/posts',auth, postCtrl.getPostsUser)
-router.put('/moderate/:id', auth, postCtrl.moderatePost)
+router.put('/admin/post/:id', auth, postCtrl.administrationPost)
 
 module.exports = router;

@@ -40,69 +40,45 @@ export default {
     Header,
     Footer
   },
-
   data() {
     return {
       nom: '',
       prenom: '',
       email: '',
       password: '',
-      image:'',
     }
   },
-methods: {
-  // message confir/err
-        signupMessage(message){
-            this.message = message;
-        },
-  //create new user
+
+  methods: {
     signup() {
       let data = {
           nom: this.nom,
           prenom: this.prenom,
           email: this.email,
-          password: this.password,
-          image: this.image
-      }
-      
-      const regexText = /^[a-zA-Z-\s]+$/;
-      const regexEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/; 
-      const regexPassword = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{3,50}$/;
-
-      if (this.nom === "") {
-          alert("Veuillez remplir votre nom");
-      } else if (regexText.test(this.nom) === false) {
-          alert("Veuillez vérifier que l'écriture de votre nom soit uniquement en lettre");}
-      
-      if (this.prenom === "") {
-          alert("Veuillez remplir votre prénom");
-      } else if (regexText.test(this.prenom) === false) {
-          alert("Veuillez vérifier que l'écriture de votre prénom soit uniquement en lettre");}
-
-      if (this.email === "") {
-          alert("Veuillez remplir votre adresse email");
-      } else if (regexEmail.test(this.email) === false) {
-          alert("Veuillez écrire une adresse email valide");}
-
-      if (this.password === "") {
-          alert("Veuillez remplir votre mot de passe");
-      } else if (regexPassword.test(this.password) === false) {
-          alert("Veuillez vérifier l'écriture de votre mot de passe, il doit contenir au moins une majuscule, une minuscule ainsi qu'un chiffre");
-      }else if ((regexText.test(this.nom) === true) && regexText.test(this.prenom) === true && regexEmail.test(this.email) === true && regexPassword.test(this.password) === true ) {
-
-          axios.post("http://localhost:3000/api/auth/signup", data, {
-             // method: "POST",
-              headers: {
-             // 'Accept': 'application/json',
-              'Content-Type': 'application/json'
-              }
+          password: this.password
+      };
+      {   
+          
+          axios.post("http://localhost:3000/api/auth/signup", {user: data} )
+          
+ /*.then (response => {
+            if(response.ok) {
+              return response.json()
+            } else {
+              return response.text()
+              .then((text) => {
+                throw new Error(text)}
+              )
+            }
+          })  */
+          .then(() => {
+              alert("Inscription accepter");
+              this.$router.push("/login");
           })
-
-              .then(() => this.signupMessage('OK'))
-                .catch(() => this.signupMessage('erreur'))
-        }
+          .catch(alert)
+      }
     }
-    }
+}
 }
 </script>
 

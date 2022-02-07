@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import HeaderProfile from "../components/HeaderProfile";
 import Footer from "../components/Footer";
 
@@ -70,7 +71,7 @@ export default {
             createPost() {
             const Id = JSON.parse(localStorage.getItem("userId"))
             const fileField = document.querySelector('input[type="file"]');
-            const token = JSON.parse(localStorage.getItem("userToken"))
+            const token = JSON.parse(localStorage.getItem("token"))
 
             if (this.titre === '')
                 alert("Veuillez remplir le titre")
@@ -104,13 +105,9 @@ export default {
                 data.append('content', this.contenu)
                 data.append('user_id', Id)
 
-                axios.post("http://localhost:3000/api/posts", {
-                    method: "POST",
-                    headers: {
-                    'authorization': `Bearer ${token}`
-                    },
-                    body: data
-                })
+                axios.post("http://localhost:3000/api/posts", { "post" : data})
+                  
+                
                 .then((response) => response.json())
                 .then(() => {
                     this.$router.push("/allposts");

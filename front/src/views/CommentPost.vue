@@ -29,9 +29,9 @@
                 <div class="content">
                     <p class="modif">
                     <button @click="modifyPost()" v-if="post.user_id === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier</button>
-                    <button @click="deletePost()" v-if="post.user_id === id || role === 1" class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer</button>
+                    <button @click="deletePost()" v-if="post.user_id === id || role === 0" class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer</button>
                     </p>
-                    <hr v-if="post.user_id === id || role === 1">
+                    <hr v-if="post.user_id === id || role === 0">
                     <img v-if="post.image" :src="post.image" alt="Image du post">
                     <p>{{ post.content }}</p>
                 </div>
@@ -50,7 +50,7 @@
                                 à <b>{{ hourFormat(comment.date) }}</b>
                             </p>
                             <p>
-                                <button v-if="comment.user_id === id || role === 1" @click="deleteComment(index)" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
+                                <button v-if="comment.user_id === id || role === 0" @click="deleteComment(index)" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
                             </p>
                         </div>                        
                         <hr>
@@ -63,7 +63,7 @@
                 <article v-if="displayCreateComment" class="createcomment">
                     <textarea v-model="commentaire" placeholder="Rédiger votre commentaire..." cols="60" rows="5" aria-label="Message du commentaire"></textarea>
                     <button @click="createComment()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
-                    <button v-on:click="hide2" class="btnDelete" aria-label="Annuler le commentaire"><i class="fas fa-comment-slash"></i>Annuler</button>
+                    <button v-on:click="hide2" class="btnDelete" aria-label="Annuler le commentaire"><i class="fas fa-comment-slash"></i>  Annuler</button>
                 </article>
 
             </section>
@@ -73,6 +73,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import HeaderProfile from "../components/HeaderProfile";
 import Footer from "../components/Footer";
 
@@ -121,30 +122,31 @@ export default {
             this.role = JSON.parse(localStorage.getItem("role"))
 
         },
-      //display post  
-        getPost() {
-            const token = JSON.parse(localStorage.getItem("userToken"))
 
-            axios.get (`http://localhost:3000/api/posts/${this.id_param}`, {
-                method: "GET",
-                headers: {
-                    'authorization': `Bearer ${token}`
-                }
-            })
+       headers: {
+           
+           'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
+                } ,
+      //display post  
+        getOnePost() {
+            
+
+            axios.get (`http://localhost:3000/api/posts/${this.id_param}`, { post : data})
+           
             .then (response => response.json())
             .then (data => (this.post = data))
             .catch(alert)
         },
      // display comments   
-        getComments() {
-            const token = JSON.parse(localStorage.getItem("userToken"))
+        
+          
+           headers: {'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
+           },
 
-            axios.get (`http://localhost:3000/api/comments/${this.id_param}`, {
-                    method: "GET",
-                    headers: {
-                        'authorization': `Bearer ${token}`
-                    }
-            })
+        getPostComments() {    //route :post_id'
+            axios.get (`http://localhost:3000/api/comments/${this.id_param}`, { comment : data})
+                   
+            
             
             .then (response => response.json())
             .then (data => (this.comments = data))
@@ -162,16 +164,17 @@ export default {
         },
 
         //delete post
+         headers: {
+           
+           'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
+                } ,
         deletePost () {
-            const token = JSON.parse(localStorage.getItem("userToken"))
+           
 
             if (confirm("Voulez-vous vraiment supprimer le post") === true) {
 
                 axios.delete(`http://localhost:3000/api/posts/${this.id_param}`, {
-                    method: "DELETE",
-                    headers: {
-                        'authorization': `Bearer ${token}`
-                    }
+                   
                 })
                 .then(response => response.json())
                 .then(() => { 
@@ -183,13 +186,17 @@ export default {
         modifyPost () {
             this.$router.push(`/modifypost/${this.id_param}`)
         },
+
+        //create comment
+         headers: {'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
+           },
         createComment () {
             if( this.commentaire === ""){
                 alert('Veuillez remplir votre commentaire')
 
             } else {
                 const Id = JSON.parse(localStorage.getItem("userId"));
-                const token = JSON.parse(localStorage.getItem("userToken"))
+                const token = JSON.parse(localStorage.getItem("token"))
                 
                 let data = {
                     content: this.commentaire,
@@ -197,15 +204,9 @@ export default {
                     user_id: Id
                 }
 
-                axios.post("http://localhost:3000/api/comments", {
-                    method: "POST",
-                    headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(data)
-                })
+                axios.post("http://localhost:3000/api/comments", { data : post})
+                    
+                
                 .then((response) => {
                     return response.json();
                 })
@@ -217,17 +218,14 @@ export default {
         },
 
         //delete comment
+         headers: {'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
+           },
         deleteComment (index) {
-            const token = JSON.parse(localStorage.getItem("userToken"))
+            
 
             if (confirm("Voulez-vous vraiment supprimer ce commentaire") === true) {
 
-                axios.delete(`http://localhost:3000/api/comments/${this.comments[index].id}`, {
-                    method: "DELETE",
-                    headers: {
-                        'authorization': `Bearer ${token}`
-                    },
-                })
+                axios.delete(`http://localhost:3000/api/comments/${this.comments[index].id}`, {data:post })
                 .then(response => response.json())
                 .then(() => { 
                     alert("La suppression du commentaire est bien prise en compte")
@@ -239,7 +237,7 @@ export default {
     mounted(){
         this.User()
         this.getPost ()
-        this.getComments ()
+        this.getPostComments ()
     }
 }
 </script>

@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import HeaderProfile from "../components/HeaderProfile";
 import Footer from "../components/Footer";
 

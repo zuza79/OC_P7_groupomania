@@ -17,16 +17,15 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    async getUser(state){
+    async getOneUser(state){
       const userId = localStorage.getItem('userId');
-      const token = localStorage.getItem('userToken');
-     // const role = localStorage.getItem('role');
-      await axios.get(`http://localhost:3000/api/auth/profile/${userId}`, {
-        headers: {
-          'authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      }).then(res => {
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role');
+      await axios.get(`http://localhost:3000/api/auth/profile/${userId}`, {post: data})
+
+
+    
+       .then(res => {
         console.log(res.data);
         state.currentUser.id = res.data.id;
         state.currentUser.nom = res.data.nom;
