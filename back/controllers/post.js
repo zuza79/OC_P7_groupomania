@@ -1,10 +1,9 @@
 // controllers post
 // create, modify, delete, display one/all post
 // display all post by user, modify post by admin
-// Importation des modules
+
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-//const { DATE } = require('sequelize/dist');
 const User = require('../models/user');
 const Post = require('../models/post');
 const Comment = require('../models/comment');
@@ -12,7 +11,7 @@ const Comment = require('../models/comment');
 
 //////// CREATE POST
 exports.createPost = (req, res, next) => {
-    console.log("console log create post  " +JSON.stringify(req.body.post));
+   // console.log("console log create post  " +JSON.stringify(req.body.post));
     if (req.file) {
         Post.create({
             title: req.body.title,
@@ -105,7 +104,7 @@ exports.modifyPost = (req, res, next) => {
         
                     Post.update(modifyPost , { where: { id: req.params.id } })
                 
-                        .then(() => res.status(200).json({message : 'Post modifié !'}))
+                        .then(() => res.status(200).json({message : 'Profil modifié !'}))
                         .catch( error => res.status(400).json({error}));
                 })} else {
                     const modifyPost = {
