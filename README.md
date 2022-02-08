@@ -8,8 +8,12 @@ server run with: `nodemon server`, port `3000`
 server run with: `npm run serve`, App running at: Local: `http://localhost:8080`
 
 # Compte administrateur #  
+    Prenom : admin
+    Nom : admin
+    Role : 0  
     Email : admin@groupomania.com  
     Password : Admin123
+
 For this projet you can connect like administrateur and change directly informations of user, post and comment.
 
 

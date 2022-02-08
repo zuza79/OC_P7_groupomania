@@ -1,7 +1,8 @@
 // controllers - user
 // singup, login, delete, display one/all, modify
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+//const jwt = require('jsonwebtoken');
+const jwtUtils = require('../utils/jwt.utils');
 const hash = require('hash.js');
 const fs = require('fs')
 
@@ -52,7 +53,7 @@ exports.signup = (req, res, next) => {
                         nom: nom,
                         prenom: prenom,
                        // image: image,
-                        role: 0
+                        
                     })
                     .then((newUser) => {
                         return res.status(201).json({ 'userId': newUser.id })
@@ -95,13 +96,17 @@ exports.login = (req, res, next) => {
         console.log("console user  " +user.password);
 
     bcrypt.compare(password, user.password)
-    console.log('console log  bcrypt user.password: ' + user.password)
-    console.log('console log  bcrypt password: ' + password)
+    //console.log('console log  bcrypt user.password: ' + user.password)
+    //console.log('console log  bcrypt password: ' + password)
                     .then(valid => {
                     if(!valid) {
                         return res.status(401).json({ message: 'Mot de passe incorrect !'} )
                     }
                     res.status(200).json({
+                        userId: user.id,
+                        token: jwtUtils.generateTokenForUser(user)
+                    })
+                    /*res.status(200).json({
                         userId: user.id,
                         role: user.role,     
                         token: jwt.sign(  {  
@@ -111,6 +116,7 @@ exports.login = (req, res, next) => {
                             expiresIn: '24h'}    
                             )
                          });
+                        */
                      })
                 .catch(err => {
                     res.status(500).json({ err })

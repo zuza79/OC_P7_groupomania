@@ -30,7 +30,7 @@ module.exports = {
       },
       role: {
         type: Sequelize.INTEGER,
-        defaultValue: 2
+        defaultValue: 1   // 1 = user; 0 = administrateur
       },
       createdAt: {
         allowNull: false,

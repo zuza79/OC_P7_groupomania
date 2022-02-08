@@ -6,7 +6,7 @@ const multerProfile = require('../middleware/multer-profile')
 const auth = require('../middleware/auth')
 
 router.post('/signup', userCtrl.signup);  //ok
-router.post('/login', userCtrl.login);   // problem code
+router.post('/login', userCtrl.login);    //ok
 router.delete('/profile/:id', auth, multerProfile, userCtrl.delete); // ok postman sans auth
 router.get('/profile/:id', userCtrl.getOneUser);  //ok postman sans auth  localhost:3000/api/auth/profile/2
 router.put('/profile/:id',auth, multerProfile, userCtrl.modifyUser); //erreur ligne 213 user.update....
