@@ -76,22 +76,27 @@ exports.signup = (req, res, next) => {
 ///////// LOGIN
 exports.login = (req, res, next) => {
     console.log("console login backend debut"  +JSON.stringify(req.body));
-    const user= req.body.user;
-    const email = user.email;
-    const password = user.password;
+   // const user= req.body.user;
+    const email = req.body.email;
+    const password = req.body.password;
  
    if(email == null || password == null) {
         return res.status(400).json({ 'erreur': 'paramètres manquants' });
   }
   
-    User.findOne({ where: {email: email} })
+    User.findOne({ 
+        where: {email: email}
+     })
        .then(user => {
         if (!user) {
             return res.status(401).json('Utilisateur non trouvé !');
         } 
+        console.log("console user  " +req.body.password);
+        console.log("console user  " +user.password);
+
     bcrypt.compare(password, user.password)
-    console.log('console log  bcrypt u mp: ' + user.password)
-    console.log('console log  bcrypt rqbd mp user: ' + password)
+    console.log('console log  bcrypt user.password: ' + user.password)
+    console.log('console log  bcrypt password: ' + password)
                     .then(valid => {
                     if(!valid) {
                         return res.status(401).json({ message: 'Mot de passe incorrect !'} )
@@ -125,7 +130,7 @@ exports.delete = (req, res, next) => {
         if (User.image != null) {
             const filename = User.image.split('/images/profiles/')[1];
             fs.unlink(`images/profiles/${filename}`, () => {
-                user.destroy({ where: { id: req.params.id } })
+                User.destroy({ where: { id: req.params.id } })
 
                 .then(() => res.status(200).json({message : 'Utilisateur supprimé !'}))
                 .catch( error => res.status(400).json({error}));
@@ -145,8 +150,10 @@ exports.getOneUser = (req, res, next) => {
         .catch(error => res.status(400).json({error}));
 };
 ////// DISPLAY ALL USERS
+
 exports.getAllUsers = (req, res, next) => {
-    user.findAll()
+    console.log("get all users"  +JSON.stringify(req.body));
+    User.findAll()
     .then((users) => res.status(200).json(users))
     .catch((error) => res.status(400).json(error))
 };

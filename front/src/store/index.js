@@ -21,19 +21,23 @@ export default new Vuex.Store({
       const userId = localStorage.getItem('userId');
       const token = localStorage.getItem('token');
       const role = localStorage.getItem('role');
-      await axios.get(`http://localhost:3000/api/auth/profile/${userId}`, {post: data})
-
-
-    
+      await axios.get(`http://localhost:3000/api/auth/profile/${userId}`, {
+        headers: {
+          'authorization': `Bearer ${token}`
+        }
+      })
+  
        .then(res => {
-        console.log(res.data);
+        console.log("index  " +res.data);
+
         state.currentUser.id = res.data.id;
         state.currentUser.nom = res.data.nom;
         state.currentUser.prenom = res.data.prenom;
         state.currentUser.email = res.data.email;
         state.currentUser.image = res.data.image;
         state.currentUser.role = res.data.role;
-        console.log(state.currentUser);
+        
+        console.log("index state currentUser  "+state.currentUser);
       }).catch(err => console.log(err))
     }, 
   },

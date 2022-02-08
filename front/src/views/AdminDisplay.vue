@@ -8,7 +8,7 @@
                 <a class="menuLink" href="#AncrePosts">Messages</a>
                 <a class="menuLink" href="#AncreComments">Commentaires</a>
             </nav>  
-            
+         <!--users -->   
         <div class = "users">
             <div class="title">Utilisateurs</div>  
             <article class="adminBloc" id="AncreUsers">
@@ -45,7 +45,7 @@
                 <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
         </article>
         </div>
-
+<!--posts -->
         <div class ="posts">
             <div class="title">Messages</div>
             <article class="adminBloc" id="AncrePosts">
@@ -71,6 +71,7 @@
             </article>
         </div>
 
+<!--comments -->
             <div class="comments">
                 <div class="title">Commentaires</div>
             <article class="adminBloc" id="AncreComments">

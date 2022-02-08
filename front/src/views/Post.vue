@@ -52,26 +52,26 @@ export default {
                 content:'',
                 created_date:'',
                 updated_date:'',
-                id:'',
+     //           id:'',
                 image:'',
                 title:'',
-                user: {},
-                user_id:''
+    //           user: {},
+    //            user_id:''
             },
             comments: [],
             displaycomments: false,
             displayCreateComment: false,
             commentaire:'',
-            id:'',
+     //       id:'',
             role: ''
         }
     },
     methods : {
 // create post
             createPost() {
-            const Id = JSON.parse(localStorage.getItem("userId"))
-            const fileField = document.querySelector('input[type="file"]');
-            const token = JSON.parse(localStorage.getItem("token"))
+        //    const Id = JSON.parse(localStorage.getItem("userId"))
+         //   const fileField = document.querySelector('input[type="file"]');
+         //   const token = JSON.parse(localStorage.getItem("token"))
 
             if (this.titre === '')
                 alert("Veuillez remplir le titre")
@@ -81,14 +81,14 @@ export default {
                 let data = new FormData()
                 data.append('title', this.titre)
                 data.append('content', this.contenu)
-                data.append('user_id', Id)
+           //     data.append('user_id', Id)
 
                 axios.post("http://localhost:3000/api/posts", {
                     method: "POST",
-                    headers: {
-                    'authorization': `Bearer ${token}`
-                    },
-                    body: data
+             //       headers: {
+               //     'authorization': `Bearer ${token}`
+                 //   },
+                 //   body: data
                 })
                 .then((response) => {
                     return response.json();

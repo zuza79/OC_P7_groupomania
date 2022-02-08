@@ -1,15 +1,22 @@
 <template>
     <div>
         <HeaderProfile />
-        <h1>Le Flash Actu Groupomania</h1>
-        <button @click="post()" class="button" ><h2><i class="far fa-edit"></i><br>Rédiger nouveau message</h2></button>
-        <div>
-            <input v-model="search" class="search" type="search" placeholder="Rechercher une publication par auteur ..." size=50 aria-label="Barre de recherche par utilisateur">
-        </div>
+        <h1>Le Flash Actu Groupomania</h1>   
+         <!--posts zero -->
         <article v-if="posts.length == 0">
             <p>Oups! Aucune publication pour instant!</p>
         </article>
-        <article v-else v-bind:key="index" v-for="(post, index) in filterList">
+         <!--create post -->
+        <button @click="post()" class="button" ><h2><i class="far fa-edit"></i><br>Rédiger nouveau message</h2></button>
+         <!--search -->
+        <div>
+            <input v-model="search" class="search" type="search" placeholder="Rechercher une publication par auteur ..." size=50 aria-label="Barre de recherche par utilisateur">
+        </div>
+         <!--posts -->
+         <article v-if="posts.length == 0">
+            <p>Oups! Aucune publication pour instant!</p>
+        </article>
+         <article v-else v-bind:key="index" v-for="(post, index) in filterList">
             <router-link :to="`/post/${post.id}`" class="article">
                 <div class="header">
                     <div>

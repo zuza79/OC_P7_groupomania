@@ -45,21 +45,18 @@ export default {
   },
 methods: {
     login() {
-      let data = {
-          email: this.email,
+  axios.post("http://localhost:3000/api/auth/login", {
+           email: this.email,
           password: this.password
-      };
-
-      axios.post("http://localhost:3000/api/auth/login", {user: data})
-       
-      
+      })
+   
      .then((res) => {
                     localStorage.setItem('userId', parseInt(res.data.userId));
                     localStorage.setItem('token', res.data.token);
                     this.$router.push('/allposts')
                 })
                 .catch((err) => {
-                    console.log("erreur : " + err);
+                    console.log("erreur vuejs : " + err);
                     this.loginFailure = true;
                 })  
         
