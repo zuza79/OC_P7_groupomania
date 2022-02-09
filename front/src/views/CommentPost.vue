@@ -123,10 +123,11 @@ export default {
 
         },
 
-       headers: {
+      /* headers: {
            
            'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
                 } ,
+    */
       //display post  
         getOnePost() {
             
@@ -139,10 +140,10 @@ export default {
         },
      // display comments   
         
-          
+          /*
            headers: {'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
            },
-
+*/
         getPostComments() {    //route :post_id'
             axios.get (`http://localhost:3000/api/comments/${this.id_param}`, { comment : data})
                    
@@ -164,10 +165,12 @@ export default {
         },
 
         //delete post
+        /*
          headers: {
            
            'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
                 } ,
+                */
         deletePost () {
            
 
@@ -188,8 +191,9 @@ export default {
         },
 
         //create comment
-         headers: {'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
+       /*  headers: {'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
            },
+           */
         createComment () {
             if( this.commentaire === ""){
                 alert('Veuillez remplir votre commentaire')
@@ -218,8 +222,11 @@ export default {
         },
 
         //delete comment
+
+        /*
          headers: {'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
            },
+           */
         deleteComment (index) {
             
 

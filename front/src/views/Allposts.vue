@@ -80,7 +80,7 @@ export default {
         getPosts() {
             const token = JSON.parse(localStorage.getItem("userToken"))
 
-            axios.get('http://localhost:3000/api/posts/', {user: data})
+            axios.get('http://localhost:3000/api/posts/')
                 
             
             .then(response => response.json())

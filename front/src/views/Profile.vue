@@ -84,23 +84,27 @@ export default {
             return this.button = true;
         },
         getUser() {
-            const Id = JSON.parse(localStorage.getItem("userId"))
-            const token = JSON.parse(localStorage.getItem("userToken"))
+            const userId = this.$route.params.id;
+      const token = localStorage.getItem('token');
+           // const Id = JSON.parse(localStorage.getItem("userId"))
+          //  const token = JSON.parse(localStorage.getItem("userToken"))
 
-            axios.get(`http://localhost:3000/api/auth/${Id}`, {
-                method: "GET",
+            axios.get(`http://localhost:3000/api/auth/profile/${userId}`, {
+               
                 headers: {
                 'authorization': `Bearer ${token}`
                 }
-            })
-
-            .then(response => response.json())
-            .then(data => (this.user = data))
-            .catch(alert)
-        },
+            }).then(res => {
+        this.user.id = res.data.id;
+        this.user.nom = res.data.nom;
+        this.user.prenom = res.data.prenom;
+        this.user.email = res.data.email;
+        this.user.image = res.data.image;
+      }).catch(err => console.log(err))
+    },
         updateUser() {
-            const Id = JSON.parse(localStorage.getItem("userId"))
-            const token = JSON.parse(localStorage.getItem("userToken"))
+            const userId = this.$route.params.id;
+      const token = localStorage.getItem('token');
             const fileField = document.querySelector('input[type="file"]');
 
             const regexText = /^[a-zA-Z-\s]+$/;
@@ -123,8 +127,8 @@ export default {
                 alert("Veuillez écrire une adresse email valide");
             } else if ((regexText.test(this.user.nom) === true) && regexText.test(this.user.prenom) === true && regexEmail.test(this.user.email) === true && this.user.image === null) {
             
-                axios.put(`http://localhost:3000/api/auth/${Id}`, {
-                    method: "PUT",
+                axios.put(`http://localhost:3000/api/auth/${userId}`, {
+                   
                         headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -148,8 +152,8 @@ export default {
                 data.append('image', fileField.files[0])
 
 
-                axios.put(`http://localhost:3000/api/auth/${Id}`, {
-                    method: "PUT",
+                axios.put(`http://localhost:3000/api/auth/${userId}`, {
+                   
                         headers: {
                         'authorization': `Bearer ${token}`
                         },
@@ -165,11 +169,11 @@ export default {
         },
         deleteUser() {
             if (confirm("Voulez-vous vraiment supprimer le compte") == true) {
-                const Id = JSON.parse(localStorage.getItem("userId"))
-                const token = JSON.parse(localStorage.getItem("userToken"))
+                const userId = this.$route.params.id;
+      const token = localStorage.getItem('token');
 
-                axion.get(`http://localhost:3000/api/posts/${Id}/posts`, {
-                    method: "GET",
+                axion.get(`http://localhost:3000/api/posts/${userId}/posts`, {
+                   
                     headers: {
                         'authorization': `Bearer ${token}`
                     },
@@ -183,7 +187,7 @@ export default {
                     for ( let i = 0 ; i < pub.length ; i++) {
                         if (pub[i].image) {
                         axios.delete(`http://localhost:3000/api/posts/${pub[i].id}`, {
-                            method: "DELETE",
+                           
                             headers: {
                                 'authorization': `Bearer ${token}`
                             },
@@ -194,8 +198,8 @@ export default {
                     }
                 })
                 .then(() => {
-                    axios.delete(`http://localhost:3000/api/auth/${Id}`, {
-                        method: "DELETE",
+                    axios.delete(`http://localhost:3000/api/auth/${userId}`, {
+                       
                         headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -226,8 +230,8 @@ export default {
             this.user.image = '';
         },
         modifyPassword() {
-            const Id = JSON.parse(localStorage.getItem("userId"))
-            const token = JSON.parse(localStorage.getItem("userToken"))
+     const userId = this.$route.params.id;
+      const token = localStorage.getItem('token');
             const regexPassword = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{3,50}$/;
 
 
@@ -249,8 +253,8 @@ export default {
 					password : this.newPassword
 				}
 
-				axios.put(`http://localhost:3000/api/auth/profile/${Id}`, {
-                    method: "PUT",
+				axios.put(`http://localhost:3000/api/auth/profile/${userId}`, {
+                   
                     headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',

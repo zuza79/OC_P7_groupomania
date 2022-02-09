@@ -18,6 +18,7 @@ module.exports = {
       },
       user_id: {
         type: Sequelize.SMALLINT,
+        autoIncrement: true,
         allowNull: false
       },
       moderate: {

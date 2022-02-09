@@ -2,8 +2,6 @@
     <header class="nav">
         <img id="logo" src="../assets/images/logoMono.png" alt="Logo Groupomania" />
         <nav>
-            <router-link to="/admin/users" v-if="role === 0" aria-label="Administration"><i class="fas fa-user-lock link"></i></router-link>
-            <router-link to="/moderate/posts" v-else-if="role === 1" aria-label="Administration"><i class="fas fa-user-lock link"></i></router-link>
             <router-link class="link" to="/profile" aria-label="Profil">Mon profil</router-link>
             <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
             <a class="link disconnect" @click="disconnectUser()">Déconexion</a>

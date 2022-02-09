@@ -9,7 +9,7 @@ const fs = require('fs')
 const models = require('../models')
 const User = models.User;
 
-// Regex
+// REGEX
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const passwordRegex = /^(?=.*\d).{4,8}$/;
 
@@ -52,7 +52,8 @@ exports.signup = (req, res, next) => {
                         password: hash,
                         nom: nom,
                         prenom: prenom,
-                       // image: image,
+                       
+                       role : 1
                         
                     })
                     .then((newUser) => {
@@ -165,8 +166,60 @@ exports.getAllUsers = (req, res, next) => {
 };
 ////// MODIFY USER AND UPDATE
 exports.modifyUser = (req, res, next) => {
-    
-    if (req.file) {
+    const headerAuth = req.headers['authorization'];
+    const userId = jwtUtils.getUserId(headerAuth); 
+
+    const email = req.body.email
+    const nom = req.body.nom;
+    const prenom = req.body.prenom;
+    const image = req.file ? `${req.protocol}://${req.get('host')}/images/profiles/${req.file.filename}` : null;
+   
+    // Recherche des informations de l'utilisateur dans la BDD
+    User.findOne({
+        attributes: ['id', 'email', 'nom', 'prenom', 'image'],
+        where: { id: userId }
+    })
+        .then(user => {
+            if(user) {
+
+                // Suppression de l'ancienne photo
+                if(image != null) {
+                    const filename = user.image.split('/images/profiles')[1];
+                    fs.unlink(`images/${filename}`, (error) => {
+                        if(error){
+                            console.log("Echec de suppression de l'image : " + error);
+                        } else {
+                            console.log("Image supprimée avec succès !");
+                        };
+                    });
+                };
+
+                // Mise à jour du profil avec les nouvelles informations
+                user.update({
+                    email: (email ? email : user.email),
+                    nom: (nom ? nom : user.nom),
+                    prenom: (prenom ? prenom : user.prenom),
+                    image: (image ? image : user.image)
+                })
+                .then(userUpdated => {
+                    if(userUpdated){
+                        return res.status(201).json(userUpdated)
+                    } else {
+                        res.status(500).json({ 'erreur': 'Impossible de mettre a jour le profil de l\'utilisateur' })
+                    }
+                })
+                .catch(() => {
+                    res.status(500).json({ 'erreur': 'impossible de mettre à jour l\'utilisateur' })
+                });
+            } else {
+                res.status(404).json({ 'erreur': 'Utilisateur introuvable !' })
+            }
+        })
+        .catch(() => {
+            res.status(500).json({ 'erreur': 'impossible de vérifier l\'utilisateur' })
+        })
+
+    /*if (req.file) {
 
         User.findOne({ where: { id: req.params.id }})
         .then(User => {
@@ -231,6 +284,7 @@ exports.modifyUser = (req, res, next) => {
                     .catch( error => res.status(400).json({error}));
             }
         })
+        
     }
     
     const modifyUser = {
@@ -244,7 +298,8 @@ exports.modifyUser = (req, res, next) => {
         })
         .then(()=> res.status(200).json({message : 'Utilisateur modifié !'}))
         .catch((error)=> res.status(400).json({error}));
-};
+*/
+    };
 
 //admin modify user
 exports.AdminModifyUser = (req, res, next) => {

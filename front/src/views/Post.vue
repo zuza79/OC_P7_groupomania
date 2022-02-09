@@ -47,31 +47,21 @@ export default {
     },
     data () {
         return {
-            id_param: this.$route.params.id,
-            post: {
-                content:'',
-                created_date:'',
-                updated_date:'',
-     //           id:'',
-                image:'',
-                title:'',
-    //           user: {},
-    //            user_id:''
-            },
-            comments: [],
-            displaycomments: false,
-            displayCreateComment: false,
-            commentaire:'',
-     //       id:'',
-            role: ''
+            titre: '',
+            contenu: '',
+            image: '',
+            preview: null
         }
     },
     methods : {
 // create post
             createPost() {
-        //    const Id = JSON.parse(localStorage.getItem("userId"))
-         //   const fileField = document.querySelector('input[type="file"]');
-         //   const token = JSON.parse(localStorage.getItem("token"))
+           // const Id = JSON.parse(localStorage.getItem("userId"))
+          //const token = JSON.parse(localStorage.getItem("token"))
+           const userId = this.$route.params.id;
+           const token = localStorage.getItem('token');
+           const fileField = document.querySelector('input[type="file"]');
+         
 
             if (this.titre === '')
                 alert("Veuillez remplir le titre")
@@ -81,38 +71,51 @@ export default {
                 let data = new FormData()
                 data.append('title', this.titre)
                 data.append('content', this.contenu)
-           //     data.append('user_id', Id)
+                data.append('id', this.user_id) //userId
 
                 axios.post("http://localhost:3000/api/posts", {
-                    method: "POST",
-             //       headers: {
-               //     'authorization': `Bearer ${token}`
-                 //   },
-                 //   body: data
+                   
+                   headers: {
+                   'authorization': `Bearer ${token}`
+                   },
+                  // body: data
                 })
                 .then((response) => {
                     return response.json();
                 })
                 .then(() => {
+                    localStorage.setItem('userId', parseInt(res.data.userId));
+                    localStorage.setItem('token', res.data.token);
                     this.$router.push("/allposts");
                 })
                 .catch(alert)
 
             } else if (this.titre != '' && this.contenu != '') {
-                let data = new FormData()
+                 var fileName = document.getElementById("file").value
+                var idxDot = fileName.lastIndexOf(".") + 1;
+                var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
+               
+                if (extFile === "jpg" || extFile === "jpeg" || extFile === "png" || extFile === "webp" ||extFile === "gif"){
+               let data = new FormData()
                 data.append('image', fileField.files[0])
                 data.append('title', this.titre)
                 data.append('content', this.contenu)
-                data.append('user_id', Id)
+                data.append('id', userId)
 
-                axios.post("http://localhost:3000/api/posts", { "post" : data})
-                  
-                
+           
+                axios.post("http://localhost:3000/api/posts", {
+                    headers: {
+                        'authorization': `Bearer ${token}`
+                        },
+                })
                 .then((response) => response.json())
                 .then(() => {
                     this.$router.push("/allposts");
                 })
                 .catch(alert)
+                } else {
+                    alert("Uniquement les fichiers jpg, jpeg, png, webp et gif sont acceptés!");
+                }
             }
         },
     //upload file
@@ -129,6 +132,7 @@ export default {
         deletefile() {
             this.image = '';
                }
+               
     }
 }
 </script>

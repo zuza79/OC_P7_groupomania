@@ -24,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
   };
   Comment.init({
     
-    user_id: DataTypes.SMALLINT,
-    post_id: DataTypes.SMALLINT,
+    userId: DataTypes.SMALLINT,
+    postId: DataTypes.SMALLINT,
     moderate: DataTypes.BOOLEAN,
     content: DataTypes.STRING,
     date: DataTypes.DATE

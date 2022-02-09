@@ -2,18 +2,20 @@
 // create, modify, delete, display one/all post
 // display all post by user, modify post by admin
 
-const jwt = require('jsonwebtoken');
+const jwtUtils = require('../utils/jwt.utils.js');
+//const headerAuth = req.headers['authorization'];
+//const userId = jwtUtils.getUserId(headerAuth);
 const fs = require('fs');
-const User = require('../models/user');
-const Post = require('../models/post');
-const Comment = require('../models/comment');
+//const User = require('../models/user');
+//const Post = require('../models/post');
+//const Comment = require('../models/comment');
+const models = require('../models');
 
 
 //////// CREATE POST
 exports.createPost = (req, res, next) => {
-   // console.log("console log create post  " +JSON.stringify(req.body.post));
-    if (req.file) {
-        Post.create({
+       if (req.file) {
+models.Post.create({
             title: req.body.title,
             content: req.body.content,
             image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`,
@@ -21,19 +23,53 @@ exports.createPost = (req, res, next) => {
         })
         .then(() => res.status(201).json({message: 'Post créé !'}))
         .catch( error => res.status(400).json({error}));
-    }/* else {
-        Post.create({
+    } else {
+       models.Post.create({
             title: req.body.title,
             content: req.body.content,
             user_id: req.body.user_id
         })
         .then(() => res.status(201).json({message: 'Post créé !'}))
         .catch( error => res.status(400).json({error}));
-    }*/
+    }
     
 };
 
+   /* console.log ('creation post  ' + req.body)
+    const content = req.body.content;    
+    let image = req.file
 
+    if(!content && !image) {
+        res.status(400).json({ 'erreur': 'paramètre manquant' });
+    };
+
+   // console.log("console log create post  " +JSON.stringify(req.body.post));
+   models.User.findOne({
+    where: { id: userId }
+})
+.then(user => {
+    if(user) {
+        models.Post.create({
+            content: content,
+            image: image,
+            like: 0,
+            dislike: 0,
+            UserId: user.id
+        })
+        
+        res.status(201).json({"message": "Nouveau post créé avec succès !"})
+                    
+        } else {
+            res.status(404).json({'erreur' : 'Utilisateur introuvable'});
+        };
+    })
+    .catch(err => {
+        res.status(500).json({ 'err': 'ERREUR !!!' });
+    });
+    
+};
+
+*/
 // DISPLAY ONE POST
 exports.getOnePost = (req, res, nest) => {
     Post.findOne({
@@ -49,13 +85,12 @@ exports.getOnePost = (req, res, nest) => {
 // DISPLAY ALL POSTS
 
 exports.getAllPosts = (req, res, next) => {
-    
-    Post.findAll({ 
+    console.log("all post  " + req.body)
+    models.Post.findAll({ 
         include: [{
-            model : User
-        },{
-            model : Comment
-        }],
+            model : models.User
+        }
+    ],
         order: [["id", "DESC"]]})
 
     .then( post => res.status(200).json(post))
@@ -71,7 +106,7 @@ exports.getPostsUser = (req, res, next) => {
             user_id : req.params.user_id
         },
         include: [{
-            model : User,
+            model : models.User,
         }],
         order: [["created_date", "ASC"]]})
 
@@ -82,7 +117,7 @@ exports.getPostsUser = (req, res, next) => {
 // MODIFY POST
 exports.modifyPost = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+    const decodedToken = jwt.verify(token, 'SECRET_KEY_TOKEN');
     const userId = decodedToken.userId
     const role = decodedToken.role
 
@@ -90,7 +125,7 @@ exports.modifyPost = (req, res, next) => {
 
         Post.findOne({ where: { id: req.params.id }})
         .then(post => {
-            if (userId === post.user_id || role === 1) {
+            if (userId === post.user_id || role === 0) {
                 if (post.image) {
                 const filename = post.image.split('/images/posts/')[1];
                 fs.unlink(`images/posts/${filename}`, () => {
@@ -131,7 +166,7 @@ exports.modifyPost = (req, res, next) => {
     } else {
         Post.findOne({ where: { id: req.params.id }})
         .then(post => {
-            if (userId === post.user_id || role === 1) {
+            if (userId === post.user_id || role === 0) {
                 if (post.image && req.body.image === '') {
                     const filename = post.image.split('/images/posts/')[1];
                     fs.unlink(`images/posts/${filename}`, () => {
@@ -173,12 +208,12 @@ exports.modifyPost = (req, res, next) => {
 // ADMINISTRATION POST BY ADMIN
 exports.administrationPost = (req, res, nest) => {
     const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+    const decodedToken = jwt.verify(token, 'SECRET_KEY_TOKEN');
     const role = decodedToken.role
 
     Post.findOne({ where: { id: req.params.id }})
     .then(() => {
-        if (role === 1) {
+        if (role === 0) {
             const administration = {
                 administration: req.body.administration
             };
@@ -233,24 +268,25 @@ exports.deletePost = (req, res, next) => {
 /////////// LIKE/DISLIKE
 //LIKE POST 
 exports.likePost = (req, res, next) => {
+    const postId = req.params.id;
     switch (req.body.like) {
       case 0:    // default = 0  
-      Post.findOne({ where: { id: postId } })   // find sauce by _id.
+      models.Post.findOne({ where: { id: postId } })   // find sauce by _id.
           .then((post) => {
             //LIKE
-            if (post.usersLiked.find(user => user === req.body.userId)) {   
+            if (post.usersLiked.find(user => user === req.body.id)) {   
               Post.updateOne({ id: req.params.id }, {
                 $inc: { likes: -1 },           
-                $pull: { usersLiked: req.body.userId },     // if user LIKE, the body make update and user can't make another LIKE 
+                $pull: { usersLiked: req.body.id },     // if user LIKE, the body make update and user can't make another LIKE 
                 id: req.params.id
               })
                 .then(() => { res.status(201).json({ message: 'Merci.' }); })
                 .catch((error) => { res.status(400).json({ error: error }); });
               //DISLIKE
-            } if (post.usersDisliked.find(user => user === req.body.userId)) {      
+            } if (post.usersDisliked.find(user => user === req.body.id)) {      
               Post.updateOne({ id: req.params.id }, {
                 $inc: { dislikes: -1 },
-                $pull: { usersDisliked: req.body.userId },      
+                $pull: { usersDisliked: req.body.id },      
                 id: req.params.id
               })
                 .then(() => { res.status(201).json({ message: ' Merci.' }); })
@@ -264,7 +300,7 @@ exports.likePost = (req, res, next) => {
       case 1:
         Post.updateOne({ id: req.params.id }, {
           $inc: { likes: 1 },
-          $push: { usersLiked: req.body.userId },
+          $push: { usersLiked: req.body.id },
           id: req.params.id
         })
           .then(() => { res.status(201).json({ message: 'Ton like a été pris en compte! Merci.' }); })
