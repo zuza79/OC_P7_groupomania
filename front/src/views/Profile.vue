@@ -89,11 +89,10 @@ export default {
            // const Id = JSON.parse(localStorage.getItem("userId"))
           //  const token = JSON.parse(localStorage.getItem("userToken"))
 
-            axios.get(`http://localhost:3000/api/auth/profile/${userId}`, {
-               
-                headers: {
-                'authorization': `Bearer ${token}`
-                }
+           axios.get(`http://localhost:3000/api/users/profile/${userId}`, {
+        headers: {
+          'authorization': `Bearer ${token}`
+        }
             }).then(res => {
         this.user.id = res.data.id;
         this.user.nom = res.data.nom;
@@ -102,14 +101,14 @@ export default {
         this.user.image = res.data.image;
       }).catch(err => console.log(err))
     },
-        updateUser() {
+        modifyUser() {
             const userId = this.$route.params.id;
-      const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             const fileField = document.querySelector('input[type="file"]');
 
             const regexText = /^[a-zA-Z-\s]+$/;
             const regexEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/; 
-            
+           
 
             if (this.user.nom === "") {
                 alert("Veuillez remplir votre nom");
@@ -172,7 +171,7 @@ export default {
                 const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
 
-                axion.get(`http://localhost:3000/api/posts/${userId}/posts`, {
+                axion.delete(`http://localhost:3000/api/posts/${userId}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
