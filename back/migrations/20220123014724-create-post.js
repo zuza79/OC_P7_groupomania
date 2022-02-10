@@ -16,12 +16,16 @@ module.exports = {
         type: Sequelize.TEXT, 
         allowNull: false
       },
-      user_id: {
-        type: Sequelize.SMALLINT,
-        autoIncrement: true,
-        allowNull: false
+      
+        userId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Users',
+          key: 'id'
+        }
       },
-      moderate: {
+      administration: {
         type: Sequelize.BOOLEAN,
         allowNull: false
       },

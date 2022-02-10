@@ -25,8 +25,8 @@
                             Publier par 
                             <b>{{ post.user.nom }} 
                             <span v-if="post.user.role != 0">{{ post.user.prenom }} </span></b>
-                            <!--<img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
-                            <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
+                            <!--<img class="imgProfile" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
+                            <img class="imgProfile" v-else src="../assets/images/profiles.jpg" alt="photo de profil"><br>
                             -->
                             le <b>{{ dateFormat(post.created_date) }}</b>
                             à <b>{{ hourFormat(post.created_date) }}</b>
@@ -165,7 +165,7 @@ input {
     text-align: center;
 }
 
-.photo-profil {
+.imgProfile {
     width: 50px;
     height: 50px;
     border: 2px solid black;

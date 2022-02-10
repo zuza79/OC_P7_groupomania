@@ -107,17 +107,7 @@ exports.login = (req, res, next) => {
                         userId: user.id,
                         token: jwtUtils.generateTokenForUser(user)
                     })
-                    /*res.status(200).json({
-                        userId: user.id,
-                        role: user.role,     
-                        token: jwt.sign(  {  
-                             userId: user.id,   
-                             role: user.role,    
-                            token : 'RANDOM_TOKEN_SECRET',   
-                            expiresIn: '24h'}    
-                            )
-                         });
-                        */
+                    
                      })
                 .catch(err => {
                     res.status(500).json({ err })
@@ -151,11 +141,22 @@ exports.delete = (req, res, next) => {
     })
 };
 ////// DISPLAY ONE USER
+   
 exports.getOneUser = (req, res, next) => {
-    User.findOne({ where: { id: req.params.id } })
-        .then(user => res.status(200).json(user))
-        .catch(error => res.status(400).json({error}));
-};
+    const userId = req.params.id;
+    models.User.findOne({
+        attributes: [ 'id', 'email', 'nom', 'prenom', 'image' ],
+        where: { id: userId }
+    }).then((user) => {
+        if(user){
+            res.status(200).json(user);
+        } else {
+            res.status(404).json({ 'erreur': 'Utilisateur non trouvé !'})
+        }
+    }).catch(err => res.status(500).json({err}))
+}
+
+
 ////// DISPLAY ALL USERS
 
 exports.getAllUsers = (req, res, next) => {
@@ -166,8 +167,10 @@ exports.getAllUsers = (req, res, next) => {
 };
 ////// MODIFY USER AND UPDATE
 exports.modifyUser = (req, res, next) => {
+    console.log("modifyUser"  +JSON.stringify(req.body));
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth); 
+    //const role = decodedToken.role
 
     const email = req.body.email
     const nom = req.body.nom;
@@ -179,7 +182,7 @@ exports.modifyUser = (req, res, next) => {
         attributes: ['id', 'email', 'nom', 'prenom', 'image'],
         where: { id: userId }
     })
-        .then(user => {
+        .then( user => {
             if(user) {
 
                 // Suppression de l'ancienne photo
@@ -201,9 +204,9 @@ exports.modifyUser = (req, res, next) => {
                     prenom: (prenom ? prenom : user.prenom),
                     image: (image ? image : user.image)
                 })
-                .then(userUpdated => {
-                    if(userUpdated){
-                        return res.status(201).json(userUpdated)
+                .then(modifyUser => {
+                    if(modifyUser){
+                        return res.status(201).json(modifyUser)
                     } else {
                         res.status(500).json({ 'erreur': 'Impossible de mettre a jour le profil de l\'utilisateur' })
                     }

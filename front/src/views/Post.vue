@@ -49,90 +49,63 @@ export default {
         return {
             titre: '',
             contenu: '',
-            image: '',
+            image: null,
+            contentType: 'text',
             preview: null
         }
     },
     methods : {
-// create post
-            createPost() {
-           // const Id = JSON.parse(localStorage.getItem("userId"))
-          //const token = JSON.parse(localStorage.getItem("token"))
-           const userId = this.$route.params.id;
-           const token = localStorage.getItem('token');
-           const fileField = document.querySelector('input[type="file"]');
-         
+// Récupération du fichier image uploadé
+        onFileSelected(event) {
+            this.image = event.target.files[0]
+        },
 
-            if (this.titre === '')
-                alert("Veuillez remplir le titre")
-            if (this.contenu === '')
-                alert("Veuillez remplir le contenu du message")
-            if (this.image === '' && this.titre != '' && this.contenu != '') {
-                let data = new FormData()
-                data.append('title', this.titre)
-                data.append('content', this.contenu)
-                data.append('id', this.user_id) //userId
+        // Création d'un nouveau post
+        createPost() {    
+            const token = localStorage.getItem('token');
+            this.content = true;    
+            
+            // Aucun contenu ajouté
+            if(!this.content && !this.image){
+                this.content = false;
 
-                axios.post("http://localhost:3000/api/posts", {
-                   
-                   headers: {
-                   'authorization': `Bearer ${token}`
-                   },
-                  // body: data
-                })
-                .then((response) => {
-                    return response.json();
-                })
-                .then(() => {
-                    localStorage.setItem('userId', parseInt(res.data.userId));
-                    localStorage.setItem('token', res.data.token);
-                    this.$router.push("/allposts");
-                })
-                .catch(alert)
-
-            } else if (this.titre != '' && this.contenu != '') {
-                 var fileName = document.getElementById("file").value
-                var idxDot = fileName.lastIndexOf(".") + 1;
-                var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
-               
-                if (extFile === "jpg" || extFile === "jpeg" || extFile === "png" || extFile === "webp" ||extFile === "gif"){
-               let data = new FormData()
-                data.append('image', fileField.files[0])
-                data.append('title', this.titre)
-                data.append('content', this.contenu)
-                data.append('id', userId)
-
-           
-                axios.post("http://localhost:3000/api/posts", {
-                    headers: {
-                        'authorization': `Bearer ${token}`
-                        },
-                })
-                .then((response) => response.json())
-                .then(() => {
-                    this.$router.push("/allposts");
-                })
-                .catch(alert)
+            // Texte ajouté
+            } else if(this.contentType === "text"){
+                this.image = null
+                if(!this.content){
+                    this.content = false;
                 } else {
-                    alert("Uniquement les fichiers jpg, jpeg, png, webp et gif sont acceptés!");
+                    const postText = { content: this.content }
+                    axios.post('http://localhost:3000/api/posts/', postText, {
+                        headers: {
+                            'authorization': `Bearer ${token}`,
+                        }
+                    })
+                        .then(res => console.log(res))
+                        .catch(() => console.log('Ceci est une erreur'))
                 }
-            }
-        },
-    //upload file
-        uploadFile(e) {
-            if (e.target.files) {
-                let reader = new FileReader()
-                reader.onload = (event) => {
-                    this.preview = event.target.result
-                    this.image = event.target.result
+
+            // Image ajoutée
+            } else if(this.contentType === "img") {
+                this.content = "";
+                if (!this.image){
+                    this.content = false;
+                } else {
+                    let formData = new FormData();
+                    formData.append('image', this.image)
+                    axios.post('http://localhost:3000/api/posts/', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'authorization': `Bearer ${token}`,
+                        }
+                    })
+                        .then(() => {
+                            console.log('ok')
+                        })
+                        .catch((err) => console.log(err))
                 }
-                reader.readAsDataURL(e.target.files[0])
-            }
-        },
-        deletefile() {
-            this.image = '';
-               }
-               
+            }            
+        }        
     }
 }
 </script>

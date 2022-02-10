@@ -14,28 +14,8 @@ const models = require('../models');
 
 //////// CREATE POST
 exports.createPost = (req, res, next) => {
-       if (req.file) {
-models.Post.create({
-            title: req.body.title,
-            content: req.body.content,
-            image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`,
-            user_id: req.body.user_id
-        })
-        .then(() => res.status(201).json({message: 'Post créé !'}))
-        .catch( error => res.status(400).json({error}));
-    } else {
-       models.Post.create({
-            title: req.body.title,
-            content: req.body.content,
-            user_id: req.body.user_id
-        })
-        .then(() => res.status(201).json({message: 'Post créé !'}))
-        .catch( error => res.status(400).json({error}));
-    }
-    
-};
-
-   /* console.log ('creation post  ' + req.body)
+    const headerAuth = req.headers['authorization'];
+    const userId = jwtUtils.getUserId(headerAuth);
     const content = req.body.content;    
     let image = req.file
 
@@ -43,33 +23,44 @@ models.Post.create({
         res.status(400).json({ 'erreur': 'paramètre manquant' });
     };
 
-   // console.log("console log create post  " +JSON.stringify(req.body.post));
-   models.User.findOne({
-    where: { id: userId }
-})
-.then(user => {
-    if(user) {
-        models.Post.create({
-            content: content,
-            image: image,
-            like: 0,
-            dislike: 0,
-            UserId: user.id
-        })
-        
-        res.status(201).json({"message": "Nouveau post créé avec succès !"})
+    if(content){
+        if(content.length > 150) {
+            res.status(400).json({ 'erreur': 'Texte trop long (150 caractères maximum)' })
+        };
+    } else {
+        image = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`;
+        if(image.length > 150) {
+            res.status(400).json({ 'erreur': 'Nom de l\'image invalide' })
+        };
+    }
+
+    models.User.findOne({
+        where: { id: userId }
+    })
+    .then(user => {
+        if(user) {
+            models.Post.create({
+                content: content,
+                image: image,
+                like: 0,
+                dislike: 0,
+                UserId: user.id
+            })
+            res.status(201).json({"message": "Nouveau post créé avec succès !"})
                     
         } else {
             res.status(404).json({'erreur' : 'Utilisateur introuvable'});
         };
     })
     .catch(err => {
-        res.status(500).json({ 'err': 'ERREUR !!!' });
+        console.log(err);
+        res.status(500).json({ "erreur": "erreur!!! catch"});
     });
     
 };
 
-*/
+
+
 // DISPLAY ONE POST
 exports.getOnePost = (req, res, nest) => {
     Post.findOne({
@@ -103,7 +94,7 @@ exports.getAllPosts = (req, res, next) => {
 exports.getPostsUser = (req, res, next) => {
     Post.findAll({
         where: {
-            user_id : req.params.user_id
+            userId : req.params.user.id
         },
         include: [{
             model : models.User,
@@ -125,7 +116,7 @@ exports.modifyPost = (req, res, next) => {
 
         Post.findOne({ where: { id: req.params.id }})
         .then(post => {
-            if (userId === post.user_id || role === 0) {
+            if (userId === post.user.id || role === 0) {
                 if (post.image) {
                 const filename = post.image.split('/images/posts/')[1];
                 fs.unlink(`images/posts/${filename}`, () => {
@@ -166,7 +157,7 @@ exports.modifyPost = (req, res, next) => {
     } else {
         Post.findOne({ where: { id: req.params.id }})
         .then(post => {
-            if (userId === post.user_id || role === 0) {
+            if (userId === post.user.id || role === 0) {
                 if (post.image && req.body.image === '') {
                     const filename = post.image.split('/images/posts/')[1];
                     fs.unlink(`images/posts/${filename}`, () => {
@@ -239,7 +230,7 @@ exports.deletePost = (req, res, next) => {
 
     Post.findOne({ where: { id: req.params.id }})
         .then(post => {
-            if (userId === post.user_id || role === 0 || role === 1) {
+            if (userId === post.user.id || role === 0 || role === 1) {
                 if (post.image != null) {
                     const filename = post.image.split('/images/posts/')[1];
                     fs.unlink(`images/posts/${filename}`, () => {

@@ -3,8 +3,10 @@
         <img id="logo" src="../assets/images/logoMono.png" alt="Logo Groupomania" />
         <nav>
             <router-link class="link" to="/profile" aria-label="Profil">Mon profil</router-link>
+       <!--    <router-link :to="{name: 'profile', params: { id: userId }}"><img class="imgProfile" :src="user.image" alt="`Photo de profil`"></router-link>
+            -->
             <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
-            <a class="link disconnect" @click="disconnectUser()">Déconexion</a>
+            <router-link to="/login" class="link disconnect" @click="disconnectUser()"  >Déconexion</router-link>
         </nav>
 
     </header>
@@ -15,6 +17,7 @@
 
 export default {
 name: 'HeaderProfile',
+//props: ['userId', 'photo'],
 data () {
 	return {
 		role:''
@@ -49,6 +52,14 @@ nav{
   justify-content: space-between;
   align-items: center;
 }
+
+.imgProfile {
+     object-fit: cover;
+     width: 100%;
+     height: 100%;
+     clip-path: circle();
+     border-radius: 50%;
+ }
 
 img {
   height: 100px;

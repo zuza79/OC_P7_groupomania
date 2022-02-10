@@ -9,8 +9,8 @@ exports.createComment = (req, res, next) => {
     console.log("console log create comment  " +JSON.stringify(req.body.comment));
     Comment.create({
             content: req.body.content,
-            user_id: req.body.user_id,
-            post_id: req.body.post_id
+          //  user_id: req.body.user_id,
+          //  post_id: req.body.post_id
         })
         .then(() => res.status(201).json({message: 'Commentaire créé !'}))
         .catch( error => res.status(400).json({error}));

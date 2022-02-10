@@ -10,7 +10,7 @@
             </nav>  
          <!--users -->   
         <div class = "users">
-            <div class="title">Utilisateurs</div>  
+            <button @click="getAllUsers()" class="menuLink" aria-label="Afficher les utilisateurs">Utilisateurs</button>  
             <article class="adminBloc" id="AncreUsers">
                 <div>
                     <input v-model="search" class="search" type="search" placeholder="Rechercher par nom ..." size=40 aria-label=" Barre de recherche d'un utilisateur par nom">
@@ -24,19 +24,12 @@
                         <th>Image de profil</th>
                     </tr>
 
-                    <tr v-bind:key="index" v-for="(user, index) in filterList">
-                     
+                    <tr v-bind:key="index" v-for="(user, index) in users">
+                   <!-- <user v-for="(user, index) in users" :key="index" :user="user">{{user}}</user> -->
                         <td><input type="text" v-model="user.nom" required aria-label="Nom"></td>
                         <td><input type="text" v-model="user.prenom" required aria-label="Prénom"></td>
                         <td><input type="text" v-model="user.email" required class="email" aria-label="Email"></td>
-                        <td>
-                            <select v-model="user.role" name="role" id="role-select" aria-label="Role">
-                                <option value="0" aria-label="Role administrateur">Admin</option>
-                                <option value="1" aria-label="Role Utilisateur">Utilisateur</option>
- 
-                            </select>
-                        </td>
-                        <td><img v-if="user.image" :src="user.image" alt="photo de profil"></td>
+                        <td><img v-if="user.image" v-bind="user.image" alt="photo de profil"></td>
                         <button @click="modifyUser(index)" aria-label="Modifier cet utilisateur" class="btnSave"><i class="fas fa-edit"></i></button>
                          <button @click="modifyPassword(index)" aria-label="Modifier le mot de passe de ce utilisateur"><i class="fas fa-edit"></i></button>
                         <button @click="deleteUser(index)" aria-label="Supprimer cet utilisateur" class="btnDelete"><i class="far fa-trash-alt"></i></button>
@@ -47,7 +40,7 @@
         </div>
 <!--posts -->
         <div class ="posts">
-            <div class="title">Messages</div>
+            <button @click="getPosts()" class="menuLink" aria-label="Afficher les messages">Messages</button>
             <article class="adminBloc" id="AncrePosts">
                 <table>
                     <tr>
@@ -73,7 +66,7 @@
 
 <!--comments -->
             <div class="comments">
-                <div class="title">Commentaires</div>
+                <button @click="getComments()" class="menuLink" aria-label="Afficher les commentaires">Commentaires</button>
             <article class="adminBloc" id="AncreComments">
                 <table>
                     <tr>
@@ -134,9 +127,17 @@ export default {
     methods : {
         //*display all users
         getAllUsers() {
-            const token = JSON.parse(localStorage.getItem("token"))
+           const token =localStorage.getItem('token')
+            if(!token) {
+                this.redirection()
+            }
 
-            axios.get('http://localhost:3000/api/', {user: data})
+            axios.get('http://localhost:3000/api/', {
+        headers: {
+                   'authorization': `Bearer ${token}`
+               }
+                })
+       
        .then((res) => {
                     localStorage.setItem('userId', parseInt(res.data.userId));
                     localStorage.setItem('token', res.data.token);
@@ -218,7 +219,7 @@ export default {
             const token = JSON.parse(localStorage.getItem("userToken"))
 
             fetch('http://localhost:3000/api/posts/', {
-                method: "GET",
+                
                 headers: {
                     'authorization': `Bearer ${token}`
                 }
@@ -236,7 +237,7 @@ export default {
             if (confirm("Voulez-vous vraiment supprimer le post") === true) {
 
                 fetch(`http://localhost:3000/api/posts/${this.posts[index].id}`, {
-                    method: "DELETE",
+                    
                     headers: {
                         'authorization': `Bearer ${token}`
                     },
@@ -257,7 +258,7 @@ export default {
             const token = JSON.parse(localStorage.getItem("userToken"))
 
             axios.get (`http://localhost:3000/api/comments/`, {
-                    method: "GET",
+                    
                     headers: {
                         'authorization': `Bearer ${token}`
                     }
@@ -274,7 +275,7 @@ export default {
             if (confirm("Voulez-vous vraiment supprimer le commentaire") === true) {
 
                 axios.delete(`http://localhost:3000/api/comments/${this.comments[index].id}`, {
-                    method: "DELETE",
+                    
                     headers: {
                         'authorization': `Bearer ${token}`
                     },
@@ -290,7 +291,7 @@ export default {
         },
     
     mounted(){
-        this.getUsers()
+        this.getAllUsers()
         this.getPosts()
         this.getComments()
     }
