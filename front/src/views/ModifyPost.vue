@@ -56,11 +56,13 @@ export default {
         }
     },
     methods: {
+
+//GET POST
         getPost() {
             const token = JSON.parse(localStorage.getItem("userToken"))
 
             axios.get (`http://localhost:3000/api/posts/${this.id_param}`, {
-                    method: "GET",
+                   
                     headers: {
                         'authorization': `Bearer ${token}`
                     }
@@ -69,6 +71,7 @@ export default {
             .then (data => (this.post = data))
             .catch(alert)
         },
+//MODIFY POST
         modifyPost() {
             const fileField = document.querySelector('input[type="file"]');
             const token = JSON.parse(localStorage.getItem("userToken"))
@@ -84,7 +87,7 @@ export default {
                 data.append('content', this.post.content)
 
                 axios.put(`http://localhost:3000/api/posts/${this.id_param}`, {
-                    method: "PUT",
+                   
                     headers: {
                         'authorization': `Bearer ${token}`
                     },
@@ -105,7 +108,7 @@ export default {
                 data.append('content', this.post.content)
 
                 axios.put(`http://localhost:3000/api/posts/${this.id_param}`, {
-                    method: "PUT",
+                    
                     headers: {
                         'authorization': `Bearer ${token}`
                     },
@@ -118,6 +121,7 @@ export default {
                 .catch(alert)
             }
         },
+    //UPLOAD POST
         uploadFile(e) {
             if (e.target.files) {
                 let reader = new FileReader()

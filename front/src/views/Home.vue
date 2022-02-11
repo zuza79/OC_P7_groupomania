@@ -9,6 +9,11 @@
     <router-link to="/signup" class="link" aria-label="Inscription">Inscription</router-link>
     <router-link to="/login" class="link" aria-label="Connection">Connection</router-link>
     </nav>
+   
+
+    <nav class="routerLink">
+    <router-link to="/login/admin" class="linkAdmin" aria-label="Administrateur">Administrateur</router-link>
+    </nav>
     </body>     
     <Footer />
   
@@ -53,7 +58,7 @@ h2 {
    margin: auto;
   padding-top: 50px;
 }
-.link {
+.link, .linkAdmin {
   height: 20px;
   color: black;
   font-weight: bolder;
@@ -65,6 +70,9 @@ h2 {
     border: 1px solid black;
     border-radius: 20px;
 }
+.linkAdmin{
+margin-top: 60px;
+}
 
 .link:hover {
   color: black;
@@ -74,6 +82,7 @@ nav {
    width: 70%;
   padding: 20px 5vw;
   font-size: 1vw;
+  margin-bottom: 60px;
 }
 
 .nav a {

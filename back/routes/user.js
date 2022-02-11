@@ -7,6 +7,7 @@ const auth = require('../middleware/auth')
 
 router.post('/signup', userCtrl.signup);  //ok
 router.post('/login', userCtrl.login);    //ok
+router.post('/login/admin', userCtrl.login); //login administrateur
 router.delete('/profile/:id', auth, multerProfile, userCtrl.delete); // ok postman sans auth
 router.get('/profile/:id', auth, userCtrl.getOneUser);  //ok postman localhost:3000/api/auth/profile/20
 router.put('/profile/:id',auth, multerProfile, userCtrl.modifyUser); //erreur ligne 213 user.update....

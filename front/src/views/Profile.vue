@@ -99,7 +99,7 @@ export default {
         this.user.prenom = res.data.prenom;
         this.user.email = res.data.email;
         this.user.image = res.data.image;
-      }).catch(err => console.log(err))
+      }).catch(err => console.log("erreur get user " +err))
     },
         modifyUser() {
             const userId = this.$route.params.id;
@@ -279,8 +279,12 @@ export default {
 			} else {
 				alert("Le nouveau mot de passe et sa confirmation ne sont pas identiques")
 			}
-        }
+        },
+    mounted() {
+        this.getUser()
     }
+}
+
 }
 </script>
 

@@ -1,0 +1,141 @@
+<template>
+  <div>
+    <HeaderProfile />
+   
+    <div class="login">
+      <h1>Administrateur</h1>
+      <p>Acces authoriser pour les administrateurs</p>
+      <br>
+      <router-link to="/login" aria-label="Retour vers connexion utilisateur">Connexion pour les utilisateurs</router-link>
+                
+      <form>
+        <ul>
+          <li>
+            <input type="email" v-model="email" placeholder="jean.dupont@groupomania.com" size="50" required aria-label="Email de connection">
+          </li>
+          <li>
+            <input type="password" v-model="password" placeholder="Pass2word" size="50" required aria-label="Mot de passe de connection">
+          </li>
+        </ul>  
+      </form>
+      <div class="alert alert-danger" v-if="loginFailure">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Email ou mot de passe incorrect
+      </div>
+      <button  @click="loginAdmin()"  type="submit" aria-label="Se connecter" class="btnSave">Valider</button>
+    </div>
+    <Footer />
+  </div>
+</template>
+
+<script>
+import axios from 'axios'
+import HeaderProfile from "../components/HeaderProfile";
+
+import Footer from "../components/Footer";
+
+export default {
+  name: 'AdminLogin',
+  components: {
+    HeaderProfile,
+    Footer
+  },
+
+  data() {
+    return {
+      users: [],
+      email: '',
+      password: '',
+      role: '0',
+      loginFailure: false
+    }
+    
+  },
+methods: {
+    
+    loginAdmin() {
+      
+  axios.post("http://localhost:3000/api/auth/login/admin", {
+           email: this.email,
+          password: this.password,
+          role: this.role
+          
+      })
+   
+     .then((res) => {
+                    localStorage.setItem('userId', parseInt(res.data.userId));
+                    localStorage.setItem('token', res.data.token);
+                    
+                    this.$router.push('/admin')
+                })
+                .catch((err) => {
+                    console.log("erreur vuejs : " + err);
+                    this.loginFailure = true;
+                })  
+        
+   /*   .then((value) => {
+        const token = JSON.stringify(value.token);
+        const userId = JSON.stringify(value.userId);
+        const role = JSON.stringify(value.role);
+        localStorage.setItem("userToken", token);
+        localStorage.setItem("userId", userId);
+        localStorage.setItem("role", role);
+        this.$router.push("/allposts");
+      })
+      .catch((err) => {
+                    console.log("erreur : " + err);
+                    this.loginFailure = true;
+                })
+       */          
+    }
+  }
+ 
+}
+</script>
+
+<style scoped>
+
+form{
+    width: 80%;
+}
+
+ul {
+list-style: none;
+padding: 0;
+}
+
+li {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-bottom: 30px;
+}
+
+
+input {
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+::placeholder {
+  text-align: center;
+}
+.alert{
+  color:red;
+  font-weight: bolder;
+}
+/*------------ desktop-----------------*/
+@media screen and (min-width: 950px) {
+
+  h1{
+    width:  25%;
+  }
+}
+
+</style>

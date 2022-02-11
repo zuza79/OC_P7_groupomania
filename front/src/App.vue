@@ -82,6 +82,22 @@ h2{
     align-items: center;
     }
 
+    .fa-turn-down-left
+    {
+    width: 100px;
+    height: 50px;
+    position: relative;
+    border-radius: 20px;
+    background: gray;
+    cursor: pointer; 
+    text-align: center;
+     color: white;   
+    display: flex;
+    justify-content: center; 
+    margin: 20px auto 0 auto;
+    align-items: center;
+    }
+
 @media screen and (max-width:1024px) {
   .app {
     padding: 0;

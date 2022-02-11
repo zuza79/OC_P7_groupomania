@@ -3,93 +3,15 @@
         <HeaderProfile />
         <AdminHeader />
         <div id = "admin">
-            <nav class="menu">   
-                <a class="menuLink" href="#AncreUsers">Utilisateurs</a>
-                <a class="menuLink" href="#AncrePosts">Messages</a>
-                <a class="menuLink" href="#AncreComments">Commentaires</a>
-            </nav>  
-         <!--users -->   
-        <div class = "users">
-            <button @click="getAllUsers()" class="menuLink" aria-label="Afficher les utilisateurs">Utilisateurs</button>  
-            <article class="adminBloc" id="AncreUsers">
-                <div>
-                    <input v-model="search" class="search" type="search" placeholder="Rechercher par nom ..." size=40 aria-label=" Barre de recherche d'un utilisateur par nom">
-                </div>
-                <table>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Email</th>
-                        <th>Rôle</th>
-                        <th>Image de profil</th>
-                    </tr>
-
-                    <tr v-bind:key="index" v-for="(user, index) in users">
-                   <!-- <user v-for="(user, index) in users" :key="index" :user="user">{{user}}</user> -->
-                        <td><input type="text" v-model="user.nom" required aria-label="Nom"></td>
-                        <td><input type="text" v-model="user.prenom" required aria-label="Prénom"></td>
-                        <td><input type="text" v-model="user.email" required class="email" aria-label="Email"></td>
-                        <td><img v-if="user.image" v-bind="user.image" alt="photo de profil"></td>
-                        <button @click="modifyUser(index)" aria-label="Modifier cet utilisateur" class="btnSave"><i class="fas fa-edit"></i></button>
-                         <button @click="modifyPassword(index)" aria-label="Modifier le mot de passe de ce utilisateur"><i class="fas fa-edit"></i></button>
-                        <button @click="deleteUser(index)" aria-label="Supprimer cet utilisateur" class="btnDelete"><i class="far fa-trash-alt"></i></button>
-                    </tr>
-                </table>
-                <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
-        </article>
+            <nav class="menu">  
+                <router-link to="/admin/users" aria-label="Administration des utilisateurs" class="menuLink">Utilisateurs</router-link> 
+                <router-link to="/admin/posts" aria-label="Administration des messages" class="menuLink">Messages</router-link>
+                <router-link to="/admin/comments" aria-label="Administration des commentaires" class="menuLink">Commentaires</router-link>
+            </nav>
         </div>
-<!--posts -->
-        <div class ="posts">
-            <button @click="getPosts()" class="menuLink" aria-label="Afficher les messages">Messages</button>
-            <article class="adminBloc" id="AncrePosts">
-                <table>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Titre du post</th>
-                        <th>Message du post</th>
-                        <th>Image du post</th>
-                    </tr>
-                    <tr v-bind:key="index" v-for="(post, index) in posts">
-                        <td><input type="text" v-model="post.user.nom" required aria-label="Nom de l'auteur du post"></td>
-                        <td><input type="text" v-model="post.user.prenom" required aria-label="Prénom de l'auteur du post"></td>
-                        <td><input type="text" v-model="post.title" required aria-label="Titre du post"></td>
-                        <td><textarea type="text" v-model="post.content" required aria-label="Message du post"></textarea></td>
-                        <td><img v-if="post.image" :src="post.image" alt="Image du post"></td>
-                        <router-link :to="`/post/modify/${this.id_param}`" aria-label="Modifier ce post" v-if="post.modify === false" class="btnSave"><i class="fas fa-check"></i></router-link>
-                        <button @click="deletePost(index)" aria-label="Supprimer ce post" class="btnDelete"><i class="far fa-trash-alt"></i></button>
-                    </tr>
-                </table>
-                <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
-            </article>
-        </div>
-
-<!--comments -->
-            <div class="comments">
-                <button @click="getComments()" class="menuLink" aria-label="Afficher les commentaires">Commentaires</button>
-            <article class="adminBloc" id="AncreComments">
-                <table>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Titre du post</th>
-                        <th>Commentaire</th>
-                    </tr>
-                    <tr v-bind:key="index" v-for="(comment, index) in comments">
-                        <td><input type="text" v-model="comment.user.nom" required aria-label="Nom de l'auteur du commentaire"></td>
-                        <td><input type="text" v-model="comment.user.prenom" required aria-label="Prénom de l'auteur du commentaire"></td>
-                        <td><input type="text" v-model="comment.post.title" required aria-label="Titre du post"></td>
-                        <td><textarea type="text" v-model="comment.content" rows="3" cols="50" required aria-label="Commentaire"></textarea></td>
-                        <button @click="deleteComments(index)" aria-label="Supprimer ce commentaire" class="btnDelete"><i class="far fa-trash-alt"></i></button>
-                    </tr>
-                </table>
-                <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
-            </article>
-            </div>
-        </div>
-
-        <Footer />
+     <Footer />   
     </div>
+    
 </template>
 
 <script>
@@ -108,213 +30,27 @@ export default {
         Footer
     },
     
-    data () {
-        return {
-            users: [],
-            search: '',
-            posts: [],
-            comments: []
-        }
-    },
-    computed : {
-        filterList() {
-            return this.users.filter((user) =>{
-                return user.nom.toLowerCase().includes(this.search.toLowerCase());
-            })
-        }
-    },
-    //////USER
-    methods : {
-        //*display all users
-        getAllUsers() {
-           const token =localStorage.getItem('token')
-            if(!token) {
-                this.redirection()
-            }
-
-            axios.get('http://localhost:3000/api/', {
-        headers: {
-                   'authorization': `Bearer ${token}`
-               }
-                })
-       
-       .then((res) => {
-                    localStorage.setItem('userId', parseInt(res.data.userId));
-                    localStorage.setItem('token', res.data.token);
-                    this.$router.push('/admin');
-       })
-        } ,   
-       
-        //delete user
-        deleteUser(index) {
-            const token = JSON.parse(localStorage.getItem("token"))
-
-            if (confirm("Voulez-vous vraiment supprimer cet utilisateur???") === true) {
-
-                axios.get(`http://localhost:3000/api/posts/${this.filterList[index].id}/posts`, {user: data})
-                   
-                
-                .then(response => response.json())
-                .then(data => (this.posts = data))
-                .then (() => {
-                    let getAllPosts = this.posts
-
-                    for ( let i = 0 ; i < getAllPosts.length ; i++) {
-                        if (getPost[i].image) {
-                    /**delete post */
-                            axios.delete(`http://localhost:3000/api/posts/${getAllPosts[i].id}`, {post: data})
-                               
-                            .then(response => response.json())
-                            .catch(alert)
-                        }
-                    }
-                })
-                .then(() => {
-            //delete filter user
-                    fetch(`http://localhost:3000/api/auth/${this.filterList[index].id}`, {
-                        method: "DELETE",
-                        headers: {
-                            'authorization': `Bearer ${token}`
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(() => { 
-                        this.$router.go()
-                        })
-                    .catch(alert)
-                })
-                .catch(alert)
-            }
-        },
-//modify user
-        modifyUser(index) {
-            const token = JSON.parse(localStorage.getItem("userToken"))
-
-            if (confirm("Voulez-vous vraiment modifier cet utilisateur") === true) {
-                
-
-                axios.put(`http://localhost:3000/api/auth/admin/${this.filterList[index].id}`, {
-                    method: "PUT",
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'authorization': `Bearer ${token}`
-                    },
-                    body : JSON.stringify(this.filterList[index])
-                })
-                .then(response => response.json())
-                .then(data => (this.filterList[index] = data))
-                .then(() => { 
-                    this.$router.go()
-                })
-                .catch(alert)
-            }
-        }
-    },
-    
-
-/////POSTS
-    //display posts
-        getPosts() {
-            const token = JSON.parse(localStorage.getItem("userToken"))
-
-            fetch('http://localhost:3000/api/posts/', {
-                
-                headers: {
-                    'authorization': `Bearer ${token}`
-                }
-            })
-            
-            .then(response => response.json())
-            .then(data => (this.posts = data))
-            .catch(alert)
-        },
-        
-    //delete post
-        deletePost(index) {
-            const token = JSON.parse(localStorage.getItem("userToken"))
-
-            if (confirm("Voulez-vous vraiment supprimer le post") === true) {
-
-                fetch(`http://localhost:3000/api/posts/${this.posts[index].id}`, {
-                    
-                    headers: {
-                        'authorization': `Bearer ${token}`
-                    },
-                    body : JSON.stringify(this.posts[index])
-                })
-                .then(response => response.json())
-                .then(data => (this.posts[index] = data))
-                .then(() => {
-                    this.$router.go()
-                })
-                .catch(alert)
-            }
-        },
-
-//// COMMENTS
-    //display comments
-      getComments() {
-            const token = JSON.parse(localStorage.getItem("userToken"))
-
-            axios.get (`http://localhost:3000/api/comments/`, {
-                    
-                    headers: {
-                        'authorization': `Bearer ${token}`
-                    }
-            })
-            
-            .then (response => response.json())
-            .then (data => (this.comments = data))
-            .catch(alert)
-        },
-    //delete comments
-        deleteComments(index) {
-            const token = JSON.parse(localStorage.getItem("userToken"))
-
-            if (confirm("Voulez-vous vraiment supprimer le commentaire") === true) {
-
-                axios.delete(`http://localhost:3000/api/comments/${this.comments[index].id}`, {
-                    
-                    headers: {
-                        'authorization': `Bearer ${token}`
-                    },
-                    body : JSON.stringify(this.comments[index])
-                })
-                .then(response => response.json())
-                .then(data => (this.comments[index] = data))
-                .then(() => {
-                    this.$router.go()
-                })
-                .catch(alert)
-            }
-        },
-    
-    mounted(){
-        this.getAllUsers()
-        this.getPosts()
-        this.getComments()
-    }
-}
-
+     
+} 
 </script>
 
 <style scoped>
-h1, .nav{
+h1, .nav, #admin{
     margin: 0 auto 0 auto;
     padding: 0;
 }
 .menu{
     margin: 5px;
   display: flex;
-    flex-direction: row;
-    justify-content: space-between;  
+    flex-direction: column;
+    justify-content: center;  
+    margin: 15px auto 15px auto;
 }
 .menuLink{
     
     width: 25%;
-    margin-top: 10px;
-    margin-bottom: 30px;
+    margin: 10px auto 30px auto ;
+    
     padding: 10px ;
     text-decoration: none;
     color: black;

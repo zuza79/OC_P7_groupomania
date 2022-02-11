@@ -3,9 +3,13 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Signup from '../views/Signup.vue'
 import Login from '../views/Login.vue'
+import AdminLogin from '../views/AdminLogin.vue'
 import Profile from '../views/Profile.vue'
 import Allposts from '../views/Allposts.vue'
 import AdminDisplay from '../views/AdminDisplay.vue'
+import AdminComments from '../views/AdminComments.vue'
+import AdminPosts from '../views/AdminPosts.vue'
+import AdminUsers from '../views/AdminUsers.vue'
 import Post from '../views/Post.vue'
 import CommentPost from '../views/CommentPost.vue'
 import ModifyPost from '../views/ModifyPost.vue'
@@ -31,6 +35,11 @@ const routes = [
     component: Login
   },
   {
+    path: '/login/admin',
+    name: 'AdminLogin',
+    component: AdminLogin
+  },
+  {
     path: '/allposts',
     name: 'Allposts',
     component: Allposts
@@ -41,6 +50,21 @@ const routes = [
     component: AdminDisplay
   },
   {
+  path: '/admin/users',
+  name: 'AdminUsers',
+  component: AdminUsers
+},
+{
+  path: '/admin/posts',
+  name: 'AdminPosts',
+  component: AdminPosts
+},
+{
+  path: '/admin/comments',
+  name: 'AdminComments',
+  component: AdminComments
+},
+ {
     path: '/profile',
     name: 'Profile',
     component: Profile
