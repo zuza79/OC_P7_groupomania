@@ -1,7 +1,6 @@
 // controllers - user
 // singup, login, delete, display one/all, modify
 const bcrypt = require('bcrypt');
-//const jwt = require('jsonwebtoken');
 const jwtUtils = require('../utils/jwt.utils');
 const hash = require('hash.js');
 const fs = require('fs')
@@ -15,8 +14,8 @@ const passwordRegex = /^(?=.*\d).{4,8}$/;
 
 //////// SIGNUP
 exports.signup = (req, res, next) => {
-    console.log("console log signup backend  " +JSON.stringify(req.body.user));
-        const user= req.body.user;
+    console.log("console log signup backend  " +JSON.stringify(req.body));
+       const user= req.body;
   //const user= JSON.parse(req.body.user); 
   const email = user.email;
     const password = user.password;
@@ -107,7 +106,7 @@ exports.login = (req, res, next) => {
                         userId: user.id,
                         token: jwtUtils.generateTokenForUser(user)
                     })
-                    
+                   // console.log('console log  token: ' + token)
                      })
                 .catch(err => {
                     res.status(500).json({ err })
@@ -118,54 +117,7 @@ exports.login = (req, res, next) => {
         });
 }
 
-///////// LOGIN ADMIN
-exports.loginAdmin = (req, res, next) => {
-    console.log("console login backend debut"  +JSON.stringify(req.body));
-   // const user= req.body.user;
-    const email = req.body.email;
-    const password = req.body.password;
-    const role = req.body.role;
- 
-   if(email == null || password == null) {
-        return res.status(400).json({ 'erreur': 'Administrateur non trouvé !' });
-  }
-  
-    User.findOne({ 
-        where: {email: email}
-         
-     })
-     ///////////////////////////
-       .then(user => {
-        if (role === "1") {
-            return res.status(401).json('acces refuser pour les utilisateurs!');
-        }
-        if (!user) {
-            return res.status(401).json('Administrateur non trouvé !');
-        } 
-        console.log("console user  " +req.body.password);
-        console.log("console user  " +user.password);
 
-    bcrypt.compare(password, user.password)
-    //console.log('console log  bcrypt user.password: ' + user.password)
-    //console.log('console log  bcrypt password: ' + password)
-                    .then(valid => {
-                    if(!valid) {
-                        return res.status(401).json({ message: 'Mot de passe incorrect !'} )
-                    }
-                    res.status(200).json({
-                        userId: user.id,
-                        token: jwtUtils.generateTokenForUser(user)
-                    })
-                    
-                     })
-                .catch(err => {
-                    res.status(500).json({ err })
-                });
-        })
-        .catch(err => { console.log("erreur login  " +err);
-        return res.status(500).json({ err });
-        });
-}
 
 /////////////// DELETE
 exports.delete = (req, res, next) => {
@@ -217,14 +169,13 @@ exports.getAllUsers = (req, res, next) => {
 exports.modifyUser = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
-
-    if (req.file) {
+        if (req.file) {
 
         User.findOne({ where: { id: req.params.id }})
        
            .then(User => {
             if (userId === User.id || role === 0) {
-                if (User.image) {
+                if (User.image) { 
                 const filename = User.image.split('/images/profiles/')[1];
                 fs.unlink(`images/profiles/${filename}`, () => {
                     
@@ -264,8 +215,8 @@ exports.modifyUser = (req, res, next) => {
         User.findOne({ where: { id: req.params.id }})
         .then(User => {
             if (userId === User.id || role === 0) {
-                if (User.image && req.body.image === '') {
-                    const filename = User.image.split('/images/profiles/')[1];
+                if (user.image && req.body.image === '') {
+                    const filename = user.image.split('/images/profiles/')[1];
                     fs.unlink(`images/profiles/${filename}`, () => {
                         const modifyUser = {
                             nom: req.body.nom,

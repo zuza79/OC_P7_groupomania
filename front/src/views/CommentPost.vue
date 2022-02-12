@@ -67,7 +67,7 @@
                 </article>
 
             </section>
-            <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
+            <router-link to="/allposts" aria-label="Retour vers Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
         <Footer />
     </div>
 </template>
@@ -78,7 +78,7 @@ import HeaderProfile from "../components/HeaderProfile";
 import Footer from "../components/Footer";
 
 export default {
-    name: 'Post',
+    name: 'CommentPost',
     components: {
         HeaderProfile,
         Footer

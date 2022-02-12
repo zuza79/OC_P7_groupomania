@@ -14,10 +14,10 @@
                             <textarea v-model="contenu" placeholder="Rédiger votre message..." rows="10" cols="60" required aria-label="Message du post"></textarea>
                         </li>
                         <li v-if="image">
-                            <img :src="post.image" alt="Image du post" class="file">
+                            <img :src="image" alt="Image du post" class="file">
                         </li>
                         <li>
-                            <label v-if="!post.image" for="file" class="label-file" aria-label="Choisir une photo pour ce post"></label>
+                            <label v-if="image" for="file" class="label-file" aria-label="Choisir une photo pour ce post"></label>
                             <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer cette photo du post"><i class="far fa-trash-alt"></i> Supprimer image</button>
                             <input type="file" accept=".jpeg, .jpg, .png, .webp, .gif" v-on:change="uploadFile" id="file" class="input-file" aria-label="Image du post">
                         </li>
@@ -97,10 +97,13 @@ export default {
                     data.append('userId', Id)
 
                     axios.post("http://localhost:3000/api/posts", {
-                         headers: {
+                        headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
                         'authorization': `Bearer ${token}`
                         },
-                        body: data
+                        body: JSON.stringify(this.body)
+                       
                     })
                     .then((response) => response.json())
                     .then(() => {

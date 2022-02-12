@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Signup from '../views/Signup.vue'
 import Login from '../views/Login.vue'
-import AdminLogin from '../views/AdminLogin.vue'
 import Profile from '../views/Profile.vue'
 import Allposts from '../views/Allposts.vue'
 import AdminDisplay from '../views/AdminDisplay.vue'
@@ -34,11 +33,7 @@ const routes = [
     name: 'Login',
     component: Login
   },
-  {
-    path: '/login/admin',
-    name: 'AdminLogin',
-    component: AdminLogin
-  },
+  
   {
     path: '/allposts',
     name: 'Allposts',

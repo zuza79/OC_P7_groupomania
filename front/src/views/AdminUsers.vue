@@ -161,7 +161,7 @@ export default {
         }
     },
     mounted(){
-        this.getUser()
+        this.getAllUsers()
     }
 }
 </script>

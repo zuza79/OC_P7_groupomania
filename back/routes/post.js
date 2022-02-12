@@ -5,7 +5,7 @@ const postCtrl = require('../controllers/post');
 const multerPosts = require('../middleware/multer-post')
 const auth = require('../middleware/auth')
 
-router.post('/', auth,  multerPosts, postCtrl.createPost); //localhost:3000/api/posts/ postman OK
+router.post('/add', auth,  multerPosts, postCtrl.createPost); //localhost:3000/api/posts/ postman OK
 router.put('/:id', auth, multerPosts, postCtrl.modifyPost);
 router.delete('/:id',auth,multerPosts, postCtrl.deletePost)
 router.get('/', auth, postCtrl.getAllPosts)

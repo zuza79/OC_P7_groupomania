@@ -11,9 +11,7 @@
     </nav>
    
 
-    <nav class="routerLink">
-    <router-link to="/login/admin" class="linkAdmin" aria-label="Administrateur">Administrateur</router-link>
-    </nav>
+    
     </body>     
     <Footer />
   

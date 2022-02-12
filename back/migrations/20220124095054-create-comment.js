@@ -8,15 +8,24 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      user_id: {
-        type: Sequelize.string
+      userId: {
+        type: Sequelize.STRING
       },
-      post_id: {
+      postId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Posts',
+          key: 'id'
+        }
+      },
+    /*  postId: {
         type: Sequelize.SMALLINT
       },
-      moderate: {
+      
+      administration: {
         type: Sequelize.BOOLEAN
-      },
+      },*/
       content: {
         type: Sequelize.STRING
       },

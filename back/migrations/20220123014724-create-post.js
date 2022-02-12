@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       title: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false
       },
       content: {
@@ -26,9 +26,10 @@ module.exports = {
         }
       },
       administration: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.STRING,
         allowNull: false
       },
+      
       image: {
         type: Sequelize.STRING
       },

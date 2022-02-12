@@ -15,20 +15,18 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'userId',
         allowNull: false
       })
-      models.Post.belongsTo(models.Comment, {
-        foreignKey: 'userId',
-        allowNull: false
-      })
+     
 
     }
   };
   Post.init({
-    title: DataTypes.STRING,
+    title: DataTypes.TEXT,
     content: DataTypes.TEXT,
     like: DataTypes.INTEGER,
     dislike: DataTypes.INTEGER,
-    administration: DataTypes.BOOLEAN,
+    administration: DataTypes.STRING,
     image: DataTypes.STRING,
+    userId : DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Post',

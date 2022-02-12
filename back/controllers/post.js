@@ -5,48 +5,59 @@
 const jwtUtils = require('../utils/jwt.utils.js');
 const fs = require('fs');
 const models = require('../models');
-
+const User = models.User;
+const Post = models.Post;
 
 //////// CREATE POST
 exports.createPost = (req, res, next) => {
-    console.log("console log create post  " +JSON.stringify(req.body.post));
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
-    const content = req.body.content;    
-    let image = req.file
+    console.log("post"+ JSON.stringify (req.body.post));
+    const post = req.body.post;    
+     console.log ("___________________________"+req.file)
+    let image = "";
+    try{
+        image = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`;
+    }
+    catch(erreur){
+        console.log(erreur);
+    }
 
-    if(!content && !image) {
+
+// verifier les champs du post sauf image 
+    if(!post || !image) {
+
         res.status(400).json({ 'erreur': 'paramètre manquant' });
     };
 
-    if(content){
-        if(content.length > 150) {
-            res.status(400).json({ 'erreur': 'Texte trop long (150 caractères maximum)' })
-        };
-    } else {
-        image = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`;
-        if(image.length > 150) {
-            res.status(400).json({ 'erreur': 'Nom de l\'image invalide' })
-        };
-    }
+ 
 
-    models.User.findOne({
+    User.findOne({
         where: { id: userId }
     })
     .then(user => {
         if(user) {
-            models.Post.create({
-                content: content,
-                image: image,
-                like: 0,
-                dislike: 0,
-                UserId: user.id
-            })
-            res.status(201).json({"message": "Nouveau post créé avec succès !"})
+            Post.create ({
+				include: [
+					{
+						model: models.User,
+				}
+				],
+                title: req.body.post.title || '',
+				content: req.body.post.content || '',
+				image: req.body.post.image || '',
+                administration: req.body.post ||'',
+				userId: user.id
+			}).then(
+                res.status(201).json({"message": "Nouveau post créé avec succès !"})
+            
+            ).catch( error => { console.log(error);  
+            res.status(500).send({'erreur' : 'erreur insertion dans la base de données'});});
+           
                     
         } else {
-            res.status(404).json({'erreur' : 'Utilisateur introuvable'});
-        };
+            res.status(400).json({'erreur' : 'Utilisateur introuvable'});
+        }
     })
     .catch(err => {
         console.log(err);
