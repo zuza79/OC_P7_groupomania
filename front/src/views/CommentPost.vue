@@ -28,10 +28,10 @@
 
                 <div class="content">
                     <p class="modif">
-                    <button @click="modifyPost()" v-if="post.user_id === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier</button>
-                    <button @click="deletePost()" v-if="post.user_id === id || role === 0" class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer</button>
+                    <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier</button>
+                    <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer</button>
                     </p>
-                    <hr v-if="post.user_id === id || role === 0">
+                    <hr v-if="post.userId === id || role === 0">
                     <img v-if="post.image" :src="post.image" alt="Image du post">
                     <p>{{ post.content }}</p>
                 </div>
@@ -50,7 +50,7 @@
                                 à <b>{{ hourFormat(comment.date) }}</b>
                             </p>
                             <p>
-                                <button v-if="comment.user_id === id || role === 0" @click="deleteComment(index)" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
+                                <button v-if="comment.userId === id || role === 0" @click="deleteComment(index)" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
                             </p>
                         </div>                        
                         <hr>
@@ -94,7 +94,7 @@ export default {
                 image:'',
                 title:'',
                 user: {},
-                user_id:''
+                userId:''
             },
             comments: [],
             displaycomments: false,
@@ -205,7 +205,7 @@ export default {
                 let data = {
                     content: this.commentaire,
                     post_id: this.id_param,
-                    user_id: Id
+                    userId: Id
                 }
 
                 axios.post("http://localhost:3000/api/comments", { data : post})

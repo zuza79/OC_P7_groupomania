@@ -61,17 +61,7 @@ export default {
           
           axios.post("http://localhost:3000/api/auth/signup", {user: data} )
           
- /*.then (response => {
-            if(response.ok) {
-              return response.json()
-            } else {
-              return response.text()
-              .then((text) => {
-                throw new Error(text)}
-              )
-            }
-          })  */
-          .then(() => {
+           .then(() => {
               alert("Inscription accepter");
               this.$router.push("/login");
           })

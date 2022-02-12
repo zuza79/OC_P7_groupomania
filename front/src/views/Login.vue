@@ -64,7 +64,7 @@ methods: {
         const token = JSON.stringify(value.token);
         const userId = JSON.stringify(value.userId);
         const role = JSON.stringify(value.role);
-        localStorage.setItem("userToken", token);
+        localStorage.setItem("token", token);
         localStorage.setItem("userId", userId);
         localStorage.setItem("role", role);
         this.$router.push("/allposts");

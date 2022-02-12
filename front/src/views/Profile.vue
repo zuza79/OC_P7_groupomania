@@ -23,7 +23,7 @@
                     <div class="modifyImage" id="modifyImage">
                         <img v-if="user.image" src="user.image" alt="Photo de profil" class="file" width="150px" height="150px" border-radius="15px">
                         <label v-if="!user.image" for="file" class="label-file" aria-label="Inserer votre photo de profil" ><i class="fas fa-upload"></i><br>Inserer <br>votre photo de profil</label>
-                        <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer la photo de profil"> <i class="far fa-trash-alt"></i>Supprimer</button>
+                        <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer la photo de profil"> <i class="far fa-trash-alt"></i> Supprimer</button>
                         <input type="file" accept="image/jpeg, image/jpg, image/png, image/webp" v-on:change="uploadFile" id="file" class="input-file" aria-label="Photo de profil">
                     </div>
                 <!--modify password -->
@@ -38,7 +38,7 @@
                     </div>
             </nav>
                 <div class="submit">
-                    <button @click="updateUser()" class="btnSave" aria-label="Modifier le compte de cet utilisateur"><i class="fas fa-edit"></i> Enregistrer</button>
+                    <button @click="modifyUser()" class="btnSave" aria-label="Modifier le compte de cet utilisateur"><i class="fas fa-edit"></i> Enregistrer</button>
                     <button @click="deleteUser()" class="espacement btnDelete" aria-label="Supprimer le compte de cet utilisateur"><i class="far fa-trash-alt"></i> Supprimer le compte</button>
                 </div>
             
@@ -83,7 +83,8 @@ export default {
         show: function () {
             return this.button = true;
         },
-        getUser() {
+        //get one user
+        getOneUser() {
             const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
            // const Id = JSON.parse(localStorage.getItem("userId"))
@@ -101,6 +102,7 @@ export default {
         this.user.image = res.data.image;
       }).catch(err => console.log("erreur get user " +err))
     },
+    //modify user
         modifyUser() {
             const userId = this.$route.params.id;
             const token = localStorage.getItem('token');
@@ -126,7 +128,7 @@ export default {
                 alert("Veuillez écrire une adresse email valide");
             } else if ((regexText.test(this.user.nom) === true) && regexText.test(this.user.prenom) === true && regexEmail.test(this.user.email) === true && this.user.image === null) {
             
-                axios.put(`http://localhost:3000/api/auth/${userId}`, {
+                axios.put(`http://localhost:3000/api/auth/profile/${userId}`, {
                    
                         headers: {
                         'Accept': 'application/json',
@@ -151,7 +153,7 @@ export default {
                 data.append('image', fileField.files[0])
 
 
-                axios.put(`http://localhost:3000/api/auth/${userId}`, {
+                axios.put(`http://localhost:3000/api/auth/profile/${userId}`, {
                    
                         headers: {
                         'authorization': `Bearer ${token}`
@@ -166,11 +168,12 @@ export default {
                 .catch(error => console.log(error))
             }
         },
+        //delete
         deleteUser() {
-            if (confirm("Voulez-vous vraiment supprimer le compte") == true) {
+            if (confirm("Voulez-vous vraiment supprimer le compte?") == true) {
                 const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
-
+//delete posts
                 axion.delete(`http://localhost:3000/api/posts/${userId}`, {
                    
                     headers: {
@@ -197,7 +200,8 @@ export default {
                     }
                 })
                 .then(() => {
-                    axios.delete(`http://localhost:3000/api/auth/${userId}`, {
+                    //delete user
+                    axios.delete(`http://localhost:3000/api/auth/profile/${userId}`, {
                        
                         headers: {
                         'Accept': 'application/json',
@@ -228,6 +232,7 @@ export default {
         deletefile() {
             this.user.image = '';
         },
+        //modify password
         modifyPassword() {
      const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
@@ -281,7 +286,7 @@ export default {
 			}
         },
     mounted() {
-        this.getUser()
+        this.getOneUser()
     }
 }
 

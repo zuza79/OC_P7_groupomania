@@ -3,17 +3,13 @@
 // display all post by user, modify post by admin
 
 const jwtUtils = require('../utils/jwt.utils.js');
-//const headerAuth = req.headers['authorization'];
-//const userId = jwtUtils.getUserId(headerAuth);
 const fs = require('fs');
-//const User = require('../models/user');
-//const Post = require('../models/post');
-//const Comment = require('../models/comment');
 const models = require('../models');
 
 
 //////// CREATE POST
 exports.createPost = (req, res, next) => {
+    console.log("console log create post  " +JSON.stringify(req.body.post));
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const content = req.body.content;    
@@ -58,8 +54,6 @@ exports.createPost = (req, res, next) => {
     });
     
 };
-
-
 
 // DISPLAY ONE POST
 exports.getOnePost = (req, res, nest) => {
