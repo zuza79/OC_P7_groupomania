@@ -16,6 +16,14 @@ module.exports = {
         type: Sequelize.TEXT, 
         allowNull: false
       },
+      like: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      dislike: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
       
         userId: {
         allowNull: false,
@@ -25,12 +33,18 @@ module.exports = {
           key: 'id'
         }
       },
-      administration: {
-        type: Sequelize.STRING,
-        allowNull: false
+      postId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Posts',
+          key: 'id'
+        }
       },
+     
       
       image: {
+        allowNull: true,
         type: Sequelize.STRING
       },
       createdAt: {

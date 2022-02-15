@@ -2,8 +2,12 @@
     <div>
         <HeaderProfile />
         <h1>Le Flash Actu Groupomania</h1>   
-         <!--posts zero -->
-        <article v-if="posts.length == 0">
+         <!--actualization -->
+         <div class="getAllPosts">
+        <button @click="getAllPosts()" class="button" ><p>Actualization</p></button>
+        
+         </div>
+        <article v-if="post in posts">
             <p>Oups! Aucune publication pour instant!</p>
         </article>
          <!--create post -->

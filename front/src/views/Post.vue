@@ -17,9 +17,11 @@
                             <img :src="image" alt="Image du post" class="file">
                         </li>
                         <li>
-                            <label v-if="image" for="file" class="label-file" aria-label="Choisir une photo pour ce post"></label>
-                            <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer cette photo du post"><i class="far fa-trash-alt"></i> Supprimer image</button>
                             <input type="file" accept=".jpeg, .jpg, .png, .webp, .gif" v-on:change="uploadFile" id="file" class="input-file" aria-label="Image du post">
+                            <label v-if="image" for="file" class="label-file" aria-label="Choisir une photo pour ce post"></label>
+                            
+                            <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer cette photo du post"><i class="far fa-trash-alt"></i> Supprimer image</button>
+                            
                         </li>
 
                     </ul>
@@ -57,12 +59,16 @@ export default {
         }
     },
     methods: {
+        // Récupération du fichier image uploadé
+        uploadFile(event) {
+            this.image = event.target.files[0]
+        },
    createPost() {
          
-const Id = localStorage.getItem("userId")
+const Id = JSON.parse(localStorage.getItem("userId"))
            const fileField = document.querySelector('input[type="file"]');
-          const token = localStorage.getItem("token")
-//const userId = JSON.parse(localStorage.getItem('userId'))
+          const token = (localStorage.getItem("token"))
+
 
 
             if (this.title === '')
@@ -76,31 +82,21 @@ const Id = localStorage.getItem("userId")
                 data.append('content', this.content)
                 data.append('userId', Id)
 
-                //console.log("userId: " +userId)
-
-                axios.post("http://localhost:3000/api/posts/add", data, {
+                         axios.post("http://localhost:3000/api/posts/add", data, {
                     
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     'authorization': `Bearer ${token}`
                     },
-                
-                })
-                .then((response) => {
-                    return response.json();
-                /*.then((response) => {
-                    console.log('ok')
-                    */
+                 
+                body: data
                 })
                 .then(() => {
-                   // localStorage.setItem('userId', parseInt(res.data.userId));
-                  //  localStorage.setItem('token', res.data.token);
+                            console.log('ok')
                     this.$router.push("/allposts");
                 })
-                .catch(alert)
-                /*
+                
                 .catch((err) => console.log(err))
-*/
             } else if (this.title != '' && this.content != '') {
 
                 var fileName = document.getElementById("file").value
@@ -109,7 +105,7 @@ const Id = localStorage.getItem("userId")
                 
                 if (extFile === "jpg" || extFile === "jpeg" || extFile === "png" || extFile === "webp" ||extFile === "gif"){
                     let data = new FormData()
-                    data.append('image', this.fileField)
+                    data.append('image', this.image)
                     data.append('title', this.title)
                     data.append('content', this.content)
                     data.append('userId',Id)
@@ -120,15 +116,16 @@ const Id = localStorage.getItem("userId")
                             'Content-Type': 'multipart/form-data',
                         'authorization': `Bearer ${token}`
                         },
+                        body: data
                         
                     })
-                    .then((response) => response.json())
                     .then(() => {
-                       // localStorage.setItem('userId', parseInt(res.data.userId));
-                    //localStorage.setItem('token', res.data.token);
+                            console.log('ok')
+
+                    
                         this.$router.push("/allposts");
                     })
-                    .catch(alert)
+                            .catch((err) => console.log(err))
                 } else {
                     alert("Uniquement les fichiers jpg, jpeg, png, webp et gif sont acceptés!");
                 }
@@ -200,6 +197,7 @@ textarea {
     font-size: 0.8rem;
 }
 
+
 .modif {
     margin: 0;
 }
@@ -215,20 +213,6 @@ textarea {
 
 
 
-.buttonenvoyer,
-.buttonannuler {
-    margin: 10px 0 10px 0;
-    padding: 5px 30px ;
-    border: 2px solid #146cbe;
-    border-radius: 10px;
-    background: #486ce0;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-.buttonannuler{
-    margin-bottom: 40px;
-}
 
 .button-comment {
     margin: 10px 0 0 0;

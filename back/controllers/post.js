@@ -12,6 +12,7 @@ const Post = models.Post;
 exports.createPost = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
+    
     console.log("post"+ JSON.stringify (req.body.post));
     const post = req.body.post;    
      console.log ("___________________________"+req.file)

@@ -9,7 +9,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       userId: {
-        type: Sequelize.STRING
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Users',
+          key: 'id'
+        }
       },
       postId: {
         allowNull: false,
@@ -27,11 +32,14 @@ module.exports = {
         type: Sequelize.BOOLEAN
       },*/
       content: {
+        allowNull: false,
         type: Sequelize.STRING
       },
-      date: {
-        type: Sequelize.DATE
-      },
+      created_date: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
+        allowNull: false
+    },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
