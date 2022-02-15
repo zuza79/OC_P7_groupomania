@@ -7,11 +7,11 @@
                 <form>
                     <ul>
                         <li>
-                            <input type="text" v-model="titre" placeholder="Titre" size="50" required aria-label="Titre du post">
+                            <input type="text" v-model="title" placeholder="Titre" size="50" required aria-label="Titre du post">
                         </li>
                         
                         <li>
-                            <textarea v-model="contenu" placeholder="Rédiger votre message..." rows="10" cols="60" required aria-label="Message du post"></textarea>
+                            <textarea v-model="content" placeholder="Rédiger votre message..." rows="10" cols="60" required aria-label="Message du post"></textarea>
                         </li>
                         <li v-if="image">
                             <img :src="image" alt="Image du post" class="file">
@@ -24,7 +24,7 @@
 
                     </ul>
                 </form>
-                <button @click="createPost()" class="btnSave" aria-label="Créer ce post">Valider</button>
+                <button @click="createPost()" class="btnSave" aria-label="Créer ce post">Publier</button>
                 <div>
                  <router-link to="/allposts" aria-label="Retour vers Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
                 </div>
@@ -35,6 +35,7 @@
 
 
 <script>
+import axios from 'axios'
 import HeaderProfile from "../components/HeaderProfile";
 import Footer from "../components/Footer";
 
@@ -46,44 +47,61 @@ export default {
     },
     data() {
         return {
-            titre: '',
-            contenu: '',
+           //post: [],
+            title: '',
+            content: '',
             image: '',
-            preview: null
+            contentType: 'text',
+            preview: null,
+            
         }
     },
     methods: {
-        createPost() {
-            const Id = JSON.parse(localStorage.getItem("userId"))
-            const fileField = document.querySelector('input[type="file"]');
-            const token = JSON.parse(localStorage.getItem("token"))
+   createPost() {
+         
+const Id = localStorage.getItem("userId")
+           const fileField = document.querySelector('input[type="file"]');
+          const token = localStorage.getItem("token")
+//const userId = JSON.parse(localStorage.getItem('userId'))
 
-            if (this.titre === '')
+
+            if (this.title === '')
                 alert("Veuillez remplir le titre")
-            if (this.contenu === '')
+            if (this.content === '')
                 alert("Veuillez remplir le contenu du message")
-            if (this.image === '' && this.titre != '' && this.contenu != '') {
+           if (this.image === '' && this.title != '' && this.content != ''){ 
+                
                 let data = new FormData()
-                data.append('title', this.titre)
-                data.append('content', this.contenu)
+                data.append('title', this.title)
+                data.append('content', this.content)
                 data.append('userId', Id)
 
-                axios.post("http://localhost:3000/api/posts", {
-                   
+                //console.log("userId: " +userId)
+
+                axios.post("http://localhost:3000/api/posts/add", data, {
+                    
                     headers: {
+                        'Content-Type': 'multipart/form-data',
                     'authorization': `Bearer ${token}`
                     },
-                    body: data
+                
                 })
                 .then((response) => {
                     return response.json();
+                /*.then((response) => {
+                    console.log('ok')
+                    */
                 })
                 .then(() => {
+                   // localStorage.setItem('userId', parseInt(res.data.userId));
+                  //  localStorage.setItem('token', res.data.token);
                     this.$router.push("/allposts");
                 })
                 .catch(alert)
-
-            } else if (this.titre != '' && this.contenu != '') {
+                /*
+                .catch((err) => console.log(err))
+*/
+            } else if (this.title != '' && this.content != '') {
 
                 var fileName = document.getElementById("file").value
                 var idxDot = fileName.lastIndexOf(".") + 1;
@@ -91,22 +109,23 @@ export default {
                 
                 if (extFile === "jpg" || extFile === "jpeg" || extFile === "png" || extFile === "webp" ||extFile === "gif"){
                     let data = new FormData()
-                    data.append('image', fileField.files[0])
-                    data.append('title', this.titre)
-                    data.append('content', this.contenu)
-                    data.append('userId', Id)
+                    data.append('image', this.fileField)
+                    data.append('title', this.title)
+                    data.append('content', this.content)
+                    data.append('userId',Id)
 
-                    axios.post("http://localhost:3000/api/posts", {
+                    axios.post("http://localhost:3000/api/posts/add", data, {
+                        
                         headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
+                            'Content-Type': 'multipart/form-data',
                         'authorization': `Bearer ${token}`
                         },
-                        body: JSON.stringify(this.body)
-                       
+                        
                     })
                     .then((response) => response.json())
                     .then(() => {
+                       // localStorage.setItem('userId', parseInt(res.data.userId));
+                    //localStorage.setItem('token', res.data.token);
                         this.$router.push("/allposts");
                     })
                     .catch(alert)

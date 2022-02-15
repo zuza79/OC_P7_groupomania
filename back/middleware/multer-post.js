@@ -15,9 +15,8 @@ const storage = multer.diskStorage({
         const name = file.originalname.split(' ').join('_');
         //const name = file.originalname.replace(/\.[^/.]+$/, "")
         const extension = MIME_TYPES[file.mimetype]
-        callback(null, name + Date.now() + "." + extension)
+        callback(null, name + '-' + Math.random().toString().slice(2, 6) + '-' + Math.random().toString().slice(2, 6) + extension)
     }
 });
-
 
 module.exports = multer({ storage }).single('image');

@@ -10,43 +10,31 @@
         <button @click="post()" class="button" ><h2><i class="far fa-edit"></i><br>Rédiger nouveau message</h2></button>
          <!--search -->
         <div>
+            <h2>{{ posts.title }}</h2>
             <input v-model="search" class="search" type="search" placeholder="Rechercher une publication par auteur ..." size=50 aria-label="Barre de recherche par utilisateur">
         </div>
+        <table>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Titre du post</th>
+                        <th>Message du post</th>
+                        <th>Image du post</th>
+                    </tr>
+                    <tr v-bind:key="index" v-for="(post, index) in posts">
+                        <td><input type="text" v-model="post.user.nom" required aria-label="Nom de l'auteur du post" disabled></td>
+                        <td><input type="text" v-model="post.user.prenom" required aria-label="Prénom de l'auteur du post" disabled></td>
+                        <td><input type="text" v-model="post.title" required aria-label="Titre du post" disabled></td>
+                        <td><textarea type="text" v-model="post.content" required aria-label="Message du post" disabled></textarea></td>
+                        <td><img v-if="post.image" :src="post.image" alt="Image du post"></td>
+                        <button @click="deletePost(index)" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i></button>
+                    </tr>
+                </table>
          <!--posts -->
          <article v-if="posts.length == 0">
             <p>Oups! Aucune publication pour instant!</p>
         </article>
-         <article v-else v-bind:key="index" v-for="(post, index) in filterList">
-            <router-link :to="`/post/${post.id}`" class="article">
-                <div class="header">
-                    <div>
-                        <h2>{{ post.title }}</h2>
-                        <p class="info">
-                            Publier par 
-                            <b>{{ post.user.nom }} 
-                            <span v-if="post.user.role != 0">{{ post.user.prenom }} </span></b>
-                            <!--<img class="imgProfile" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
-                            <img class="imgProfile" v-else src="../assets/images/profiles.jpg" alt="photo de profil"><br>
-                            -->
-                            le <b>{{ dateFormat(post.created_date) }}</b>
-                            à <b>{{ hourFormat(post.created_date) }}</b>
-
-                        </p>
-                        <p v-if="post.created_date != post.updated_date"  class="info">
-                            Modification
-                            le <b>{{ dateFormat(post.updated_date) }}</b>
-                            à <b>{{ hourFormat(post.updated_date) }}</b>
-                        </p>
-                    </div>
-                </div>
-                <div class="content">
-                    <p class="message"></p><br>
-                    <img class="image" v-if="post.image" :src="post.image" :alt="post.title">
-                    <p class="text">{{ post.content }}</p>
-                </div>
-                
-            </router-link>
-        </article>
+       <post v-for="(post, index) in posts" :key="index" :post="post">{{post}}</post>
         <Footer />
     </div>
 </template>
@@ -77,12 +65,16 @@ export default {
     },
     methods : {
         
-        getPosts() {
-            const token = JSON.parse(localStorage.getItem("userToken"))
+        getAllPosts() {
+            const token = localStorage.getItem("token")
 
-            axios.get('http://localhost:3000/api/posts/')
+            axios.get('http://localhost:3000/api/posts/', {
                 
-            
+             headers: {
+                    'authorization': `Bearer ${token}`
+                    },
+                   
+                })    
             .then(response => response.json())
             .then(data => (this.posts = data))
             .catch(error => console.log(error))
@@ -102,7 +94,7 @@ export default {
         }
     },
     mounted(){
-        this.getPosts()
+        this.getAllPosts()
     }
 }
 </script>

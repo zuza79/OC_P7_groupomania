@@ -45,7 +45,7 @@ exports.createPost = (req, res, next) => {
 				],
                 title: req.body.post.title || '',
 				content: req.body.post.content || '',
-				image: req.body.post.image || '',
+				image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`|| '',
                 administration: req.body.post ||'',
 				userId: user.id
 			}).then(
