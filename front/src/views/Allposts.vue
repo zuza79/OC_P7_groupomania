@@ -11,34 +11,36 @@
             <p>Oups! Aucune publication pour instant!</p>
         </article>
          <!--create post -->
-        <button @click="post()" class="button" ><h2><i class="far fa-edit"></i><br>Rédiger nouveau message</h2></button>
+        <button @click="addPost()" class="button" ><h2><i class="far fa-edit"></i><br>Rédiger nouveau message</h2></button>
          <!--search -->
         <div>
-            <h2>{{ posts.title }}</h2>
+            
             <input v-model="search" class="search" type="search" placeholder="Rechercher une publication par auteur ..." size=50 aria-label="Barre de recherche par utilisateur">
         </div>
         <table>
                     <tr>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Titre du post</th>
-                        <th>Message du post</th>
-                        <th>Image du post</th>
+                       
+                        <th>Titre</th>
+                        <th>Message</th>
+                        <th>Image</th>
                     </tr>
-                    <tr v-bind:key="index" v-for="(post, index) in posts">
-                        <td><input type="text" v-model="post.user.nom" required aria-label="Nom de l'auteur du post" disabled></td>
-                        <td><input type="text" v-model="post.user.prenom" required aria-label="Prénom de l'auteur du post" disabled></td>
-                        <td><input type="text" v-model="post.title" required aria-label="Titre du post" disabled></td>
-                        <td><textarea type="text" v-model="post.content" required aria-label="Message du post" disabled></textarea></td>
-                        <td><img v-if="post.image" :src="post.image" alt="Image du post"></td>
-                        <button @click="deletePost(index)" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i></button>
+                    <!-- <tr v-for="(post, index) in posts" :key="index" :post="post">{{post}}
+                    -->
+                     <tr v-bind:key="index" v-for="(post, index) in posts">
+                        
+                        <td><input type="text" v-model="post.title" required aria-label="Titre" disabled></td>
+                        <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled></textarea></td>
+                        <td><img v-if="post.image" :src="post.image" alt="Image"></td>
+                        <button @click="post" classe="btnSave" aria-label="Afficher le message"><i class="fa-solid fa-comment-dots"></i></button>
+                        <button @click="deletePost(index)" class="btnDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
+                        
                     </tr>
                 </table>
          <!--posts -->
          <article v-if="posts.length == 0">
             <p>Oups! Aucune publication pour instant!</p>
         </article>
-       <post v-for="(post, index) in posts" :key="index" :post="post">{{post}}</post>
+      <!-- <post v-for="(post, index) in posts" :key="index" :post="post">{{post}}</post>-->
         <Footer />
     </div>
 </template>
@@ -57,6 +59,7 @@ export default {
     data () {
         return {
             posts: [],
+            users: [],
             search:''
         }
     },
@@ -75,13 +78,17 @@ export default {
             axios.get('http://localhost:3000/api/posts/', {
                 
              headers: {
-                    'authorization': `Bearer ${token}`
+                    'authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
                     },
                    
                 })    
-            .then(response => response.json())
-            .then(data => (this.posts = data))
-            .catch(error => console.log(error))
+             .then((res) => {
+                console.log(res.data);
+                this.posts = res.data
+            })
+                
+            .catch(() => console.log('Impossible de récupérer les posts !'))
         },
         dateFormat(createdDate) {
             const date = new Date(createdDate)

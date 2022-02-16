@@ -1,40 +1,78 @@
 <template>
     <div>
         <HeaderProfile />
-            
             <section>
-                <h1><i class="far fa-edit"></i><br>Rédiger votre message</h1>
-                <form>
-                    <ul>
-                        <li>
-                            <input type="text" v-model="title" placeholder="Titre" size="50" required aria-label="Titre du post">
-                        </li>
-                        
-                        <li>
-                            <textarea v-model="content" placeholder="Rédiger votre message..." rows="10" cols="60" required aria-label="Message du post"></textarea>
-                        </li>
-                        <li v-if="image">
-                            <img :src="image" alt="Image du post" class="file">
-                        </li>
-                        <li>
-                            <input type="file" accept=".jpeg, .jpg, .png, .webp, .gif" v-on:change="uploadFile" id="file" class="input-file" aria-label="Image du post">
-                            <label v-if="image" for="file" class="label-file" aria-label="Choisir une photo pour ce post"></label>
-                            
-                            <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer cette photo du post"><i class="far fa-trash-alt"></i> Supprimer image</button>
-                            
-                        </li>
-
-                    </ul>
-                </form>
-                <button @click="createPost()" class="btnSave" aria-label="Créer ce post">Publier</button>
-                <div>
-                 <router-link to="/allposts" aria-label="Retour vers Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
+                <div class="header">
+                    <div>
+                        <h1>{{ post.title }}</h1>
+                    </div>
+                    <div>
+                        <div class="info">
+                            <p>
+                                Posté par 
+                                <b>{{ post.user.nom }} 
+                                <span v-if="post.user.role != 0">{{ post.user.prenom }} </span></b>     
+                               <!-- <img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
+                                <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
+                               -->
+                                le <b>{{ dateFormat(post.created_date) }}</b>
+                                à <b>{{ hourFormat(post.created_date) }}</b><br>
+                            </p>
+                            <p v-if="post.created_date != post.updated_date">
+                                Modifié 
+                                le <b>{{ dateFormat(post.updated_date) }}</b>
+                                à <b>{{ hourFormat(post.updated_date) }}</b>
+                            </p>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="content">
+                    <p class="modif">
+                    <button @click="modifyPost()" v-if="post.user_id === id" class="button" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier ce post</button>
+                    <button @click="deletePost()" v-if="post.user_id === id || role === 1" class="button espacement" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer ce post</button>
+                    </p>
+                    <hr v-if="post.user_id === id || role === 1">
+                    <img v-if="post.image" :src="post.image" alt="Image du post">
+                    <p>{{ post.content }}</p>
+                </div>
+
+                <button v-if="comments.length != 0 && displaycomments === false " v-on:click="show" class="comment-button" aria-label="Voir commentaire">Voir {{ comments.length }} commentaire<span v-if="comments.length >= 2">s</span></button>
+                <article v-if="displaycomments">
+                    <div v-bind:key="index" v-for="(comment, index) in comments" class="comment">
+                        <div>
+                            <p class="info">
+                                Posté par 
+                                <b>{{ comment.user.nom }} 
+                                <span v-if="comment.user.role != 0">{{ comment.user.prenom }} </span></b> 
+                               <!-- <img class="photo-profil" v-if="comment.user.image" :src="comment.user.image" alt="photo de profil">
+                                <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
+                               -->
+                                le <b>{{ dateFormat(comment.date) }}</b>
+                                à <b>{{ hourFormat(comment.date) }}</b>
+                            </p>
+                            <p>
+                                <button v-if="comment.user_id === id || role === 1" @click="deleteComment(index)" class="button-comment" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
+                            </p>
+                        </div>                        
+                        <hr>
+                        <p class="comment-content">{{ comment.content }}</p>
+                    </div>
+                    <button v-on:click="hide" class="comment-button" aria-label="Cacher commentaire">Cacher le<span v-if="comments.length >= 2">s</span> commentaire<span v-if="comments.length >= 2">s</span></button>
+                </article>
+
+                <button v-if="displayCreateComment === false" v-on:click="show2" class="button" aria-label="Ecrire un commentaire">Ecrire un commentaire</button>
+                <article v-if="displayCreateComment" class="createcomment">
+                    <textarea v-model="commentaire" placeholder="Commentaire" cols="60" rows="5" aria-label="Message du commentaire"></textarea>
+                    <button @click="createComment()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer le commentaire</button>
+                    <button v-on:click="hide2" class="btnDelete" aria-label="Annuler le commentaire">Annuler le commentaire</button>
+                </article>
+
             </section>
+            <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
         <Footer />
     </div>
 </template>
-
 
 <script>
 import axios from 'axios'
@@ -47,103 +85,167 @@ export default {
         HeaderProfile,
         Footer
     },
-    data() {
+    data () {
         return {
-           //post: [],
-            title: '',
-            content: '',
-            image: '',
-            contentType: 'text',
-            preview: null,
-            
+            id_param: this.$route.params.id,
+            post: {
+                content:'',
+                created_date:'',
+                updated_date:'',
+                id:'',
+                image:'',
+                title:'',
+                user: {},
+                userId:''
+            },
+            comments: [],
+            displaycomments: false,
+            displayCreateComment: false,
+            commentaire:'',
+            id:'',
+            role: ''
         }
     },
-    methods: {
-        // Récupération du fichier image uploadé
-        uploadFile(event) {
-            this.image = event.target.files[0]
+    methods : {
+        show: function () {
+            return this.displaycomments = true;
         },
-   createPost() {
-         
-const Id = JSON.parse(localStorage.getItem("userId"))
-           const fileField = document.querySelector('input[type="file"]');
-          const token = (localStorage.getItem("token"))
+        hide: function () {
+            return this.displaycomments = false;
+        },
+        show2: function () {
+            return this.displayCreateComment = true;
+        },
+        hide2: function () {
+            return this.displayCreateComment = false;
+        },
+        User() {
+            this.id = localStorage.getItem("userId")
+            this.role = localStorage.getItem("role")
 
+        },
+        
+        getOnePost() {
+            const token = localStorage.getItem("token")
 
-
-            if (this.title === '')
-                alert("Veuillez remplir le titre")
-            if (this.content === '')
-                alert("Veuillez remplir le contenu du message")
-           if (this.image === '' && this.title != '' && this.content != ''){ 
+            axios.get (`http://localhost:3000/api/posts/${this.id_param}`, {
+              
+                headers: {
+                    'authorization': `Bearer ${token}`
+                }
+            })
+            .then((res) => {
+                console.log(res.data);
+                this.posts = res.data
+            })
                 
-                let data = new FormData()
-                data.append('title', this.title)
-                data.append('content', this.content)
-                data.append('userId', Id)
+            .catch(() => console.log('Impossible de récupérer les posts !'))
+        },
+        
+        getPostComments() {
+            const token = localStorage.getItem("token")
 
-                         axios.post("http://localhost:3000/api/posts/add", data, {
-                    
+            axios.get (`http://localhost:3000/api/comments/${this.id_param}`, {
+                   
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        'authorization': `Bearer ${token}`
+                    }
+            })
+            
+            .then((res) => {
+                console.log(res.data);
+                this.posts = res.data
+            })
+                
+            .catch(() => console.log('Impossible de récupérer les posts !'))
+        },
+        dateFormat (createdDate) {
+            const date = new Date(createdDate)
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'};
+            return date.toLocaleDateString('fr-FR', options);
+        },
+        hourFormat (createdHour) {
+            const hour = new Date(createdHour)
+            const options = { hour: 'numeric', minute:'numeric', second:'numeric'};
+            return hour.toLocaleTimeString('fr-FR', options);
+        },
+        deletePost () {
+            const token = JSON.parse(localStorage.getItem("userToken"))
+
+            if (confirm("Voulez-vous vraiment supprimer le post") === true) {
+
+                axios.delete(`http://localhost:3000/api/posts/${this.id_param}`, {
+                   
+                    headers: {
+                        'authorization': `Bearer ${token}`
+                    }
+                })
+                .then((res) => {
+                console.log(res.data);
+                this.posts = res.data
+            })
+                
+            .catch(() => console.log('Impossible de récupérer les posts !'))
+        
+            }
+        },
+        modifyPost () {
+            this.$router.push(`/modifypost/${this.id_param}`)
+        },
+        createComment () {
+            if( this.commentaire === ""){
+                alert('Veuillez remplir votre commentaire')
+
+            } else {
+                const Id = localStorage.getItem("userId");
+                const token = localStorage.getItem("token")
+                
+                let data = {
+                    content: this.commentaire,
+                    post_id: this.id_param,
+                    userId: Id
+                }
+
+                get.post("http://localhost:3000/api/comments", {
+                   
+                    headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
                     'authorization': `Bearer ${token}`
                     },
-                 
-                body: data
-                })
-                .then(() => {
-                            console.log('ok')
-                    this.$router.push("/allposts");
-                })
+                    body: data                })
+                .then((res) => {
+                console.log(res.data);
+                this.posts = res.data
+            })
                 
-                .catch((err) => console.log(err))
-            } else if (this.title != '' && this.content != '') {
+            .catch(() => console.log('Impossible de récupérer les posts !'))
+       }
+        },
+        deleteComment (index) {
+            const token = localStorage.getItem("token")
 
-                var fileName = document.getElementById("file").value
-                var idxDot = fileName.lastIndexOf(".") + 1;
-                var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
-                
-                if (extFile === "jpg" || extFile === "jpeg" || extFile === "png" || extFile === "webp" ||extFile === "gif"){
-                    let data = new FormData()
-                    data.append('image', this.image)
-                    data.append('title', this.title)
-                    data.append('content', this.content)
-                    data.append('userId',Id)
+            if (confirm("Voulez-vous vraiment supprimer ce commentaire") === true) {
 
-                    axios.post("http://localhost:3000/api/posts/add", data, {
-                        
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
+                axios.delete(`http://localhost:3000/api/comments/${this.comments[index].id}`, {
+                   
+                    headers: {
                         'authorization': `Bearer ${token}`
-                        },
-                        body: data
-                        
-                    })
-                    .then(() => {
-                            console.log('ok')
-
-                    
-                        this.$router.push("/allposts");
-                    })
-                            .catch((err) => console.log(err))
-                } else {
-                    alert("Uniquement les fichiers jpg, jpeg, png, webp et gif sont acceptés!");
-                }
-            }
+                    },
+                })
+                 .then((res) => {
+                console.log(res.data);
+                this.posts = res.data
+            })
+                
+            .catch(() => console.log('Impossible de récupérer les posts !'))
+       }
         },
-        uploadFile(e) {
-            if (e.target.files) {
-                let reader = new FileReader()
-                reader.onload = (event) => {
-                    this.preview = event.target.result
-                    this.image = event.target.result
-                }
-                reader.readAsDataURL(e.target.files[0])
-            }
-        },
-        deletefile() {
-            this.image = '';
-        }
+    },
+    mounted(){
+        this.User()
+        this.getOnePost ()
+        this.getComments ()
     }
 }
 </script>
@@ -155,22 +257,11 @@ section {
     align-items: center;
 }
 
-form{
-    width: 80%;
-}
-ul {
-list-style: none;
-padding: 0;
-
+h1 {
+    font-size: 1.5rem;
+    margin: 30px 0 10px 0;
 }
 
-li {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  margin-bottom: 30px;
-  
-}
 textarea {
     font-size: 1.2rem;
 }
@@ -178,8 +269,8 @@ textarea {
 .header,
 .content {
     width: 50%;
-    background: #146cbe;
-    border: 2px solid #486ce0;
+    background:gray;
+    border: 2px solid black;
 }
 
 .header {
@@ -197,7 +288,6 @@ textarea {
     font-size: 0.8rem;
 }
 
-
 .modif {
     margin: 0;
 }
@@ -214,12 +304,17 @@ textarea {
 
 
 
+
+.buttonannuler{
+    margin-bottom: 40px;
+}
+
 .button-comment {
     margin: 10px 0 0 0;
     padding: 5px 5px ;
-    border: 2px solid #146cbe;
+    border: 2px solid #fd2d01;
     border-radius: 10px;
-    background: #486ce0;
+    background: #ffd7d7;
     font-size: 1rem;
     cursor: pointer;
 }
@@ -236,9 +331,9 @@ textarea {
 .comment-button {
     margin: 10px 0 30px 0;
     padding: 5px 30px ;
-    border: 2px solid #146cbe;
+    border: 2px solid #fd2d01;
     border-radius: 10px;
-    background: #486ce0;
+    background: #ffd7d7;
     font-size: 1rem;
     cursor: pointer;
 }
@@ -257,7 +352,6 @@ textarea {
 img {
     width: 70%;
     border-radius: 30px;
-    margin: auto;
 }
 
 .content img {
@@ -268,10 +362,47 @@ img {
 .photo-profil {
     width: 50px;
     height: 50px;
-    border: 2px solid #146cbe;
+    border: 2px solid #fd2d01;
     border-radius: 30px;
 }
 
 
+@media screen and (max-width:1024px) {
+
+    
+    .header,
+    .content {
+        width: 90%;
+    }
+
+}
+
+@media screen and (max-width:768px) {
+
+    
+    .header,
+    .content {
+        width: 98%;
+    }
+
+    .modif{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .espacement{
+        margin: 0;
+    }
+
+    .button {
+        width: 50%;
+    }
+
+    .createcomment {
+        width: 100%;
+    }
+
+}
 
 </style>

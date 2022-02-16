@@ -10,6 +10,7 @@ import AdminComments from '../views/AdminComments.vue'
 import AdminPosts from '../views/AdminPosts.vue'
 import AdminUsers from '../views/AdminUsers.vue'
 import Post from '../views/Post.vue'
+import CreatePost from '../views/CreatePost.vue'
 import CommentPost from '../views/CommentPost.vue'
 import ModifyPost from '../views/ModifyPost.vue'
 import ModifyComment from '../views/ModifyComment.vue'
@@ -40,6 +41,11 @@ const routes = [
     component: Allposts
   },
   {
+    path: '/post',
+    name: 'Post',
+    component: Post
+  },
+  {
     path: '/admin',
     name: 'AdminDisplay',
     component: AdminDisplay
@@ -65,9 +71,9 @@ const routes = [
     component: Profile
   },
   {
-    path: '/post',
-    name: 'Post',
-    component: Post
+    path: '/post/new',
+    name: 'CreatePost',
+    component: CreatePost
   },
   {
     path: '/post/comment',

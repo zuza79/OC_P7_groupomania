@@ -59,8 +59,11 @@ export default {
       };
       {   
           
-          axios.post("http://localhost:3000/api/auth/signup", {user: data} )
-          
+          axios.post("http://localhost:3000/api/auth/signup", data, {
+          headers: {
+                    //'Content-Type': 'multipart/form-data'
+                }
+                 })
            .then(() => {
               alert("Inscription accepter");
               this.$router.push("/login");

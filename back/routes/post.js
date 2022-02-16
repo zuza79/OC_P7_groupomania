@@ -10,7 +10,7 @@ router.put('/:id', auth, multerPosts, postCtrl.modifyPost);
 router.delete('/:id',auth,multerPosts, postCtrl.deletePost)
 router.get('/', auth, postCtrl.getAllPosts)
 router.get('/:id', auth, postCtrl.getOnePost) 
-router.get('/:user_id/posts',auth, postCtrl.getPostsUser)
+router.get('/:userId/posts',auth, postCtrl.getPostsUser)
 router.put('/admin/post/:id', auth, postCtrl.administrationPost)
 
 module.exports = router;

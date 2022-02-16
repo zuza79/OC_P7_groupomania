@@ -44,11 +44,12 @@ exports.createPost = (req, res, next) => {
 						model: models.User,
 				}
 				],
-                title: req.body.post.title || '',
-				content: req.body.post.content || '',
+                title: req.body.post.title || 'pokus',
+				content: req.body.post.content || 'mezeri',
 				image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`|| '',
-                administration: req.body.post ||'',
-				userId: user.id
+                UserId: user.id,
+                like: 0,
+                dislike: 0,
 			}).then(
                 res.status(201).json({"message": "Nouveau post créé avec succès !"})
             
@@ -229,16 +230,15 @@ exports.administrationPost = (req, res, nest) => {
 
 // DELETE POST
 exports.deletePost = (req, res, next) => {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, process.env.TOKEN);
-    const userId = decodedToken.userId
-    const role = decodedToken.role
-
-    Post.findOne({ where: { id: req.params.id }})
-        .then(post => {
-            if (userId === post.user.id || role === 0 || role === 1) {
-                if (post.image != null) {
-                    const filename = post.image.split('/images/posts/')[1];
+    console.log("post   "+ req.body);
+        Post.findOne({ where: { id: req.params.id }})
+        
+        .then(Post => {
+            console.log("post FindOne    "   + req.params.id);
+            if (userId === post.user.id || role === 0) {
+               
+                if (Post.image != null) {
+                    const filename = Post.image.split('/images/posts/')[1];
                     fs.unlink(`images/posts/${filename}`, () => {
                         Post.destroy({ where: { id: req.params.id } })
 
@@ -248,7 +248,7 @@ exports.deletePost = (req, res, next) => {
                 
             
                 } else {
-                    Post.destroy({ where: { id: req.params.id } })
+                    post.destroy({ where: { id: req.params.id } })
 
                     .then(() => res.status(200).json({message : 'Post supprimé !'}))
                     .catch( error => res.status(400).json({error}));

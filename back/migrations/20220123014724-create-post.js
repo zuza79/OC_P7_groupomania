@@ -33,15 +33,6 @@ module.exports = {
           key: 'id'
         }
       },
-      postId: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Posts',
-          key: 'id'
-        }
-      },
-     
       
       image: {
         allowNull: true,
