@@ -77,7 +77,7 @@ export default {
         }
     },
     mounted () {
-        this.getUser();
+        this.getOneUser();
     },
     methods: {
         show: function () {
@@ -87,12 +87,11 @@ export default {
         getOneUser() {
             const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
-           // const Id = JSON.parse(localStorage.getItem("userId"))
-          //  const token = JSON.parse(localStorage.getItem("userToken"))
-
+          
            axios.get(`http://localhost:3000/api/users/profile/${userId}`, {
         headers: {
-          'authorization': `Bearer ${token}`
+          'authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
         }
             }).then(res => {
         this.user.id = res.data.id;

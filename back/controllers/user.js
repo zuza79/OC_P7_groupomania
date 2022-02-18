@@ -132,7 +132,7 @@ exports.delete = (req, res, next) => {
                 .catch( error => res.status(400).json({error}));
             })
         } else {
-            user.destroy({ where: { id: req.params.id } })
+            User.destroy({ where: { id: req.params.id } })
 
             .then(() => res.status(200).json({message : 'Utilisateur supprimé !'}))
             .catch( error => res.status(400).json({error}));

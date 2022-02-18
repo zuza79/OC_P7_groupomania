@@ -9,11 +9,11 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       title: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
         allowNull: false
       },
       content: {
-        type: Sequelize.TEXT, 
+        type: Sequelize.STRING, 
         allowNull: false
       },
       like: {
@@ -35,7 +35,7 @@ module.exports = {
       },
       
       image: {
-        allowNull: true,
+       
         type: Sequelize.STRING
       },
       createdAt: {

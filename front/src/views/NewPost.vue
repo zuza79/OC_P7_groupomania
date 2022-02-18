@@ -42,7 +42,7 @@ import HeaderProfile from "../components/HeaderProfile";
 import Footer from "../components/Footer";
 
 export default {
-    name: 'Post',
+    name: 'NewPost',
     components: {
         HeaderProfile,
         Footer
@@ -82,7 +82,7 @@ const Id = JSON.parse(localStorage.getItem("userId"))
                 data.append('content', this.content)
                 data.append('userId', Id)
 
-                         axios.post("http://localhost:3000/api/posts/add", data, {
+                         axios.post("http://localhost:3000/api/posts/new", data, {
                     
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -105,12 +105,13 @@ const Id = JSON.parse(localStorage.getItem("userId"))
                 
                 if (extFile === "jpg" || extFile === "jpeg" || extFile === "png" || extFile === "webp" ||extFile === "gif"){
                     let data = new FormData()
-                    data.append('image', this.image)
-                    data.append('title', this.title)
-                    data.append('content', this.content)
-                    data.append('userId',Id)
+                    data.append('filename', fileName)
+                     data.append('image', this.image);
+                    data.append('title', this.title);
+                    data.append('content', this.content);
+                    data.append('userId',Id);
 
-                    axios.post("http://localhost:3000/api/posts/add", data, {
+                    axios.post("http://localhost:3000/api/posts/new", data, {
                         
                         headers: {
                             'Content-Type': 'multipart/form-data',
@@ -119,13 +120,14 @@ const Id = JSON.parse(localStorage.getItem("userId"))
                         body: data
                         
                     })
-                    .then(() => {
-                            console.log('ok')
-
-                    
-                        this.$router.push("/allposts");
-                    })
-                            .catch((err) => console.log(err))
+                    .then((res) => {
+                    alert("Message suprimé")
+                console.log(res.data);
+                this.posts = res.data
+            })
+                
+            .catch(() => console.log('Impossible de récupérer information !'))
+        
                 } else {
                     alert("Uniquement les fichiers jpg, jpeg, png, webp et gif sont acceptés!");
                 }

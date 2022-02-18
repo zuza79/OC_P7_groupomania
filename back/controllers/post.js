@@ -1,7 +1,67 @@
 // controllers post
-// create, modify, delete, display one/all post
+// create, modify, dele, display one/all post
 // display all post by user, modify post by admin
+const jwtUtils = require('../utils/jwt.utils.js');
 
+
+// Importation des modèles
+const models = require('../models');
+
+
+// ----->Controllers<-----
+// Création d'un nouveau post
+exports.createPost = (req, res, next) => {
+     console.log("post"+ JSON.stringify (req.body.post));
+
+    const headerAuth = req.headers['authorization'];
+    const userId = jwtUtils.getUserId(headerAuth);
+    const title = req.body.title;
+    const content = req.body.content;    
+    let image = req.file
+
+    if(!content || !title) {
+        res.status(400).json({ 'erreur': 'paramètre manquant' });
+    };
+
+     /*   } else {
+        image = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`;
+        if(image.length > 150) {
+            res.status(400).json({ 'erreur': 'Nom de l\'image invalide' })
+        };
+    }*/
+
+    models.User.findOne({
+        where: { id: userId }
+    })
+    .then(user => {
+        if(user) {
+            models.Post.create({
+                title : title,
+                content: content,
+                image: image,
+                like: 0,
+                dislike: 0,
+                UserId: user.id
+            })
+            res.status(201).json({"message": "Nouveau post créé avec succès !"})
+                    
+        } else {
+            res.status(404).json({'erreur' : 'Utilisateur introuvable'});
+        };
+    })
+    .catch(err => {
+        res.status(500).json({ 'err': 'ERREUR !!!' });
+    });
+};
+
+
+
+
+
+
+
+
+/*
 const jwtUtils = require('../utils/jwt.utils.js');
 const fs = require('fs');
 const models = require('../models');
@@ -13,39 +73,30 @@ exports.createPost = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     
-    console.log("post"+ JSON.stringify (req.body.post));
+  //  console.log("post"+ JSON.stringify (req.body.post));
     const post = req.body.post;    
-     console.log ("___________________________"+req.file)
+    // console.log ("___________________________"+req.file)
     let image = "";
-    try{
+    /*try{
         image = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`;
     }
     catch(erreur){
         console.log(erreur);
-    }
-
-
+    }*/
 // verifier les champs du post sauf image 
-    if(!post || !image) {
+ /*   if(!post) {
 
         res.status(400).json({ 'erreur': 'paramètre manquant' });
     };
-
- 
-
     User.findOne({
         where: { id: userId }
     })
     .then(user => {
         if(user) {
-            Post.create ({
-				include: [
-					{
-						model: models.User,
-				}
-				],
-                title: req.body.post.title || 'pokus',
-				content: req.body.post.content || 'mezeri',
+           Post.create ({
+				include: [ {model: models.User,}],
+                title: post.title,
+				content: req.body.post.content || "",
 				image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`|| '',
                 UserId: user.id,
                 like: 0,
@@ -67,7 +118,7 @@ exports.createPost = (req, res, next) => {
     });
     
 };
-
+*/
 // DISPLAY ONE POST
 exports.getOnePost = (req, res, nest) => {
     Post.findOne({

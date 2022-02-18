@@ -11,12 +11,12 @@
             <p>Oups! Aucune publication pour instant!</p>
         </article>
          <!--create post -->
-        <button @click="addPost()" class="button" ><h2><i class="far fa-edit"></i><br>Rédiger nouveau message</h2></button>
-         <!--search -->
-        <div>
-            
-            <input v-model="search" class="search" type="search" placeholder="Rechercher une publication par auteur ..." size=50 aria-label="Barre de recherche par utilisateur">
-        </div>
+        <router-link to="/postnew" aria-label="Ouvertir de creation d'un message">
+        <button  class="button" >
+            <h2><i class="far fa-edit"></i><br>Rédiger nouveau message</h2>
+            </button>
+            </router-link>
+        
         <table>
                     <tr>
                        
@@ -31,7 +31,7 @@
                         <td><input type="text" v-model="post.title" required aria-label="Titre" disabled></td>
                         <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled></textarea></td>
                         <td><img v-if="post.image" :src="post.image" alt="Image"></td>
-                        <button @click="post" classe="btnSave" aria-label="Afficher le message"><i class="fa-solid fa-comment-dots"></i></button>
+                        <router-link to="post/comment/${this.posts[index].id}" class="btnSave" aria-label="Afficher le message"><i class="fa-solid fa-comment-dots"></i></router-link>
                         <button @click="deletePost(index)" class="btnDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
                         
                     </tr>
@@ -89,6 +89,28 @@ export default {
             })
                 
             .catch(() => console.log('Impossible de récupérer les posts !'))
+        },
+        //DELETE POST
+        deletePost (index) {
+            const token = localStorage.getItem("token")
+
+            if (confirm("Voulez-vous vraiment supprimer votre message?") === true) {
+
+                axios.delete(`http://localhost:3000/api/posts/${this.posts[index].id}`, {
+                   
+                    headers: {
+                        'authorization': `Bearer ${token}`
+                    }
+                })
+                .then((res) => {
+                    alert("Message suprimé")
+                console.log(res.data);
+                this.posts = res.data
+            })
+                
+            .catch(() => console.log('Impossible de suprimer ce message!'))
+            alert("Vous disposer pas des doit de supprimer ce message, c'est que le auter ou administrateur");
+            }
         },
         dateFormat(createdDate) {
             const date = new Date(createdDate)
@@ -174,7 +196,10 @@ input {
     border: 2px solid black;
     border-radius: 30px;
 }
-
+.btnSave, .btnDelete{
+    width: 25px;
+    height: 25px;
+}
 .text {
     font-size: 14px;
 }
