@@ -120,7 +120,7 @@ exports.login = (req, res, next) => {
 
 
 /////////////// DELETE
-exports.delete = (req, res, next) => {
+exports.deleteUser = (req, res, next) => {
     User.findOne({ where: { id: req.params.id }})
     .then(User => {
         if (User.image != null) {
@@ -270,8 +270,10 @@ exports.AdminModifyUser = (req, res, next) => {
 
 //modify password
 exports.modifyPassword = (req, res, next) => {
-    user.findOne({ where: { id: req.params.id }})
+    User.findOne({ where: { id: req.params.id }})
     .then(User => {
+        controle.log ('oldPasword   ' + req.body.oldPassword), 
+        controle.log ('new pssaword    ' +User.password)
         bcrypt.compare(req.body.oldPassword, User.password)
             .then(valid => {
 
@@ -290,6 +292,7 @@ exports.modifyPassword = (req, res, next) => {
                     };
 
                     user.update(newPassword, { where: { id: req.params.id }})
+                    console.log('newpass   ' + newPassword)
                     .then(() => { res.status(201).json({ message: 'Mot de passe modifié !' })})
                     .catch(error => res.status(400).json({ error }));
 

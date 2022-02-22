@@ -3,6 +3,9 @@
         <HeaderProfile />
         <div>
             <h1>Mon profil</h1>
+           <p>Voir tout les publications??????</p>
+           
+                            
         <!--user info nom, prenom, email -->
             <form>
                 <ul>
@@ -21,7 +24,7 @@
 
                 <!--modify image -->
                     <div class="modifyImage" id="modifyImage">
-                        <img v-if="user.image" src="user.image" alt="Photo de profil" class="file" width="150px" height="150px" border-radius="15px">
+                        <img v-if="user.image" :src="user.image" alt="Photo de profil" class="file" width="150px" height="150px" border-radius="15px">
                         <label v-if="!user.image" for="file" class="label-file" aria-label="Inserer votre photo de profil" ><i class="fas fa-upload"></i><br>Inserer <br>votre photo de profil</label>
                         <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer la photo de profil"> <i class="far fa-trash-alt"></i> Supprimer</button>
                         <input type="file" accept="image/jpeg, image/jpg, image/png, image/webp" v-on:change="uploadFile" id="file" class="input-file" aria-label="Photo de profil">
@@ -37,6 +40,7 @@
                         </li>
                     </div>
             </nav>
+
                 <div class="submit">
                     <button @click="modifyUser()" class="btnSave" aria-label="Modifier le compte de cet utilisateur"><i class="fas fa-edit"></i> Enregistrer</button>
                     <button @click="deleteUser()" class="espacement btnDelete" aria-label="Supprimer le compte de cet utilisateur"><i class="far fa-trash-alt"></i> Supprimer le compte</button>
@@ -85,10 +89,11 @@ export default {
         },
         //get one user
         getOneUser() {
+            const Id = JSON.parse(localStorage.getItem("userId"))
             const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
           
-           axios.get(`http://localhost:3000/api/users/profile/${userId}`, {
+           axios.get(`http://localhost:3000/api/auth/profile/${Id}`, {
         headers: {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
@@ -103,6 +108,7 @@ export default {
     },
     //modify user
         modifyUser() {
+            const Id = JSON.parse(localStorage.getItem("userId"))
             const userId = this.$route.params.id;
             const token = localStorage.getItem('token');
             const fileField = document.querySelector('input[type="file"]');
@@ -127,7 +133,7 @@ export default {
                 alert("Veuillez écrire une adresse email valide");
             } else if ((regexText.test(this.user.nom) === true) && regexText.test(this.user.prenom) === true && regexEmail.test(this.user.email) === true && this.user.image === null) {
             
-                axios.put(`http://localhost:3000/api/auth/profile/${userId}`, {
+                axios.put(`http://localhost:3000/api/auth/profile/${Id}`, {
                    
                         headers: {
                         'Accept': 'application/json',
@@ -148,59 +154,69 @@ export default {
                 let data = new FormData()
                 data.append('nom', this.user.nom)
                 data.append('prenom', this.user.prenom)
-                data.append('email', this.user.email)
+                //data.append('email', this.user.email)
+                data.append('image', this.image)
                 data.append('image', fileField.files[0])
 
 
-                axios.put(`http://localhost:3000/api/auth/profile/${userId}`, {
+                axios.put(`http://localhost:3000/api/auth/profile/${Id}`, data,{
                    
                         headers: {
+                            'Content-Type': 'multipart/form-data',
                         'authorization': `Bearer ${token}`
                         },
                         body: data
                 })
-                .then((response) => response.json())
-                .then(() => {
-                    alert("Votre modification est bien prise en compte")
-                    this.$router.go();
-                })
-                .catch(error => console.log(error))
+                 .then(() => {
+                    alert("Profil modifier")
+                console.log("profil modifier");
+                 this.$router.push("/profile");
+                
+            })
+                
+            .catch(() => console.log('Impossible de récupérer les informations !'))
             }
         },
         //delete
         deleteUser() {
+            const Id = JSON.parse(localStorage.getItem("userId"))
             if (confirm("Voulez-vous vraiment supprimer le compte?") == true) {
                 const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
 //delete posts
-                axion.delete(`http://localhost:3000/api/posts/${userId}`, {
+                axios.delete(`http://localhost:3000/api/posts/${Id}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
                     },
                 })
 
-                .then(response => response.json())
-                .then(data => (this.posts = data))
-                .then (() => {
-                    let pub = this.posts
+                .then(() => {
+                    alert ("message suprimer")
+                    console.log("message suprimer");
+                
+                     let pub = this.posts
 
                     for ( let i = 0 ; i < pub.length ; i++) {
                         if (pub[i].image) {
-                        axios.delete(`http://localhost:3000/api/posts/${pub[i].id}`, {
+                        axios.deletePost(`http://localhost:3000/api/posts/${pub[i].id}`, {
                            
                             headers: {
-                                'authorization': `Bearer ${token}`
+                                'authorization': `Bearer ${token}`,
+                                'Content-Type': 'multipart/form-data',
                             },
                         })
-                            .then(response => response.json())
-                            .catch(alert)
+                            .then(() => {
+                                alert("les posts suprimer")
+                                console.log("les posts supprimer")
+                            })
+                            .catch(alert ("impossilbe supprimer les posts"))
                         }
                     }
                 })
                 .then(() => {
                     //delete user
-                    axios.delete(`http://localhost:3000/api/auth/profile/${userId}`, {
+                    axios.deleteUser(`http://localhost:3000/api/auth/profile/${Id}`, {
                        
                         headers: {
                         'Accept': 'application/json',
@@ -231,8 +247,10 @@ export default {
         deletefile() {
             this.user.image = '';
         },
+        
         //modify password
         modifyPassword() {
+            const Id = JSON.parse(localStorage.getItem("userId"))
      const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
             const regexPassword = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{3,50}$/;
@@ -256,32 +274,26 @@ export default {
 					password : this.newPassword
 				}
 
-				axios.put(`http://localhost:3000/api/auth/profile/${userId}`, {
+				axios.put(`http://localhost:3000/api/auth/profile/${Id}`, data, {
                    
                     headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify(data)
+                   // body: JSON.stringify(data)
 				})
-                .then(response => {
-                    if(response.ok) {
-                    return response.json()
-                    } else {
-                    return response.text()
-                    .then((text) => {
-                        throw new Error(text)}
-                    )
-                    }
-                })
-				.then(() => {
-                    alert("Le mot de passe a été modifié")
-					this.$router.go();
-				})
-				.catch(alert)
+                .then(() => {
+                    alert("Le nouveau mot de passe enregistrer")
+                console.log("Le nouveau mot de passe enregistrer");
+                 this.$router.push("/allposts");
+                
+            })
+                
+            .catch(() => console.log('Impossible de récupérer les informations !'))
+     
 			} else {
-				alert("Le nouveau mot de passe et sa confirmation ne sont pas identiques")
+				alert("Le nouveau mot de passe enregistrer")
 			}
         },
     mounted() {

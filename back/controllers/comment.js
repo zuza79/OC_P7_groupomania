@@ -1,28 +1,43 @@
-//// controllers - comment
 const Comment = require('../models/comment');
 const Post = require('../models/post');
 const User = require('../models/user');
-const jwt = require('jsonwebtoken');
+const models = require('../models');
+const jwtUtils = require('../utils/jwt.utils.js');
 
-//create comment
 exports.createComment = (req, res, next) => {
-    console.log("console log create comment  " +JSON.stringify(req.body.comment));
-    Comment.create({
+    console.log("console log comments    "+ JSON.stringify (req.body.comment));
+    const headerAuth = req.headers['authorization'];
+    const userId = jwtUtils.getUserId(headerAuth);
+    models.Comment.create({
             content: req.body.content,
-          //  user_id: req.body.user_id,
-          //  post_id: req.body.post_id
+            userId: req.body.userId,
+            postId: req.body.postId
         })
         .then(() => res.status(201).json({message: 'Commentaire créé !'}))
         .catch( error => res.status(400).json({error}));
 };
-// delete comment
+
 exports.deleteComment = (req, res, next) => {
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, process.env.TOKEN);
+    const userId = decodedToken.userId
+    const role = decodedToken.role
+
     Comment.destroy({ where: { id: req.params.id } })
 
-        .then(() => res.status(200).json({message : 'Commentaire supprimé !'}))
-        .catch( error => res.status(400).json({error}));
+    .then((comment) => {
+        if (userId === comment.user_id || role === 0 || role === 1) {
+            res.status(200).json({message : 'Commentaire supprimé !'})
+
+        } else {
+            res.status(401).json({
+                message: 'Requête non autorisée !'
+            });
+        }
+    })
+    .catch( error => res.status(400).json({error}));
 };
-//display post comment
+
 exports.getPostComments = (req, res, next) => {
     Comment.findAll({
         where: {
@@ -36,7 +51,7 @@ exports.getPostComments = (req, res, next) => {
     .then( comments => res.status(200).json(comments))
     .catch( error => res.status(400).json({error}))
 };
-// display all comments
+
 exports.getAllComments = (req, res, next) => {
     Comment.findAll({
         include: [{
@@ -50,18 +65,29 @@ exports.getAllComments = (req, res, next) => {
     .then( comments => res.status(200).json(comments))
     .catch( error => res.status(400).json({error}))
 };
-//modify comment
+
 exports.modifyComment = (req, res, next) => {
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, process.env.TOKEN);
+    const role = decodedToken.role
+
     Comment.findOne({ where: { id: req.params.id }})
         .then(() => {
-            const modifyComment = {
-                moderate: req.body.moderate
-            };
+            if (role === 1) {
+                const modifyComment = {
+                    moderate: req.body.moderate
+                };
 
-            Comment.update(modifyComment , { where: { id: req.params.id } })
+                Comment.update(modifyComment , { where: { id: req.params.id } })
 
-            .then(() => res.status(200).json({message : 'Commentaire modifié !'}))
-            .catch( error => res.status(400).json({error}));
+                .then(() => res.status(200).json({message : 'Commentaire modifié !'}))
+                .catch( error => res.status(400).json({error}));
+
+            } else {
+                res.status(401).json({
+                    message: 'Requête non autorisée !'
+                });
+            }
         })
-    
+        .catch( error => res.status(400).json({error}))
 };

@@ -26,14 +26,16 @@
                     </tr>
                     <!-- <tr v-for="(post, index) in posts" :key="index" :post="post">{{post}}
                     -->
-                     <tr v-bind:key="index" v-for="(post, index) in posts">
+                     <tr class = "card" v-bind:key="index" v-for="(post, index) in posts">
                         
                         <td><input type="text" v-model="post.title" required aria-label="Titre" disabled></td>
                         <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled></textarea></td>
                         <td><img v-if="post.image" :src="post.image" alt="Image"></td>
-                        <router-link to="post/comment/${this.posts[index].id}" class="btnSave" aria-label="Afficher le message"><i class="fa-solid fa-comment-dots"></i></router-link>
-                        <button @click="deletePost(index)" class="btnDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
-                        
+                  
+                        <div class="icone">
+                             <button router-link to="/post" :href="$router.resolve ({name: 'post', params :{id: id_param}}).href" class="btnIconeSave" aria-label="Afficher le message"><i class="far fa-edit"></i></button>
+                            <button @click="deletePost(index)" class="btnIconeDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
+                        </div>
                     </tr>
                 </table>
          <!--posts -->
@@ -58,6 +60,7 @@ export default {
     },
     data () {
         return {
+            id_param: this.$route.params.id,
             posts: [],
             users: [],
             search:''
@@ -99,7 +102,8 @@ export default {
                 axios.delete(`http://localhost:3000/api/posts/${this.posts[index].id}`, {
                    
                     headers: {
-                        'authorization': `Bearer ${token}`
+                        'authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
                     }
                 })
                 .then((res) => {
@@ -109,7 +113,7 @@ export default {
             })
                 
             .catch(() => console.log('Impossible de suprimer ce message!'))
-            alert("Vous disposer pas des doit de supprimer ce message, c'est que le auter ou administrateur");
+            //alert("Vous disposer pas des doit de supprimer ce message, c'est que le auter ou administrateur");
             }
         },
         dateFormat(createdDate) {
@@ -161,7 +165,9 @@ h2 {
     background: #ffd7d7;
     border: 2px solid black;
 }
-
+table{
+    margin: 0 auto 0 auto ;
+}
 .header {
     border-radius: 20px 20px 0 0;
 }
@@ -196,9 +202,23 @@ input {
     border: 2px solid black;
     border-radius: 30px;
 }
-.btnSave, .btnDelete{
-    width: 25px;
-    height: 25px;
+.icone{
+    display: flex;
+    justify-content: space-between;
+}
+.btnIconeSave, .btnIconeDelete{
+    width: 30px ;
+    height: 30px ;
+    margin: 5px;
+    border-radius: 10px;
+}
+
+.btnIconeDelete{
+    background-color: indianred;
+}
+
+.btnIconeSave{
+    background-color: rgb(31, 216, 216);
 }
 .text {
     font-size: 14px;

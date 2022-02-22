@@ -5,11 +5,11 @@ const postCtrl = require('../controllers/post');
 const multerPosts = require('../middleware/multer-post')
 const auth = require('../middleware/auth')
 
-router.post('/new', auth,  multerPosts, postCtrl.createPost); //localhost:3000/api/posts/ postman OK
+router.post('/new', auth,  multerPosts, postCtrl.createPost); //localhost:3000/api/posts/ PROBLEME IMAGE
 router.put('/:id', auth, multerPosts, postCtrl.modifyPost);
 router.delete('/:id',auth,multerPosts, postCtrl.deletePost) //OK
-router.get('/', auth, postCtrl.getAllPosts)
-router.get('/:id', auth, postCtrl.getOnePost) 
+router.get('/', auth, postCtrl.getAllPosts)                 //OK
+router.get('/:id', auth, postCtrl.getOnePost)               //OK
 router.get('/:userId/posts',auth, postCtrl.getPostsUser)
 router.put('/admin/post/:id', auth, postCtrl.administrationPost)
 

@@ -11,7 +11,7 @@ const models = require('../models');
 // ----->Controllers<-----
 // Création d'un nouveau post
 exports.createPost = (req, res, next) => {
-     console.log("post"+ JSON.stringify (req.body.post));
+     console.log("post          "+ JSON.stringify (req.body));
 
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
@@ -54,20 +54,12 @@ exports.createPost = (req, res, next) => {
     });
 };
 
-
-
-
-
-
-
-
 /*
 const jwtUtils = require('../utils/jwt.utils.js');
 const fs = require('fs');
 const models = require('../models');
 const User = models.User;
 const Post = models.Post;
-
 //////// CREATE POST
 exports.createPost = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
@@ -85,7 +77,6 @@ exports.createPost = (req, res, next) => {
     }*/
 // verifier les champs du post sauf image 
  /*   if(!post) {
-
         res.status(400).json({ 'erreur': 'paramètre manquant' });
     };
     User.findOne({
@@ -282,14 +273,14 @@ exports.administrationPost = (req, res, nest) => {
 // DELETE POST
 exports.deletePost = (req, res, next) => {
     console.log("post   "+ req.body);
-        Post.findOne({ where: { id: req.params.id }})
+        models.Post.findOne({ where: { id: req.params.id }})
         
         .then(Post => {
             console.log("post FindOne    "   + req.params.id);
             if (userId === post.user.id || role === 0) {
                
-                if (Post.image != null) {
-                    const filename = Post.image.split('/images/posts/')[1];
+                if (post.image != null) {
+                    const filename = post.image.split('/images/posts/')[1];
                     fs.unlink(`images/posts/${filename}`, () => {
                         Post.destroy({ where: { id: req.params.id } })
 

@@ -4,7 +4,10 @@
             <section>
                 <div class="header">
                     <div>
-                        <h1>{{ post.title }}</h1>
+                        <h3>{{ post.title }}</h3>
+                    </div>
+                    <div>
+                        <p>{{ post.content }}</p>
                     </div>
                     <div>
                         <div class="info">
@@ -89,12 +92,12 @@ export default {
         return {
             id_param: this.$route.params.id,
             post: {
+                title:'',
                 content:'',
                 created_date:'',
                 updated_date:'',
                 id:'',
                 image:'',
-                title:'',
                 user: {},
                 userId:''
             },
@@ -120,18 +123,21 @@ export default {
             return this.displayCreateComment = false;
         },
         User() {
-            this.id = localStorage.getItem("userId")
+            this.id = localStorage.getItem("Id")
             this.role = localStorage.getItem("role")
 
         },
         
         getOnePost() {
             const token = localStorage.getItem("token")
-
-            axios.get (`http://localhost:3000/api/posts/${this.id_param}`, {
+ const Id = JSON.parse(localStorage.getItem("userId"))
+  const userId = this.$route.params.id;
+             axios.get (`http://localhost:3000/api/posts/17`, {
+            //axios.get (`http://localhost:3000/api/posts/${this.id_param}`, {
               
                 headers: {
-                    'authorization': `Bearer ${token}`
+                    'authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
                 }
             })
             .then((res) => {
@@ -245,10 +251,13 @@ export default {
     mounted(){
         this.User()
         this.getOnePost ()
-        this.getComments ()
+      //  this.getComments ()
     }
 }
 </script>
+
+
+
 
 <style scoped>
 section {

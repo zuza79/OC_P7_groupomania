@@ -118,7 +118,7 @@ export default {
             return this.displayCreateComment = false;
         },
         User() {
-            this.id = JSON.parse(localStorage.getItem("userId"))
+            this.id = (localStorage.getItem("userId"))
             this.role = JSON.parse(localStorage.getItem("role"))
 
         },
@@ -131,8 +131,8 @@ export default {
       //display post  
         getOnePost() {
             
-
-            axios.get (`http://localhost:3000/api/posts/${this.id_param}`, { post : data})
+            axios.get (`http://localhost:3000/api/posts/17`, { post : data})
+          //  axios.get (`http://localhost:3000/api/posts/${this.id_param}`, { post : data})
            
             .then (response => response.json())
             .then (data => (this.post = data))
@@ -243,8 +243,8 @@ export default {
     },
     mounted(){
         this.User()
-        this.getPost ()
-        this.getPostComments ()
+        this.getOnePost ()
+       // this.getPostComments ()
     }
 }
 </script>
