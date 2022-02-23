@@ -177,14 +177,14 @@ export default {
             .catch(() => console.log('Impossible de récupérer les informations !'))
             }
         },
-        //delete
+        //delete user
         deleteUser() {
             const Id = JSON.parse(localStorage.getItem("userId"))
             if (confirm("Voulez-vous vraiment supprimer le compte?") == true) {
                 const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
-//delete posts
-                axios.delete(`http://localhost:3000/api/posts/${Id}`, {
+//delete user
+                axios.delete(`http://localhost:3000/api/auth/profile/${Id}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
@@ -192,8 +192,8 @@ export default {
                 })
 
                 .then(() => {
-                    alert ("message suprimer")
-                    console.log("message suprimer");
+                    alert ("compte supprimmer")
+                    console.log("compte supprimer");
                 
                      let pub = this.posts
 
@@ -277,16 +277,16 @@ export default {
 				axios.put(`http://localhost:3000/api/auth/profile/${Id}`, data, {
                    
                     headers: {
-                    //'Accept': 'application/json',
+                    'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'authorization': `Bearer ${token}`
                     },
-                   // body: JSON.stringify(data)
+                   // body: data
 				})
                 .then(() => {
                     alert("Le nouveau mot de passe enregistrer")
                 console.log("Le nouveau mot de passe enregistrer");
-                 this.$router.push("/allposts");
+                // this.$router.push("/allposts");
                 
             })
                 
