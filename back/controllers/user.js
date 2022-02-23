@@ -119,7 +119,7 @@ exports.login = (req, res, next) => {
 
 
 
-/////////////// DELETE
+/////////////// DELETE USER
 exports.deleteUser = (req, res, next) => {
     User.findOne({ where: { id: req.params.id }})
     .then(User => {

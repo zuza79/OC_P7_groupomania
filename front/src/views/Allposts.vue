@@ -108,8 +108,9 @@ export default {
                 })
                 .then((res) => {
                     alert("Message suprimé")
+                //    this.$router.push("/allposts");
                 console.log(res.data);
-                this.posts = res.data
+               this.posts = res.data
             })
                 
             .catch(() => console.log('Impossible de suprimer ce message!'))

@@ -107,9 +107,12 @@ const Id = JSON.parse(localStorage.getItem("userId"))
                     let data = new FormData()
                     data.append('filename', fileName)
                      data.append('image', this.image);
-                    data.append('title', this.title);
+                     //formData.append('image', this.post.image, this.post.image.name);
+                   data.append('title', this.title);
                     data.append('content', this.content);
                     data.append('userId',Id);
+                  
+                
 
                     axios.post("http://localhost:3000/api/posts/new", data, {
                         
@@ -121,7 +124,7 @@ const Id = JSON.parse(localStorage.getItem("userId"))
                         
                     })
                     .then((res) => {
-                    alert("Message suprimé")
+                    alert("Message crée")
                 console.log(res.data);
                 this.posts = res.data
             })

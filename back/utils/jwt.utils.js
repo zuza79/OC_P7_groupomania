@@ -39,6 +39,25 @@ module.exports = {
             }
         }
         return userId;
+    },
+
+       // Récupération de l'ID de l'utilisateur dans le token
+       getRoleUser: (authorization) => {
+        let role = 0;
+        const token = module.exports.parseAuthorization(authorization);
+        
+        if(token != null) {
+            try {
+                const jwtToken = jwt.verify(token, 'SECRET_KEY_TOKEN');
+                if(jwtToken != null) {
+                    role = jwtToken.role;
+                   
+                }
+            } catch (err) { 
+                console.log(err);
+            }
+        }
+        return role;
     }
 }
 

@@ -2,16 +2,14 @@
 // create, modify, dele, display one/all post
 // display all post by user, modify post by admin
 const jwtUtils = require('../utils/jwt.utils.js');
-
-
-// Importation des modèles
+const fs = require('fs');
 const models = require('../models');
 
 
 // ----->Controllers<-----
 // Création d'un nouveau post
 exports.createPost = (req, res, next) => {
-     console.log("post          "+ JSON.stringify (req.body));
+     console.log("post          "+ JSON.stringify (req.body.title));
 
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
@@ -22,7 +20,7 @@ exports.createPost = (req, res, next) => {
     if(!content || !title) {
         res.status(400).json({ 'erreur': 'paramètre manquant' });
     };
-
+    console.log("create 1 ");
      /*   } else {
         image = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`;
         if(image.length > 150) {
@@ -34,7 +32,8 @@ exports.createPost = (req, res, next) => {
         where: { id: userId }
     })
     .then(user => {
-        if(user) {
+        console.log("create 2 ");
+        if(user) {  console.log("create 3 ");
             models.Post.create({
                 title : title,
                 content: content,
@@ -42,15 +41,19 @@ exports.createPost = (req, res, next) => {
                 like: 0,
                 dislike: 0,
                 UserId: user.id
-            })
-            res.status(201).json({"message": "Nouveau post créé avec succès !"})
+            }).then( res.status(201).json({"message": "Nouveau post créé avec succès !"})
+            ).catch(error => {
+                console.log(error);
+                res.status(400).json({erreur : erreur.message});
+            });
                     
-        } else {
-            res.status(404).json({'erreur' : 'Utilisateur introuvable'});
+        } else {  console.log("create 4 ");
+            res.status(404).json({erreur : 'Utilisateur non trouvé!!'});
         };
     })
-    .catch(err => {
-        res.status(500).json({ 'err': 'ERREUR !!!' });
+    .catch(error => {
+        console.log(error);
+        res.status(500).json({erreur : erreur.message});
     });
 };
 
@@ -272,17 +275,25 @@ exports.administrationPost = (req, res, nest) => {
 
 // DELETE POST
 exports.deletePost = (req, res, next) => {
+    const headerAuth = req.headers['authorization'];
+    const userId = jwtUtils.getUserId(headerAuth);
+    const role = jwtUtils.getRoleUser(headerAuth);
     console.log("post   "+ req.body);
+
         models.Post.findOne({ where: { id: req.params.id }})
         
-        .then(Post => {
-            console.log("post FindOne    "   + req.params.id);
-            if (userId === post.user.id || role === 0) {
+        .then(post => {
+            console.log("post FindOne    "   + req.params.id)
+            console.log("userId    "   + userId);
+            console.log("post use.id     " + post.userId)
+            if (userId === post.userId || role === 0)
+            
+            {
                
                 if (post.image != null) {
                     const filename = post.image.split('/images/posts/')[1];
                     fs.unlink(`images/posts/${filename}`, () => {
-                        Post.destroy({ where: { id: req.params.id } })
+                       models.Post.destroy({ where: { id: req.params.id } })
 
                         .then(() => res.status(200).json({message : 'Post supprimé !'}))
                         .catch( error => res.status(400).json({error}));
@@ -290,10 +301,10 @@ exports.deletePost = (req, res, next) => {
                 
             
                 } else {
-                    post.destroy({ where: { id: req.params.id } })
+                    models.Post.destroy({ where: { id: req.params.id } })
 
                     .then(() => res.status(200).json({message : 'Post supprimé !'}))
-                    .catch( error => res.status(400).json({error}));
+                    .catch( error =>{console.log(error); res.status(400).json({message :error.message}); });
                 }
             } else {
                 res.status(401).json({
@@ -301,7 +312,7 @@ exports.deletePost = (req, res, next) => {
                 });
             }
         })
-        .catch( error => res.status(400).json({error}));
+        .catch( error =>{console.log(error); res.status(400).json({message :error.message}); });
 }
 
 /////////// LIKE/DISLIKE
