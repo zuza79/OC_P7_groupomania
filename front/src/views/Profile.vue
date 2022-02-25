@@ -229,7 +229,7 @@ export default {
                             alert("La suppression du compte est bien prise en compte")
                             localStorage.clear();
                         })
-                        .then(this.$router.push("/"))
+                        .then(this.$router.push('/'))
                 })
                 .catch(alert)
             }

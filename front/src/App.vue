@@ -7,6 +7,7 @@
 <style>
 body{
   margin: 0px;
+  background-color: rgba(207, 203, 203, 0.877);
 }
 section{
   margin:0px;

@@ -13,14 +13,14 @@ export default new Vuex.Store({
       prenom: '',
       email: '',
       image: '',
-    //  role : ''
+    role : ''
     },
   },
   mutations: {
     async getUser(state){
       const userId = localStorage.getItem('userId');
       const token = localStorage.getItem('token');
-     // const role = localStorage.getItem('role');
+      const role = localStorage.getItem('role');
       await axios.get(`http://localhost:3000/api/auth/profile/${userId}`, {
         headers: {
           'authorization': `Bearer ${token}`

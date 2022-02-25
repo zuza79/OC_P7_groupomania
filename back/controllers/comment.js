@@ -1,7 +1,7 @@
 const Comment = require('../models/comment');
 const Post = require('../models/post');
 const User = require('../models/user');
-const models = require('../models');
+//const models = require('../models');
 const jwtUtils = require('../utils/jwt.utils.js');
 
 exports.createComment = (req, res, next) => {
@@ -20,8 +20,8 @@ exports.createComment = (req, res, next) => {
 exports.deleteComment = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.TOKEN);
-    const userId = decodedToken.userId
-    const role = decodedToken.role
+    const userId = jwtUtils.getUserId(headerAuth);
+    const role = jwtUtils.getRoleUser(headerAuth);
 
     Comment.destroy({ where: { id: req.params.id } })
 

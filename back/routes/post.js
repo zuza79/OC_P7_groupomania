@@ -11,6 +11,7 @@ router.delete('/:id',auth,multerPosts, postCtrl.deletePost) //OK
 router.get('/', auth, postCtrl.getAllPosts)                 //OK
 router.get('/:id', auth, postCtrl.getOnePost)               //OK
 router.get('/:userId/posts',auth, postCtrl.getPostsUser)
+router.put('/:id', auth, postCtrl.likePost);
 router.put('/admin/post/:id', auth, postCtrl.administrationPost)
 
 module.exports = router;

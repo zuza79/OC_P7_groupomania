@@ -1,15 +1,29 @@
 <template>
     <div>
         <HeaderProfile />
+<div class="like">
+          <button class="btnSave" @click="likePost">
+            <div><i class="fas fa-thumbs-up like"></i>{{ like }}</div>
+          </button>
+       <!--   <button class="btnDelete ">
+            <div><i class="fas fa-thumbs-down dislike"></i>{{ dislike }}</div>
+          </button>
+       -->
+      </div>
+
             <section>
-                <div class="header">
+     <div class="header">
+                    <tr class = "card" v-bind:key="index" v-for="(post, index) in posts">
+                    
                     <div>
                         <h3>{{ post.title }}</h3>
                     </div>
                     <div>
                         <p>{{ post.content }}</p>
                     </div>
+                    </tr>
                     <div>
+                        
                         <div class="info">
                             <p>
                                 Posté par 
@@ -40,6 +54,7 @@
                     <p>{{ post.content }}</p>
                 </div>
 
+
                 <button v-if="comments.length != 0 && displaycomments === false " v-on:click="show" class="comment-button" aria-label="Voir commentaire">Voir {{ comments.length }} commentaire<span v-if="comments.length >= 2">s</span></button>
                 <article v-if="displaycomments">
                     <div v-bind:key="index" v-for="(comment, index) in comments" class="comment">
@@ -66,7 +81,7 @@
 
                 <button v-if="displayCreateComment === false" v-on:click="show2" class="button" aria-label="Ecrire un commentaire">Ecrire un commentaire</button>
                 <article v-if="displayCreateComment" class="createcomment">
-                    <textarea v-model="commentaire" placeholder="Commentaire" cols="60" rows="5" aria-label="Message du commentaire"></textarea>
+                    <textarea v-model="commentaire" placeholder="Faire ton commentaire..." cols="60" rows="5" aria-label="Message du commentaire"></textarea>
                     <button @click="createComment()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer le commentaire</button>
                     <button v-on:click="hide2" class="btnDelete" aria-label="Annuler le commentaire">Annuler le commentaire</button>
                 </article>
@@ -90,6 +105,8 @@ export default {
     },
     data () {
         return {
+            posts: [],
+            users: [],
             id_param: this.$route.params.id,
             post: {
                 title:'',
@@ -132,26 +149,27 @@ export default {
             const token = localStorage.getItem("token")
  const Id = JSON.parse(localStorage.getItem("userId"))
   const userId = this.$route.params.id;
-             axios.get (`http://localhost:3000/api/posts/17`, {
-            //axios.get (`http://localhost:3000/api/posts/${this.id_param}`, {
+             axios.get (`http://localhost:3000/api/posts/16`, {
+           // axios.get (`http://localhost:3000/api/posts/${this.id_param}`, {
               
                 headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 }
             })
-            .then((res) => {
-                console.log(res.data);
-                this.posts = res.data
-            })
+            .then(() => {
+                                alert("message afficher")
+                                console.log("message afficher")
+                            })
+            
                 
-            .catch(() => console.log('Impossible de récupérer les posts !'))
+            .catch(() => console.log('Impossible de récupérer message !'))
         },
         
         getPostComments() {
             const token = localStorage.getItem("token")
 
-            axios.get (`http://localhost:3000/api/comments/${this.id_param}`, {
+            axios.get (`http://localhost:3000/api/comments/16}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
@@ -175,6 +193,37 @@ export default {
             const options = { hour: 'numeric', minute:'numeric', second:'numeric'};
             return hour.toLocaleTimeString('fr-FR', options);
         },
+
+        likePost(){
+            console.log(this.post);
+             const token = sessionStorage.getItem('token');
+            
+             axios.put(`http://localhost:3000/api/posts/${this.post.id}`, {like: this.likeIncrement}, {
+                 headers: {
+                        'authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
+                    }
+                })
+                .then(() => {
+                    alert("Merci")
+                    console.log("like");
+                //   this.$router.push("/allposts");
+                
+              // this.posts = res.data
+            })
+                
+            .catch(() =>{ 
+                alert("impossible de faire like")
+                console.log('problem like')
+            //    this.$router.push("/allposts");
+            //alert("Vous disposer pas des doit de supprimer ce message, c'est que le auter ou administrateur");
+
+
+
+     } )
+        },
+      
+
         deletePost () {
             const token = JSON.parse(localStorage.getItem("userToken"))
 
@@ -198,6 +247,8 @@ export default {
         modifyPost () {
             this.$router.push(`/modifypost/${this.id_param}`)
         },
+
+        //create comment
         createComment () {
             if( this.commentaire === ""){
                 alert('Veuillez remplir votre commentaire')
@@ -208,11 +259,11 @@ export default {
                 
                 let data = {
                     content: this.commentaire,
-                    post_id: this.id_param,
+                    postId: this.id_param,
                     userId: Id
                 }
 
-                get.post("http://localhost:3000/api/comments", {
+                get.post("http://localhost:3000/api/comments", data, {
                    
                     headers: {
                     'Accept': 'application/json',
@@ -220,12 +271,12 @@ export default {
                     'authorization': `Bearer ${token}`
                     },
                     body: data                })
-                .then((res) => {
-                console.log(res.data);
-                this.posts = res.data
-            })
+                .then(() => {
+                                alert("commentaire fait")
+                                console.log("commentaire fait")
+                            })
                 
-            .catch(() => console.log('Impossible de récupérer les posts !'))
+            .catch(() => console.log(' erreur commentaire!'))
        }
         },
         deleteComment (index) {
@@ -251,6 +302,7 @@ export default {
     mounted(){
         this.User()
         this.getOnePost ()
+        this.posts[index].id ()
       //  this.getComments ()
     }
 }

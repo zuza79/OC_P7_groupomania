@@ -49,7 +49,7 @@ export default {
     },
     data() {
         return {
-           //post: [],
+           post: [],
             title: '',
             content: '',
             image: '',
@@ -68,8 +68,6 @@ export default {
 const Id = JSON.parse(localStorage.getItem("userId"))
            const fileField = document.querySelector('input[type="file"]');
           const token = (localStorage.getItem("token"))
-
-
 
             if (this.title === '')
                 alert("Veuillez remplir le titre")
@@ -107,6 +105,7 @@ const Id = JSON.parse(localStorage.getItem("userId"))
                     let data = new FormData()
                     data.append('filename', fileName)
                      data.append('image', this.image);
+                     data.append('image', fileField.files[0])
                      //formData.append('image', this.post.image, this.post.image.name);
                    data.append('title', this.title);
                     data.append('content', this.content);

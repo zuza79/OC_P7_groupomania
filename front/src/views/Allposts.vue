@@ -33,7 +33,11 @@
                         <td><img v-if="post.image" :src="post.image" alt="Image"></td>
                   
                         <div class="icone">
-                             <button router-link to="/post" :href="$router.resolve ({name: 'post', params :{id: id_param}}).href" class="btnIconeSave" aria-label="Afficher le message"><i class="far fa-edit"></i></button>
+                          <!--   <button router-link to="/post/${post.id}" :href="$router.resolve ({name: 'post', params :{id: post.id}}).href" class="btnIconeSave" aria-label="Afficher le message"><i class="far fa-edit"></i></button>-->
+                           <!--  <router-link to="/post/${id}" aria-label="Afficher le message">--> 
+                           <router-link to="/post" :href="$router.resolve({name:'post', params: {id : postId}}).href">
+                             <button class="btnIconeSave" ><i class="far fa-edit"></i></button>
+                           </router-link>
                             <button @click="deletePost(index)" class="btnIconeDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
                         </div>
                     </tr>
@@ -54,16 +58,18 @@ import Footer from "../components/Footer";
 
 export default {
     name: 'allposts',
+    props: ['id'],
     components: {
         HeaderProfile,
         Footer
     },
     data () {
         return {
-            id_param: this.$route.params.id,
+            postId: this.$route.params.id,
+            props: ['postId'],
             posts: [],
             users: [],
-            search:''
+            
         }
     },
     computed : {
@@ -106,27 +112,25 @@ export default {
                         'Content-Type': 'multipart/form-data',
                     }
                 })
-                .then((res) => {
-                    alert("Message suprimé")
-                //    this.$router.push("/allposts");
-                console.log(res.data);
-               this.posts = res.data
+                .then(() => {
+                    alert("Message supprimer")
+                    console.log("message supprimer");
+                //   this.$router.push("/allposts");
+                
+              // this.posts = res.data
             })
                 
-            .catch(() => console.log('Impossible de suprimer ce message!'))
+            .catch(() =>{ 
+                alert("Vous n'avez pas autorisation de supprimer ce message!!")
+                console.log('Vous n avez pas autorisation de supprimer ce message!!')
+            //    this.$router.push("/allposts");
             //alert("Vous disposer pas des doit de supprimer ce message, c'est que le auter ou administrateur");
-            }
+
+
+
+     } )}
         },
-        dateFormat(createdDate) {
-            const date = new Date(createdDate)
-            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'};
-            return date.toLocaleDateString('fr-FR', options);
-        },
-        hourFormat(createdHour) {
-            const hour = new Date(createdHour)
-            const options = { hour: 'numeric', minute:'numeric', second:'numeric'};
-            return hour.toLocaleTimeString('fr-FR', options);
-        },
+      
         post () {
             this.$router.push("/post")
         }

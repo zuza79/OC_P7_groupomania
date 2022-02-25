@@ -14,10 +14,10 @@ exports.createPost = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const title = req.body.title;
-    const content = req.body.content;    
-    let image = req.file
-
-    if(!content || !title) {
+    const content = req.body.content;   
+    let image = req.file;
+    //let image = "";
+    if(!title || !content) {
         res.status(400).json({ 'erreur': 'paramètre manquant' });
     };
     console.log("create 1 ");
@@ -37,7 +37,8 @@ exports.createPost = (req, res, next) => {
             models.Post.create({
                 title : title,
                 content: content,
-                image: image,
+              // image: image,
+              image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`|| '',
                 like: 0,
                 dislike: 0,
                 UserId: user.id
@@ -115,11 +116,14 @@ exports.createPost = (req, res, next) => {
 */
 // DISPLAY ONE POST
 exports.getOnePost = (req, res, nest) => {
-    Post.findOne({
+    models.Post.findOne({
         include: [{
-            model : User
+            model : models.User
         }], 
+         
         where: { id: req.params.id }})
+    
+     
     .then( post => res.status(200).json(post))
     .catch( error => res.status(400).json({error}))
 }
@@ -144,7 +148,7 @@ exports.getAllPosts = (req, res, next) => {
 // DISPLAY ALL POSTS  - ONE USER
 
 exports.getPostsUser = (req, res, next) => {
-    Post.findAll({
+    models.Post.findAll({
         where: {
             userId : req.params.user.id
         },
@@ -278,14 +282,14 @@ exports.deletePost = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
-    console.log("post   "+ req.body);
+    console.log("delete post   "+ req.body);
 
         models.Post.findOne({ where: { id: req.params.id }})
         
         .then(post => {
             console.log("post FindOne    "   + req.params.id)
             console.log("userId    "   + userId);
-            console.log("post use.id     " + post.userId)
+            console.log("post user.id     " + post.userId)
             if (userId === post.userId || role === 0)
             
             {
@@ -315,58 +319,22 @@ exports.deletePost = (req, res, next) => {
         .catch( error =>{console.log(error); res.status(400).json({message :error.message}); });
 }
 
-/////////// LIKE/DISLIKE
+
 //LIKE POST 
 exports.likePost = (req, res, next) => {
+    const headerAuth = req.headers['authorization'];
+    const userId = jwtUtils.getUserId(headerAuth);
     const postId = req.params.id;
-    switch (req.body.like) {
-      case 0:    // default = 0  
-      models.Post.findOne({ where: { id: postId } })   // find sauce by _id.
-          .then((post) => {
-            //LIKE
-            if (post.usersLiked.find(user => user === req.body.id)) {   
-              Post.updateOne({ id: req.params.id }, {
-                $inc: { likes: -1 },           
-                $pull: { usersLiked: req.body.id },     // if user LIKE, the body make update and user can't make another LIKE 
-                id: req.params.id
-              })
-                .then(() => { res.status(201).json({ message: 'Merci.' }); })
-                .catch((error) => { res.status(400).json({ error: error }); });
-              //DISLIKE
-            } if (post.usersDisliked.find(user => user === req.body.id)) {      
-              Post.updateOne({ id: req.params.id }, {
-                $inc: { dislikes: -1 },
-                $pull: { usersDisliked: req.body.id },      
-                id: req.params.id
-              })
-                .then(() => { res.status(201).json({ message: ' Merci.' }); })
-                .catch((error) => { res.status(400).json({ error: error }); }); 
-            }
-          })
-          .catch((error) => { res.status(404).json({ error: error }); });
-        break;
-  
-        //update LIKE
-      case 1:
-        Post.updateOne({ id: req.params.id }, {
-          $inc: { likes: 1 },
-          $push: { usersLiked: req.body.id },
-          id: req.params.id
+    console.log('like post:    ' + req.body.like);
+
+    models.Post.findOne({ where: { id: postId } })
+        .then(post => {
+            console.log("console post dataValues   "   +post.dataValues);
+            post.update({
+                like: req.body.like
+            })
+                .then(() => res.status(200).json({ message: 'Données mises à jour !' }))
+                .catch((err) => res.status(500).json({ err }))
         })
-          .then(() => { res.status(201).json({ message: 'Ton like a été pris en compte! Merci.' }); })
-          .catch((error) => { res.status(400).json({ error: error }); });
-        break;
-  
-        // update DISLIKE
-      case -1:
-        Post.updateOne({ _id: req.params.id }, {
-          $inc: { dislikes: +1 },
-          $push: { usersDisliked: req.body.userId },
-          id: req.params.id
-        })
-          .then(() => { res.status(201).json({ message: 'Ton dislike a été pris en compte!' }); })
-          .catch((error) => { res.status(400).json({ error: error }); });
-        break;
-        default:
-    }
-  };
+        .catch(() => res.status(404).json({ error: 'Post introuvable !' }));
+};
