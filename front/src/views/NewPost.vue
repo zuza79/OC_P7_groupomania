@@ -18,11 +18,10 @@
                         </li>
                         <li>
                             <input type="file" accept=".jpeg, .jpg, .png, .webp, .gif" v-on:change="uploadFile" id="file" class="input-file" aria-label="Image du post">
-                            <label v-if="image" for="file" class="label-file" aria-label="Choisir une photo pour ce post"></label>
-                            
+                            <label v-if="!image" for="file" class="label-file" aria-label="Choisir une photo pour ce post"></label>
                             <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer cette photo du post"><i class="far fa-trash-alt"></i> Supprimer image</button>
-                            
                         </li>
+                       
 
                     </ul>
                 </form>
@@ -78,6 +77,7 @@ const Id = JSON.parse(localStorage.getItem("userId"))
                 let data = new FormData()
                 data.append('title', this.title)
                 data.append('content', this.content)
+                data.append('image', "");
                 data.append('userId', Id)
 
                          axios.post("http://localhost:3000/api/posts/new", data, {
@@ -90,8 +90,9 @@ const Id = JSON.parse(localStorage.getItem("userId"))
                 body: data
                 })
                 .then(() => {
+                     alert("Message publier")
                             console.log('ok')
-                    this.$router.push("/allposts");
+                    
                 })
                 
                 .catch((err) => console.log(err))
@@ -110,9 +111,7 @@ const Id = JSON.parse(localStorage.getItem("userId"))
                    data.append('title', this.title);
                     data.append('content', this.content);
                     data.append('userId',Id);
-                  
-                
-
+     
                     axios.post("http://localhost:3000/api/posts/new", data, {
                         
                         headers: {
@@ -123,7 +122,7 @@ const Id = JSON.parse(localStorage.getItem("userId"))
                         
                     })
                     .then((res) => {
-                    alert("Message crée")
+                    alert("Message publier")
                 console.log(res.data);
                 this.posts = res.data
             })
@@ -148,6 +147,10 @@ const Id = JSON.parse(localStorage.getItem("userId"))
         deletefile() {
             this.image = '';
         }
+    },
+    
+     mounted(){
+        this.getAllPosts()
     }
 }
 </script>
@@ -275,7 +278,19 @@ img {
     border: 2px solid #146cbe;
     border-radius: 30px;
 }
+@media screen and (max-width:1024px){
+.btnDelete{
+    width: 50%;
+    margin: 0 auto 0 auto;
+}
 
+}
+@media screen and (max-width:768px){
+.btnDelete{
+    width: 50%;
+    margin: 0 auto 0 auto;
+}
+}
 
 
 </style>

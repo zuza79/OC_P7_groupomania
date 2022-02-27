@@ -6,7 +6,7 @@
                 <form>
                     <ul>
                         <li>
-                            <label for="titre"  aria-label="Titre">Titre</label>
+                            <label for="title"  aria-label="Titre">Titre</label>
                             <input type="text" v-model="post.title" placeholder="Titre" size="50" required aria-label="Titre du post">
                         </li>
                         <li>
@@ -28,7 +28,7 @@
                 <button @click="modifyPost()" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Enregistrer</button>
             </section>
             <div>
-            <router-link :to="`/post/${this.id_param}`" class="btnDelete" aria-label="Retour au fil d'actualité"><i class="fas fa-comment-slash"></i> Annuler</router-link>
+            <router-link :to="`/post/${post.id}`" class="btnDelete" aria-label="Retour au fil d'actualité"><i class="fas fa-comment-slash"></i> Annuler</router-link>
             </div>
             <div>
             <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
@@ -58,10 +58,10 @@ export default {
     methods: {
 
 //GET POST
-        getPost() {
+        getOnePost() {
             const token = JSON.parse(localStorage.getItem("userToken"))
 
-            axios.get (`http://localhost:3000/api/posts/${this.id_param}`, {
+            axios.get (`http://localhost:3000/api/posts/${post.id}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
@@ -86,7 +86,7 @@ export default {
                 data.append('title', this.post.title)
                 data.append('content', this.post.content)
 
-                axios.put(`http://localhost:3000/api/posts/${this.id_param}`, {
+                axios.put(`http://localhost:3000/api/posts/${this.post.id}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
@@ -137,7 +137,7 @@ export default {
         }
     },
     mounted () {
-        this.getPost()
+        this.getOnePost()
     }
 }
 </script>

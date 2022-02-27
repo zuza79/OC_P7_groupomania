@@ -4,7 +4,7 @@
         <h1>Le Flash Actu Groupomania</h1>   
          <!--actualization -->
          <div class="getAllPosts">
-        <button @click="getAllPosts()" class="button" ><p>Actualization</p></button>
+        <button @click="getAllPosts()" class="btnSave" ><i class="fas fa-redo"></i></button>
         
          </div>
         <article v-if="post in posts">
@@ -33,9 +33,15 @@
                         <td><img v-if="post.image" :src="post.image" alt="Image"></td>
                   
                         <div class="icone">
-                          <!--   <button router-link to="/post/${post.id}" :href="$router.resolve ({name: 'post', params :{id: post.id}}).href" class="btnIconeSave" aria-label="Afficher le message"><i class="far fa-edit"></i></button>-->
-                           <!--  <router-link to="/post/${id}" aria-label="Afficher le message">--> 
-                           <router-link to="/post" :href="$router.resolve({name:'post', params: {id : postId}}).href">
+                          <!--   <button router-link  class="btnIconeSave" aria-label="Afficher le message"><i class="far fa-edit"></i></button>-->
+                           <!--  <router-link to="/post/${id}" >
+                          <router-link 
+                          to="/post" :href="$router.resolve ({name: 'post', params :{id: postId}}).href">
+                           class="link" :to="`/post/${post.id}`"
+                            --> 
+                           
+                           <router-link :to="`/post/${post.id}`" aria-label="Afficher le message">
+                          
                              <button class="btnIconeSave" ><i class="far fa-edit"></i></button>
                            </router-link>
                             <button @click="deletePost(index)" class="btnIconeDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
@@ -46,7 +52,7 @@
          <article v-if="posts.length == 0">
             <p>Oups! Aucune publication pour instant!</p>
         </article>
-      <!-- <post v-for="(post, index) in posts" :key="index" :post="post">{{post}}</post>-->
+       
         <Footer />
     </div>
 </template>
@@ -58,7 +64,7 @@ import Footer from "../components/Footer";
 
 export default {
     name: 'allposts',
-    props: ['id'],
+    props: ['postId'],
     components: {
         HeaderProfile,
         Footer
@@ -66,7 +72,7 @@ export default {
     data () {
         return {
             postId: this.$route.params.id,
-            props: ['postId'],
+            props: ['post.id'],
             posts: [],
             users: [],
             
@@ -148,6 +154,7 @@ h2 {
     margin: 0 auto 0 auto;
 }
 
+
 .info {
     font-size: 0.8vw;
 }
@@ -211,10 +218,11 @@ input {
     display: flex;
     justify-content: space-between;
 }
-.btnIconeSave, .btnIconeDelete{
+.btnIconeSave, .btnIconeDelete, .btnSave{
     width: 30px ;
     height: 30px ;
     margin: 5px;
+    padding: 0px;
     border-radius: 10px;
 }
 
@@ -228,7 +236,28 @@ input {
 .text {
     font-size: 14px;
 }
-
+@media screen and (max-width:1024px){
+table {
+    width: 100%;
+}
+textarea{
+    width: 90%
+}
+.icone{
+    justify-content: space-evenly;
+}
+}
+@media screen and (max-width:768px){
+table {
+    width: 100%;
+}
+textarea{
+    width: 90%
+}
+.icone{
+    justify-content: space-evenly;
+}
+}
 
 
 </style>

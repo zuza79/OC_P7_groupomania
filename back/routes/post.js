@@ -7,9 +7,9 @@ const auth = require('../middleware/auth')
 
 router.post('/new', auth,  multerPosts, postCtrl.createPost); //localhost:3000/api/posts/ PROBLEME IMAGE
 router.put('/:id', auth, multerPosts, postCtrl.modifyPost);
-router.delete('/:id',auth,multerPosts, postCtrl.deletePost) //OK
-router.get('/', auth, postCtrl.getAllPosts)                 //OK
-router.get('/:id', auth, postCtrl.getOnePost)               //OK
+router.delete('/:id',auth,multerPosts, postCtrl.deletePost) //OK all
+router.get('/', auth, postCtrl.getAllPosts)                 //OK all
+router.get('/:id', auth, postCtrl.getOnePost)               //OK postman
 router.get('/:userId/posts',auth, postCtrl.getPostsUser)
 router.put('/:id', auth, postCtrl.likePost);
 router.put('/admin/post/:id', auth, postCtrl.administrationPost)

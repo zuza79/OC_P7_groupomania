@@ -1,19 +1,19 @@
 <template>
     <div>
         <HeaderProfile />
-         
+        
         
             <div class="like">
           <button class="btnSave" @click="likePost">
             <div><i class="fas fa-thumbs-up like"></i>{{ like }}</div>
           </button>
-<!--
-         <button class="btnDelete ">
+
+       <!--   <button class="btnDelete ">
             <div><i class="fas fa-thumbs-down dislike"></i>{{ dislike }}</div>
           </button>
- -->    
+   -->    
       </div>
-  
+
  
             <section>
      <div class="header">
@@ -21,20 +21,13 @@
                   <tr class = "card" v-bind:key="index" v-for="(post, index) in posts"> 
                     
                     <post v-for="post in posts" v-bind:key="post.id" :post="post"></post>-->
-                    <tr class = "card" v-bind:key="index" v-for="(post, index) in posts">
-                        
-                        <td><input type="text" v-model="post.title" required aria-label="Titre" disabled></td>
-                        <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled></textarea></td>
-                        <td><img v-if="post.image" :src="post.image" alt="Image"></td>
-                    </tr>
-                    <!--
                     <div>
-                        <h3>Title: {{ post.title }}</h3>
+                        <h3>{{ post.title }}</h3>
                     </div>
                     <div>
-                        <p>Message: {{ post.content }}</p>
+                        <p>{{ post.content }}</p>
                     </div>
-                -->
+                
                     <div>
                         
                         <div class="info">
@@ -54,18 +47,15 @@
                                 à <b>{{ hourFormat(post.updated_date) }}</b>
                             </p>
                         </div>
-                    
                     </div>
-                    
                 </div>
-                
 
                 <div class="content">
                     <p class="modif">
-                    <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier ce post</button>
-                    <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete espacement" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer ce post</button>
+                    <button @click="modifyPost()" v-if="post.userId === id" class="button" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier ce post</button>
+                    <button @click="deletePost()" v-if="post.userId === id || role === 1" class="button espacement" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer ce post</button>
                     </p>
-                    <hr v-if="post.userId === id || role === 0">
+                    <hr v-if="post.userId === id || role === 1">
                     <img v-if="post.image" :src="post.image" alt="Image du post">
                     <p>{{ post.content }}</p>
                 </div>
@@ -86,7 +76,7 @@
                                 à <b>{{ hourFormat(comment.date) }}</b>
                             </p>
                             <p>
-                                <button v-if="comment.userId === id || role === 0" @click="deleteComment(index)" class="button-comment" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
+                                <button v-if="comment.userId === id || role === 1" @click="deleteComment(index)" class="button-comment" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
                             </p>
                         </div>                        
                         <hr>
@@ -95,11 +85,11 @@
                     <button v-on:click="hide" class="comment-button" aria-label="Cacher commentaire">Cacher le<span v-if="comments.length >= 2">s</span> commentaire<span v-if="comments.length >= 2">s</span></button>
                 </article>
 
-                <button v-if="displayCreateComment === false" v-on:click="show2" class="btnSave" aria-label="Ecrire un commentaire"><i class="far fa-edit"></i>Commenter</button>
+                <button v-if="displayCreateComment === false" v-on:click="show2" class="button" aria-label="Ecrire un commentaire">Ecrire un commentaire</button>
                 <article v-if="displayCreateComment" class="createcomment">
                     <textarea v-model="commentaire" placeholder="Faire ton commentaire..." cols="60" rows="5" aria-label="Message du commentaire"></textarea>
-                    <button @click="createComment()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
-                    <button v-on:click="hide2" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
+                    <button @click="createComment()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer le commentaire</button>
+                    <button v-on:click="hide2" class="btnDelete" aria-label="Annuler le commentaire">Annuler le commentaire</button>
                 </article>
 
             </section>
@@ -123,7 +113,7 @@ export default {
         return {
             posts: [],
             users: [],
-            //postId: this.$route.params.id,
+            postId: this.$route.params.id,
             post: {
                 title:'',
                 content:'',
@@ -163,10 +153,10 @@ export default {
        
         getOnePost() {
             const token = localStorage.getItem("token")
-          // const postId = localStorage.getItem('postId');
+           const postId = localStorage.getItem('postId');
            
            //  axios.get (`http://localhost:3000/api/posts/${this.posts[index].id}`, { ${post.id} + this.post.id
-            axios.get (`http://localhost:3000/api/posts/${post.id}`, {
+            axios.get (`http://localhost:3000/api/posts/{postId}`, {
               
                 headers: {
                     'authorization': `Bearer ${token}`,
@@ -187,7 +177,7 @@ export default {
         getPostComments() {
             const token = localStorage.getItem("token")
 
-            axios.get (`http://localhost:3000/api/comments/${this.post.id}}`, {
+            axios.get (`http://localhost:3000/api/comments/${this.postId}}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
@@ -247,7 +237,7 @@ export default {
 
             if (confirm("Voulez-vous vraiment supprimer le post") === true) {
 
-                axios.delete(`http://localhost:3000/api/posts/${this.post.id}`, {
+                axios.delete(`http://localhost:3000/api/posts/${this.id_param}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
@@ -263,12 +253,12 @@ export default {
             }
         },
         modifyPost () {
-            this.$router.push(`/postmodify/${this.post.id}`)
+            this.$router.push(`/modifypost/${this.id_param}`)
         },
 
         //create comment
         createComment () {
-            if( this.comment === ""){
+            if( this.commentaire === ""){
                 alert('Veuillez remplir votre commentaire')
 
             } else {
@@ -318,9 +308,9 @@ export default {
         },
     },
     mounted(){
-        
+        this.getOneUser()
         this.getOnePost ()
-       this.getOneUser()
+       
        this.getComments ()
     }
 }

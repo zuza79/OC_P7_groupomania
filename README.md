@@ -10,8 +10,8 @@ server run with: `npm run serve`, App running at: Local: `http://localhost:8080`
 # Compte administrateur #  
     Prenom : admin
     Nom : admin
-    Role : 0   
-    Id : 17
+    Role : 1   
+    Id : 1
     Email : admin@groupomania.com  
     Password : Admin123
 

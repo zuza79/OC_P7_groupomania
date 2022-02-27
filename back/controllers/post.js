@@ -38,10 +38,11 @@ exports.createPost = (req, res, next) => {
                 title : title,
                 content: content,
               // image: image,
-              image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`|| '',
+              image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}` || "",
                 like: 0,
                 dislike: 0,
-                UserId: user.id
+                UserId: user.id,
+                
             }).then( res.status(201).json({"message": "Nouveau post créé avec succès !"})
             ).catch(error => {
                 console.log(error);
@@ -116,6 +117,7 @@ exports.createPost = (req, res, next) => {
 */
 // DISPLAY ONE POST
 exports.getOnePost = (req, res, nest) => {
+    console.log("getOnePost  " + req.body)
     models.Post.findOne({
         include: [{
             model : models.User

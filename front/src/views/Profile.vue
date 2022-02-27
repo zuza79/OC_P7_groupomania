@@ -30,6 +30,7 @@
                         <input type="file" accept="image/jpeg, image/jpg, image/png, image/webp" v-on:change="uploadFile" id="file" class="input-file" aria-label="Photo de profil">
                     </div>
                 <!--modify password -->
+                
                     <div class="modifyPassword">
                         <button v-on:click="show" class="button">Modifier<br> mot de passe</button>
                         <li v-if="button">
@@ -39,7 +40,8 @@
                             <button @click.prevent="modifyPassword()" class="btnSave"><i class="fas fa-edit"></i>Enregistrer nouveau mot de passe</button>
                         </li>
                     </div>
-            </nav>
+                
+            </nav>q
 
                 <div class="submit">
                     <button @click="modifyUser()" class="btnSave" aria-label="Modifier le compte de cet utilisateur"><i class="fas fa-edit"></i> Enregistrer</button>
@@ -133,7 +135,7 @@ export default {
                 alert("Veuillez écrire une adresse email valide");
             } else if ((regexText.test(this.user.nom) === true) && regexText.test(this.user.prenom) === true && regexEmail.test(this.user.email) === true && this.user.image === null) {
             
-                axios.put(`http://localhost:3000/api/auth/profile/${Id}`, {
+                axios.put(`http://localhost:3000/api/auth/profile/${Id}`, { 
                    
                         headers: {
                         'Accept': 'application/json',
@@ -281,7 +283,7 @@ export default {
                     'Content-Type': 'application/json',
                     'authorization': `Bearer ${token}`
                     },
-                   // body: data
+                    body: data
 				})
                 .then(() => {
                     alert("Le nouveau mot de passe enregistrer")
