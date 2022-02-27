@@ -98,8 +98,10 @@
                 <button v-if="displayCreateComment === false" v-on:click="show2" class="btnSave" aria-label="Ecrire un commentaire"><i class="far fa-edit"></i>Commenter</button>
                 <article v-if="displayCreateComment" class="createcomment">
                     <textarea v-model="commentaire" placeholder="Faire ton commentaire..." cols="60" rows="5" aria-label="Message du commentaire"></textarea>
+                    <div class=btnComment>
                     <button @click="createComment()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
                     <button v-on:click="hide2" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
+                    </div>
                 </article>
 
             </section>
@@ -134,6 +136,7 @@ export default {
                 user: {},
                 userId:''
             },
+            user : {},
             comments: [],
             displaycomments: false,
             displayCreateComment: false,
@@ -163,27 +166,26 @@ export default {
        
         getOnePost() {
             const token = localStorage.getItem("token")
-          // const postId = localStorage.getItem('postId');
-           
-           //  axios.get (`http://localhost:3000/api/posts/${this.posts[index].id}`, { ${post.id} + this.post.id
-            axios.get (`http://localhost:3000/api/posts/${post.id}`, {
+         ///   ('http://localhost:3000/api/user/' + this.userId)
+            // 'http://localhost:3000/api/posts/'
+          //  ('http://localhost:3000/api/profile/' + this.user.id,
+         
+            axios.get (('http://localhost:3000/api/posts/' + post.id), {
               
                 headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                 }
+                })    
+             .then((res) => {
+                console.log(res.data);
+                this.posts = res.data
             })
-            .then(() => {res => 
-                                alert("message afficher")
-                                console.log("message afficher")
-                               this.posts = res.data
-                            })
-            
                 
-            .catch(() => console.log('erreur getOnePost !' + err))
+            .catch(() => console.log('Impossible de récupérer les posts !'))
         },
-        
+
         getPostComments() {
             const token = localStorage.getItem("token")
 
@@ -334,6 +336,7 @@ section {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 0 auto 0 auto;
 }
 
 h1 {
@@ -370,7 +373,9 @@ textarea {
 .modif {
     margin: 0;
 }
-
+.btn{
+    text-align: center;
+}
 .content {
     margin-bottom: 30px;
 }
@@ -380,12 +385,14 @@ textarea {
     flex-direction: column;
 }
 
-
-
-
-
-.buttonannuler{
-    margin-bottom: 40px;
+.btn{
+    width: 30%;
+}
+.btnComment{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    
 }
 
 .button-comment {
@@ -453,7 +460,9 @@ img {
     .content {
         width: 90%;
     }
-
+section{
+    width: 80%;
+}
 }
 
 @media screen and (max-width:768px) {
@@ -463,7 +472,10 @@ img {
     .content {
         width: 98%;
     }
-
+section{
+    width: 80%;
+    
+}
     .modif{
         display: flex;
         flex-direction: column;
