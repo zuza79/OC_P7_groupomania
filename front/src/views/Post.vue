@@ -17,41 +17,32 @@
  
             <section>
      <div class="header">
-       <!--   <post v-for="(post, index) in posts" :key="index" :post="post">{{post}}</post>
-                  <tr class = "card" v-bind:key="index" v-for="(post, index) in posts"> 
-                    
-                    <post v-for="post in posts" v-bind:key="post.id" :post="post"></post>-->
-                    <tr class = "card" v-bind:key="index" v-for="(post, index) in posts">
-                        
-                        <td><input type="text" v-model="post.title" required aria-label="Titre" disabled></td>
-                        <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled></textarea></td>
-                        <td><img v-if="post.image" :src="post.image" alt="Image"></td>
+       <!-- DISPLAY POST --> 
+                    <tr class = "card" >
+                        <td><input type="text" v-model="post.title" required aria-label="Titre" disabled size="50" ></td>  <!--rows="10" cols="25" -->
+                        <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled ></textarea></td>
+                        <td><img v-if="post.image" :src="post.image" alt="Image du post"></td>
                     </tr>
-                    <!--
-                    <div>
-                        <h3>Title: {{ post.title }}</h3>
-                    </div>
-                    <div>
-                        <p>Message: {{ post.content }}</p>
-                    </div>
-                -->
+                    
+
+
                     <div>
                         
                         <div class="info">
                             <p>
                                 Posté par 
                                 <b>{{ post.user.nom }} 
-                                <span v-if="post.user.role != 0">{{ post.user.prenom }} </span></b>     
+                                <span v-if="post.user.role != 1">{{ post.user.prenom }} </span></b>     
                                <!-- <img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
                                 <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
                                -->
-                                le <b>{{ dateFormat(post.created_date) }}</b>
-                                à <b>{{ hourFormat(post.created_date) }}</b><br>
+                                le <b>{{ dateFormat(post.createdAt) }}</b>
+                                à <b>{{ hourFormat(post.createdAt) }}</b><br>
                             </p>
-                            <p v-if="post.created_date != post.updated_date">
+                            <p v-if="post.createdAt != post.updatedAt">
                                 Modifié 
-                                le <b>{{ dateFormat(post.updated_date) }}</b>
-                                à <b>{{ hourFormat(post.updated_date) }}</b>
+                                le <b>{{ dateFormat(post.updatedAt) }}</b>
+                                à <b>{{ hourFormat(post.updatedAt) }}</b>
                             </p>
                         </div>
                     
@@ -62,12 +53,13 @@
 
                 <div class="content">
                     <p class="modif">
-                    <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier ce post</button>
-                    <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete espacement" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer ce post</button>
+                        <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier ce post</button>
+                        <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete espacement" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer ce post</button>
                     </p>
+                   <!-- <p>{{ post.content }}</p>
                     <hr v-if="post.userId === id || role === 0">
                     <img v-if="post.image" :src="post.image" alt="Image du post">
-                    <p>{{ post.content }}</p>
+                   -->  
                 </div>
 
 
@@ -117,6 +109,7 @@ import Footer from "../components/Footer";
 
 export default {
     name: 'Post',
+    props: [''],
     components: {
         HeaderProfile,
         Footer
@@ -125,12 +118,12 @@ export default {
         return {
             posts: [],
             users: [],
-            //postId: this.$route.params.id,
+            userId: this.$route.params.id,
             post: {
                 title:'',
                 content:'',
-                created_date:'',
-                updated_date:'',
+                createdAt:'',
+                updatedAt:'',
                 id:'',
                 image:'',
                 user: {},
@@ -163,29 +156,37 @@ export default {
             this.role = localStorage.getItem("role")
 
         },
-       
+       // DISPLAY ONE POST
         getOnePost() {
             const token = localStorage.getItem("token")
-         ///   ('http://localhost:3000/api/user/' + this.userId)
-            // 'http://localhost:3000/api/posts/'
-          //  ('http://localhost:3000/api/profile/' + this.user.id,
-         
-            axios.get (('http://localhost:3000/api/posts/' + post.id), {
+         ///   'http://localhost:3000/api/profile/' + this.user.id,
+         //'   axios.get("mon_url/"+post.id)+ 
+         //axios.get('https://site.com/?foo=bar') foo=id bar=poison
+                        //${post.id}
+            axios.get (`http://localhost:3000/api/posts/6` ,  {
               
                 headers: {
                     'authorization': `Bearer ${token}`,
+                   // 'Content-Type': 'multipart/form-data',
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
+                    //'Accept': 'application/json',
                 }
-                })    
-             .then((res) => {
+                } ).then((res) => {
+
                 console.log(res.data);
-                this.posts = res.data
+                this.posts = res.data;
+                this.post.title = res.data.title;
+                this.post.content = res.data.content;
+                this.post.image = res.data.image;
+                this.post.createdAt = res.data.createdAt;
+                this.post.updatedAt = res.data.updatedAt;
+                this.post.user.nom = res.data.user.nom;
+                
             })
                 
-            .catch(() => console.log('Impossible de récupérer les posts !'))
+            .catch(err => this.posts = [{title : "Impossible de récupérer les posts !"}]);
         },
-
+// DISPLAY ALL COMMENTS OF POST
         getPostComments() {
             const token = localStorage.getItem("token")
 
@@ -213,7 +214,7 @@ export default {
             const options = { hour: 'numeric', minute:'numeric', second:'numeric'};
             return hour.toLocaleTimeString('fr-FR', options);
         },
-
+// LIKE POST
         likePost(){
             console.log(this.post);
              const token = sessionStorage.getItem('token');
@@ -256,11 +257,12 @@ export default {
                     }
                 })
                 .then((res) => {
+                alert ("Publication supprimer")
                 console.log(res.data);
                 this.posts = res.data
             })
                 
-            .catch(() => console.log('Impossible de récupérer les posts !'))
+            .catch(() => console.log('Impossible de récupérer supprimer ce post !'))
         
             }
         },
@@ -283,7 +285,7 @@ export default {
                     userId: Id
                 }
 
-                get.post("http://localhost:3000/api/comments/new", data, {
+                axios.post("http://localhost:3000/api/comments", data, {
                    
                     headers: {
                     'Accept': 'application/json',
@@ -292,11 +294,11 @@ export default {
                     },
                     body: data                })
                 .then(() => {
-                                alert("commentaire fait")
-                                console.log("commentaire fait")
+                                alert("commentaire publié")
+                                console.log("commentaire OK")
                             })
                 
-            .catch(() => console.log(' erreur commentaire!'))
+            .catch(() => console.log(' Impossible de publier commentaire!'))
        }
         },
         deleteComment (index) {
@@ -322,8 +324,8 @@ export default {
     mounted(){
         
         this.getOnePost ()
-       this.getOneUser()
-       this.getComments ()
+       //this.getOneUser()
+       //this.getComments ()
     }
 }
 </script>
@@ -338,14 +340,28 @@ section {
     align-items: center;
     margin: 0 auto 0 auto;
 }
-
+.card {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+}
+input{
+    width: 60%;
+    height: 30px;
+    text-align: center ;
+    font-size: 20px;
+    font-weight: bolder;
+}
 h1 {
     font-size: 1.5rem;
     margin: 30px 0 10px 0;
 }
 
 textarea {
+    width: 80%;
+    height: 150px;
     font-size: 1.2rem;
+    margin: 10px auto 10px auto;
 }
 
 .header,
@@ -463,6 +479,7 @@ img {
 section{
     width: 80%;
 }
+
 }
 
 @media screen and (max-width:768px) {

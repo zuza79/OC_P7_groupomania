@@ -12,6 +12,6 @@ router.get('/', auth, postCtrl.getAllPosts)                 //OK all
 router.get('/:id', auth, postCtrl.getOnePost)               //OK postman
 router.get('/:userId/posts',auth, postCtrl.getPostsUser)
 router.put('/:id', auth, postCtrl.likePost);
-router.put('/admin/post/:id', auth, postCtrl.administrationPost)
+
 
 module.exports = router;

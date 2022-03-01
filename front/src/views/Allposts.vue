@@ -33,12 +33,7 @@
                         <td><img v-if="post.image" :src="post.image" alt="Image"></td>
                   
                         <div class="icone">
-                          <!--   <button router-link  class="btnIconeSave" aria-label="Afficher le message"><i class="far fa-edit"></i></button>-->
-                           <!--  <router-link to="/post/${id}" >
-                          <router-link 
-                          to="/post" :href="$router.resolve ({name: 'post', params :{id: postId}}).href">
-                           class="link" :to="`/post/${post.id}`"
-                            --> 
+                         <!--  === ok====  to="/post"   ====--> 
                            
                            <router-link :to="`/post/${post.id}`" aria-label="Afficher le message">
                           
@@ -64,15 +59,15 @@ import Footer from "../components/Footer";
 
 export default {
     name: 'allposts',
-    props: ['postId'],
+    props: ['post.id'],
     components: {
         HeaderProfile,
         Footer
     },
     data () {
         return {
-            postId: this.$route.params.id,
-            props: ['post.id'],
+           // postId: this.$route.params.id,
+            props: [''],
             posts: [],
             users: [],
             
@@ -86,7 +81,7 @@ export default {
         }
     },
     methods : {
-        
+        //GET ALL POSTS
         getAllPosts() {
             const token = localStorage.getItem("token")
 

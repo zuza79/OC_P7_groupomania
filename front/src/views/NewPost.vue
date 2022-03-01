@@ -58,15 +58,16 @@ export default {
         }
     },
     methods: {
-        // Récupération du fichier image uploadé
+        // FILE UPLOAD
         uploadFile(event) {
             this.image = event.target.files[0]
         },
+        //CREATE POST
    createPost() {
          
-const Id = JSON.parse(localStorage.getItem("userId"))
-           const fileField = document.querySelector('input[type="file"]');
-          const token = (localStorage.getItem("token"))
+        const Id = JSON.parse(localStorage.getItem("userId"))
+        const fileField = document.querySelector('input[type="file"]');
+        const token = (localStorage.getItem("token"))
 
             if (this.title === '')
                 alert("Veuillez remplir le titre")
@@ -90,7 +91,7 @@ const Id = JSON.parse(localStorage.getItem("userId"))
                 body: data
                 })
                 .then(() => {
-                     alert("Message publier")
+                     alert("Message  sans image publier")
                             console.log('ok')
                     
                 })

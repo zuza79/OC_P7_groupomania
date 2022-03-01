@@ -1,26 +1,24 @@
 // controllers post
-// create, modify, dele, display one/all post
+// create, modify, delete, display one/all post
 // display all post by user, modify post by admin
 const jwtUtils = require('../utils/jwt.utils.js');
 const fs = require('fs');
 const models = require('../models');
 
 
-// ----->Controllers<-----
-// Création d'un nouveau post
+// CREATE POST
 exports.createPost = (req, res, next) => {
-     console.log("post          "+ JSON.stringify (req.body.title));
-
+    // console.log("post          "+ JSON.stringify (req.body.title));
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const title = req.body.title;
     const content = req.body.content;   
-    let image = req.file;
-    //let image = "";
+   // let image = req.file;
+    let image = "";
     if(!title || !content) {
         res.status(400).json({ 'erreur': 'paramètre manquant' });
     };
-    console.log("create 1 ");
+    //console.log("create 1 ");
      /*   } else {
         image = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`;
         if(image.length > 150) {
@@ -32,13 +30,13 @@ exports.createPost = (req, res, next) => {
         where: { id: userId }
     })
     .then(user => {
-        console.log("create 2 ");
-        if(user) {  console.log("create 3 ");
+      //  console.log("create 2 ");
+        if(user) {  //console.log("create 3 ");
             models.Post.create({
                 title : title,
                 content: content,
-              // image: image,
-              image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}` || "",
+              // image: image || "",
+              image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}` || '',
                 like: 0,
                 dislike: 0,
                 UserId: user.id,
@@ -49,7 +47,7 @@ exports.createPost = (req, res, next) => {
                 res.status(400).json({erreur : erreur.message});
             });
                     
-        } else {  console.log("create 4 ");
+        } else {  //console.log("create 4 ");
             res.status(404).json({erreur : 'Utilisateur non trouvé!!'});
         };
     })
@@ -59,62 +57,6 @@ exports.createPost = (req, res, next) => {
     });
 };
 
-/*
-const jwtUtils = require('../utils/jwt.utils.js');
-const fs = require('fs');
-const models = require('../models');
-const User = models.User;
-const Post = models.Post;
-//////// CREATE POST
-exports.createPost = (req, res, next) => {
-    const headerAuth = req.headers['authorization'];
-    const userId = jwtUtils.getUserId(headerAuth);
-    
-  //  console.log("post"+ JSON.stringify (req.body.post));
-    const post = req.body.post;    
-    // console.log ("___________________________"+req.file)
-    let image = "";
-    /*try{
-        image = `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`;
-    }
-    catch(erreur){
-        console.log(erreur);
-    }*/
-// verifier les champs du post sauf image 
- /*   if(!post) {
-        res.status(400).json({ 'erreur': 'paramètre manquant' });
-    };
-    User.findOne({
-        where: { id: userId }
-    })
-    .then(user => {
-        if(user) {
-           Post.create ({
-				include: [ {model: models.User,}],
-                title: post.title,
-				content: req.body.post.content || "",
-				image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`|| '',
-                UserId: user.id,
-                like: 0,
-                dislike: 0,
-			}).then(
-                res.status(201).json({"message": "Nouveau post créé avec succès !"})
-            
-            ).catch( error => { console.log(error);  
-            res.status(500).send({'erreur' : 'erreur insertion dans la base de données'});});
-           
-                    
-        } else {
-            res.status(400).json({'erreur' : 'Utilisateur introuvable'});
-        }
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({ "erreur": "erreur!!! catch"});
-    });
-    
-};
-*/
 // DISPLAY ONE POST
 exports.getOnePost = (req, res, nest) => {
     console.log("getOnePost  " + req.body)
@@ -165,10 +107,10 @@ exports.getPostsUser = (req, res, next) => {
 
 // MODIFY POST
 exports.modifyPost = (req, res, next) => {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, 'SECRET_KEY_TOKEN');
-    const userId = decodedToken.userId
-    const role = decodedToken.role
+    const headerAuth = req.headers['authorization'];
+    const userId = jwtUtils.getUserId(headerAuth);
+    const role = jwtUtils.getRoleUser(headerAuth);
+    console.log("modify post   "+ req.body);
 
     if (req.file) {
 
@@ -253,30 +195,6 @@ exports.modifyPost = (req, res, next) => {
         })
         .catch(error => res.status(500).json({ error }));
     }
-}
-// ADMINISTRATION POST BY ADMIN
-exports.administrationPost = (req, res, nest) => {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, 'SECRET_KEY_TOKEN');
-    const role = decodedToken.role
-
-    Post.findOne({ where: { id: req.params.id }})
-    .then(() => {
-        if (role === 0) {
-            const administration = {
-                administration: req.body.administration
-            };
-
-            Post.update(administration, { where: { id: req.params.id }})
-            .then(() => { res.status(201).json({ message: 'Modificatio effectué par administrateur !' })})
-            .catch(error => res.status(400).json({ error }));
-        } else {
-            res.status(401).json({
-                message: 'Requête non autorisée !' 
-            });
-        }
-    })
-    .catch(error => res.status(500).json({ error }));
 }
 
 // DELETE POST

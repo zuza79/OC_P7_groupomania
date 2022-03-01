@@ -59,8 +59,8 @@ export default {
 
 //GET POST
         getOnePost() {
-            const token = JSON.parse(localStorage.getItem("userToken"))
-
+            const token = localStorage.getItem("token")
+                                                                  
             axios.get (`http://localhost:3000/api/posts/${post.id}`, {
                    
                     headers: {
@@ -74,7 +74,7 @@ export default {
 //MODIFY POST
         modifyPost() {
             const fileField = document.querySelector('input[type="file"]');
-            const token = JSON.parse(localStorage.getItem("userToken"))
+            const token = localStorage.getItem("token")
 
             if (this.post.title === "")
                 alert("Veuillez remplir le titre");

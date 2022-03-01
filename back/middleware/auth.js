@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
         const decodedToken = jwt.verify(token, 'SECRET_KEY_TOKEN');
         const userId = decodedToken.userId;
         if(req.body.userId && req.body.userId !== userId) {
-            throw 'ID utilisateur incorrect !';
+            throw 'err middleware auth ID utilisateur incorrect !';
         } else {
             next();
         }

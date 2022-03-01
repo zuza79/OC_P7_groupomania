@@ -3,9 +3,22 @@
         <HeaderProfile />
         <div>
             <h1>Mon profil</h1>
-           <p>Voir tout les publications??????</p>
-           
-                            
+          <!--DISPLAY ALL POSTS  - ONE USER
+            pridat afficher les post, modifier, dlete post-->
+         
+
+         <button v-if="displayPostsUser === false" v-on:click="show2" class="btnSave" aria-label="afficher toutes mes publications">Afficher toutes mes publications</button>
+         <tr class = "card" v-bind:key="index" v-for="(post, index) in posts">
+                <article v-if="displayPostsUser" class="createcomment">
+                        <td><input type="text" v-model="post.title" required aria-label="Titre" disabled></td>
+                        <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled></textarea></td>
+                        <td><img v-if="post.image" :src="post.image" alt="Image"></td>
+                    <div class=btnComment>
+                        <button @click="getPostsUser()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
+                        <button v-on:click="hide2" class="btnIconeDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
+                    </div>
+                </article>
+        </tr>                    
         <!--user info nom, prenom, email -->
             <form>
                 <ul>
@@ -23,13 +36,13 @@
             <nav class="modify" >
 
                 <!--modify image -->
-                    <div class="modifyImage" id="modifyImage">
+                    <div class="modifyImage btnModifyImg" id="modifyImage">
                         <img v-if="user.image" :src="user.image" alt="Photo de profil" class="file" width="150px" height="150px" border-radius="15px">
-                        <label v-if="!user.image" for="file" class="label-file" aria-label="Inserer votre photo de profil" ><i class="fas fa-upload"></i><br>Inserer <br>votre photo de profil</label>
+                        <label v-if="!user.image" for="file" class="label-file btnModifyImg" aria-label="Inserer votre photo de profil" ><i class="fas fa-upload"></i><br>Inserer <br>votre photo de profil</label>
                         <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer la photo de profil"> <i class="far fa-trash-alt"></i> Supprimer</button>
                         <input type="file" accept="image/jpeg, image/jpg, image/png, image/webp" v-on:change="uploadFile" id="file" class="input-file" aria-label="Photo de profil">
                     </div>
-                <!--modify password -->
+                <!--modify password 
                 
                     <div class="modifyPassword">
                         <button v-on:click="show" class="button">Modifier<br> mot de passe</button>
@@ -40,8 +53,8 @@
                             <button @click.prevent="modifyPassword()" class="btnSave"><i class="fas fa-edit"></i>Enregistrer nouveau mot de passe</button>
                         </li>
                     </div>
-                
-            </nav>q
+                -->
+            </nav>
 
                 <div class="submit">
                     <button @click="modifyUser()" class="btnSave" aria-label="Modifier le compte de cet utilisateur"><i class="fas fa-edit"></i> Enregistrer</button>
@@ -67,6 +80,7 @@ export default {
     },
     data() {
         return {
+             displayPostsUser: false,
             user: {
                 id: '',
                 nom: '',
@@ -89,7 +103,18 @@ export default {
         show: function () {
             return this.button = true;
         },
-        //get one user
+        show2: function () {
+            return this.displayPostsUser = true;
+        },
+        hide2: function () {
+            return this.displayPostsUser = false;
+        },
+        User() {
+            this.id = localStorage.getItem("Id")
+            this.role = localStorage.getItem("role")
+
+        },
+        //GET ONE USER
         getOneUser() {
             const Id = JSON.parse(localStorage.getItem("userId"))
             const userId = this.$route.params.id;
@@ -108,7 +133,27 @@ export default {
         this.user.image = res.data.image;
       }).catch(err => console.log("erreur get user " +err))
     },
-    //modify user
+
+    // DISPLAY ALL POSTS ONE USER
+    getPostsUser() {
+            const token = localStorage.getItem("token")
+//router.get('/:userId/posts',auth, postCtrl.getPostsUser)
+            axios.get('http://localhost:3000/api/ +${this.Id} posts/', {
+                
+             headers: {
+                    'authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                    },
+                   
+                })    
+             .then((res) => {
+                console.log(res.data);
+                this.posts = res.data
+            })
+                
+            .catch(() => console.log('Impossible de récupérer les posts !'))
+        },
+    //MODIFY USER
         modifyUser() {
             const Id = JSON.parse(localStorage.getItem("userId"))
             const userId = this.$route.params.id;
@@ -179,13 +224,13 @@ export default {
             .catch(() => console.log('Impossible de récupérer les informations !'))
             }
         },
-        //delete user
+        //DELETE USER
         deleteUser() {
             const Id = JSON.parse(localStorage.getItem("userId"))
             if (confirm("Voulez-vous vraiment supprimer le compte?") == true) {
                 const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
-//delete user
+
                 axios.delete(`http://localhost:3000/api/auth/profile/${Id}`, {
                    
                     headers: {
@@ -217,7 +262,7 @@ export default {
                     }
                 })
                 .then(() => {
-                    //delete user
+                   
                     axios.deleteUser(`http://localhost:3000/api/auth/profile/${Id}`, {
                        
                         headers: {
@@ -250,8 +295,8 @@ export default {
             this.user.image = '';
         },
         
-        //modify password
-        modifyPassword() {
+        //MODIFY PASSWORD
+      /*  modifyPassword() {
             const Id = JSON.parse(localStorage.getItem("userId"))
      const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
@@ -297,7 +342,9 @@ export default {
 			} else {
 				alert("Le nouveau mot de passe enregistrer")
 			}
+            
         },
+        */
     mounted() {
         this.getOneUser()
     }
@@ -368,6 +415,8 @@ input {
     border-radius: 10px;
     text-decoration: none;
     color: #000000;
+      width: 40%;
+    margin: 15px auto 15px auto;
     background: gray;
     font-size: 15px;
     cursor: pointer;
