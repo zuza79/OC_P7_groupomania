@@ -28,7 +28,7 @@
                 <button @click="modifyPost()" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Enregistrer</button>
             </section>
             <div>
-            <router-link :to="`/post/${post.id}`" class="btnDelete" aria-label="Retour au fil d'actualité"><i class="fas fa-comment-slash"></i> Annuler</router-link>
+            <router-link :to="`/post/${this.id_param}`" class="btnDelete" aria-label="Retour au fil d'actualité"><i class="fas fa-comment-slash"></i> Annuler</router-link>
             </div>
             <div>
             <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
@@ -60,21 +60,24 @@ export default {
 //GET POST
         getOnePost() {
             const token = localStorage.getItem("token")
-                                                                  
-            axios.get (`http://localhost:3000/api/posts/${post.id}`, {
+                                                // ${post.id}                  
+            axios.get (`http://localhost:3000/api/posts/${this.id_param}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
                     }
             })
-            .then (response => response.json())
-            .then (data => (this.post = data))
-            .catch(alert)
+             .then((res) => {
+                console.log(res.data);
+                this.posts = res.data
+            })
+            .catch(() => console.log('Impossible de récupérer les posts !'))
         },
 //MODIFY POST
         modifyPost() {
             const fileField = document.querySelector('input[type="file"]');
             const token = localStorage.getItem("token")
+            
 
             if (this.post.title === "")
                 alert("Veuillez remplir le titre");
@@ -82,24 +85,29 @@ export default {
             if (this.post.content === "")
                 alert("Veuillez remplir votre message");
             if (this.post.image === null && this.post.title != "" && this.post.content != "") {
+               
                 let data = new FormData()
+                data.append('image', '')
                 data.append('title', this.post.title)
                 data.append('content', this.post.content)
 
-                axios.put(`http://localhost:3000/api/posts/${this.post.id}`, {
+                axios.put(`http://localhost:3000/api/posts/${this.id_param}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
                     },
                     body: data
+                    
                 })
-                    .then(response => response.json())
-                    .then(data => (this.post = data))
-                    .then(() => {
-                        this.$router.push(`/post/${this.id_param}`);
-                    })
-                .catch(alert)
-
+                    .then((res) => {
+                        alert("Modification de message sans image réusi")
+                console.log("modification ok");
+                this.posts = res.data
+                //this.$router.push(`/post/${this.id_param}`);
+                })
+                   
+                .catch(() => console.log('Impossible de modifier ce post !'));
+                    
             } else if (this.post.title != "" && this.post.content != "") {
 
                 let data = new FormData()
@@ -114,11 +122,21 @@ export default {
                     },
                     body: data
                 })
-                .then((response) => response.json())
-                .then(() => {
-                    this.$router.push(`/post/${this.id_param}`);
+                .then((res) => {
+                      console.log(res.data);
+                this.posts = res.data;
+                this.post.title = res.data.title;
+                this.post.content = res.data.content;
+                this.post.image = res.data.image;
+                this.post.createdAt = res.data.createdAt;
+                this.post.updatedAt = res.data.updatedAt;
+                        alert("Modification de message avec image réusi")
+                console.log("modification ok");
+                this.posts = res.data
+                //this.$router.push(`/post/${this.id_param}`);
                 })
-                .catch(alert)
+                   
+                .catch(() => console.log('Impossible de modifier ce post avec image !'));
             }
         },
     //UPLOAD POST

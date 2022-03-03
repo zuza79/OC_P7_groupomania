@@ -33,9 +33,13 @@
                         <td><img v-if="post.image" :src="post.image" alt="Image"></td>
                   
                         <div class="icone">
-                         <!--  === ok====  to="/post"   ====--> 
+                         <!--to="/post/${post.id}"  === ok==== 
+                         :to="`/post/${post.id}`"
+                          
+                             
+                             ====--> 
                            
-                           <router-link :to="`/post/${post.id}`" aria-label="Afficher le message">
+                           <router-link :to="`/post/${post.id}`" :href="$router.resolve({name: 'Post', params: { id: post.id}}).href" aria-label="Afficher le message">
                           
                              <button class="btnIconeSave" ><i class="far fa-edit"></i></button>
                            </router-link>
@@ -66,8 +70,8 @@ export default {
     },
     data () {
         return {
-           // postId: this.$route.params.id,
-            props: [''],
+            id_param: this.$route.params.id,
+            props: ['post.id'],
             posts: [],
             users: [],
             

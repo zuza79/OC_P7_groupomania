@@ -2,18 +2,18 @@
     <div>
         <HeaderProfile />
          
-        
+   <!--     
             <div class="like">
           <button class="btnSave" @click="likePost">
             <div><i class="fas fa-thumbs-up like"></i>{{ like }}</div>
           </button>
-<!--
+
          <button class="btnDelete ">
             <div><i class="fas fa-thumbs-down dislike"></i>{{ dislike }}</div>
           </button>
- -->    
+   
       </div>
-  
+   --> 
  
             <section>
      <div class="header">
@@ -31,7 +31,7 @@
                         <div class="info">
                             <p>
                                 Posté par 
-                                <b>{{ post.user.nom }} 
+                                <b>{{ user.nom }} 
                                 <span v-if="post.user.role != 1">{{ post.user.prenom }} </span></b>     
                                <!-- <img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
                                 <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
@@ -116,9 +116,16 @@ export default {
     },
     data () {
         return {
+             id_param: this.$route.params.id,
+          //  like: this.post.like,
+           // dislike: this.post.dislike,
+
+           
+
+            props: ['post'],
             posts: [],
             users: [],
-            userId: this.$route.params.id,
+            
             post: {
                 title:'',
                 content:'',
@@ -129,13 +136,21 @@ export default {
                 user: {},
                 userId:''
             },
-            user : {},
+            user : {
+                nom: '',
+            },
             comments: [],
             displaycomments: false,
             displayCreateComment: false,
             commentaire:'',
             id:'',
             role: ''
+        }
+    },
+     computed: {
+        likeIncrement(){
+            return this.like + 1 ;
+            // console.log(this.like);
         }
     },
     methods : {
@@ -161,13 +176,13 @@ export default {
             const token = localStorage.getItem("token")
          ///   'http://localhost:3000/api/profile/' + this.user.id,
          //'   axios.get("mon_url/"+post.id)+ 
-         //axios.get('https://site.com/?foo=bar') foo=id bar=poison
-                        //${post.id}
-            axios.get (`http://localhost:3000/api/posts/6` ,  {
+         //axios.get('https://site.com/?foo=bar')  ${this.post.id}
+                        //
+            axios.get (`http://localhost:3000/api/posts/${this.id_param}` ,  {
               
                 headers: {
                     'authorization': `Bearer ${token}`,
-                   // 'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'multipart/form-data',
                     'Content-Type': 'application/json',
                     //'Accept': 'application/json',
                 }
@@ -175,12 +190,14 @@ export default {
 
                 console.log(res.data);
                 this.posts = res.data;
+                this.users = res.data;
+
                 this.post.title = res.data.title;
                 this.post.content = res.data.content;
                 this.post.image = res.data.image;
                 this.post.createdAt = res.data.createdAt;
                 this.post.updatedAt = res.data.updatedAt;
-                this.post.user.nom = res.data.user.nom;
+                this.user.nom = res.data.nom;
                 
             })
                 
@@ -190,7 +207,7 @@ export default {
         getPostComments() {
             const token = localStorage.getItem("token")
 
-            axios.get (`http://localhost:3000/api/comments/${this.post.id}}`, {
+            axios.get (`http://localhost:3000/api/comments/${this.id_param}}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
@@ -217,9 +234,9 @@ export default {
 // LIKE POST
         likePost(){
             console.log(this.post);
-             const token = sessionStorage.getItem('token');
+             const token = localStorage.getItem('token');
             
-             axios.put(`http://localhost:3000/api/posts/${this.post.id}`, {like: this.likeIncrement}, {
+             axios.put(`http://localhost:3000/api/posts/${this.id_param}`, {like: this.likeIncrement}, {
                  headers: {
                         'authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data',
@@ -244,13 +261,13 @@ export default {
      } )
         },
       
-
+//DELETE POST
         deletePost () {
             const token = JSON.parse(localStorage.getItem("userToken"))
 
             if (confirm("Voulez-vous vraiment supprimer le post") === true) {
 
-                axios.delete(`http://localhost:3000/api/posts/${this.post.id}`, {
+                axios.delete(`http://localhost:3000/api/posts/${this.id_param}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
@@ -262,12 +279,15 @@ export default {
                 this.posts = res.data
             })
                 
-            .catch(() => console.log('Impossible de récupérer supprimer ce post !'))
+            .catch(() =>{ 
+                alert("Vous n'avez pas autorisation de supprimer ce message!!")
+                console.log('Vous n avez pas autorisation de supprimer ce message!!')
         
-            }
+          } )}
         },
+        //MODIFY POST
         modifyPost () {
-            this.$router.push(`/postmodify/${this.post.id}`)
+            this.$router.push(`/postmodify/${this.id_param}`)
         },
 
         //create comment

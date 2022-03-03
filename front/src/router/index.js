@@ -41,7 +41,7 @@ const routes = [
     component: Allposts
   },
   {
-    path: '/post',
+    path: '/post/:id',
     name: 'Post',
     component: Post
   },
@@ -78,17 +78,17 @@ const routes = [
     component: NewPost
   },
   {
-    path: '/postcomment',
+    path: '/postcomment/:id',
     name: 'CommentPost',
     component: CommentPost
   },
   {
-    path: '/postmodify',
+    path: '/postmodify/:id',
     name: 'ModifyPost',
     component: ModifyPost
   }, 
   {
-    path: '/commentmodify',
+    path: '/commentmodify/:id',
     name: 'ModifyComment',
     component: ModifyComment
   },

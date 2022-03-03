@@ -76,7 +76,8 @@ exports.getOnePost = (req, res, nest) => {
 // DISPLAY ALL POSTS
 
 exports.getAllPosts = (req, res, next) => {
-    console.log("all post  " + req.body)
+    console.log("all post  " + req.body);
+  
     models.Post.findAll({ 
         include: [{
             model : models.User
@@ -107,23 +108,30 @@ exports.getPostsUser = (req, res, next) => {
 
 // MODIFY POST
 exports.modifyPost = (req, res, next) => {
+    console.log("modify post   "+ req.body);
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
-    console.log("modify post   "+ req.body);
+    
 
     if (req.file) {
 
-        Post.findOne({ where: { id: req.params.id }})
+       models.Post.findOne({ where: { id: req.params.id }})
+       
         .then(post => {
-            if (userId === post.user.id || role === 0) {
+            console.log("post FindOne    "   + req.params.id)
+            console.log("userId    "   + userId);
+            console.log("post user.id     " + post.userId)
+
+
+            if (userId === post.userId || role === 0) {
                 if (post.image) {
                 const filename = post.image.split('/images/posts/')[1];
                 fs.unlink(`images/posts/${filename}`, () => {
                     const modifyPost = {
                         title: req.body.title,
                         content: req.body.content,
-                        updated_date: Date.now(),
+                        updatedAt: Date.now(),
                         administration: false,
                         image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`
                     };
@@ -136,7 +144,7 @@ exports.modifyPost = (req, res, next) => {
                     const modifyPost = {
                         title: req.body.title,
                         content: req.body.content,
-                        updated_date: Date.now(),
+                        updatedAt: Date.now(),
                         administration: false,
                         image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`
                     };
@@ -157,15 +165,15 @@ exports.modifyPost = (req, res, next) => {
     } else {
         Post.findOne({ where: { id: req.params.id }})
         .then(post => {
-            if (userId === post.user.id || role === 0) {
+            if (userId === post.userId || role === 0) {
                 if (post.image && req.body.image === '') {
                     const filename = post.image.split('/images/posts/')[1];
                     fs.unlink(`images/posts/${filename}`, () => {
                         const modifyPost = {
                             title: req.body.title,
                             content: req.body.content,
-                            updated_date: Date.now(),
-                            administration: false,
+                            updatedAt: Date.now(),
+                            //administration: false,
                             image: ''
                         };
 
@@ -178,8 +186,8 @@ exports.modifyPost = (req, res, next) => {
                     const modifyPost = {
                         title: req.body.title,
                         content: req.body.content,
-                        updated_date: Date.now(),
-                        administration: false,
+                        updatedAt: Date.now(),
+                       // administration: false,
                     };
             
                     Post.update(modifyPost , { where: { id: req.params.id } })
