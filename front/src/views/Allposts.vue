@@ -74,6 +74,7 @@ export default {
             props: ['post.id'],
             posts: [],
             users: [],
+           // image : image,
             
         }
     },
@@ -94,6 +95,7 @@ export default {
              headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
+                    //'Access-Control-Allow-Origin': *,
                     },
                    
                 })    

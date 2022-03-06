@@ -9,7 +9,7 @@ router.post('/new', auth,  multerPosts, postCtrl.createPost); //localhost:3000/a
 router.put('/:id', auth, multerPosts, postCtrl.modifyPost);
 router.delete('/:id',auth,multerPosts, postCtrl.deletePost) //OK all
 router.get('/', auth, postCtrl.getAllPosts)                 //OK all
-router.get('/:id', auth, postCtrl.getOnePost)               //OK postman
+router.get('/:id', auth, postCtrl.getOnePost)               //OK all
 router.get('/:userId/posts',auth, postCtrl.getPostsUser)
 router.put('/:id', auth, postCtrl.likePost);
 

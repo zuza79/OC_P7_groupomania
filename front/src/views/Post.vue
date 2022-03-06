@@ -133,7 +133,7 @@ export default {
                 updatedAt:'',
                 id:'',
                 image:'',
-                user: {},
+                user: { },
                 userId:''
             },
             user : {
@@ -171,19 +171,18 @@ export default {
             this.role = localStorage.getItem("role")
 
         },
+
+      
        // DISPLAY ONE POST
         getOnePost() {
             const token = localStorage.getItem("token")
-         ///   'http://localhost:3000/api/profile/' + this.user.id,
-         //'   axios.get("mon_url/"+post.id)+ 
-         //axios.get('https://site.com/?foo=bar')  ${this.post.id}
-                        //
             axios.get (`http://localhost:3000/api/posts/${this.id_param}` ,  {
               
                 headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                     'Content-Type': 'application/json',
+                    //'Cross-Origin-Resource-Policy': 'same-site',
                     //'Accept': 'application/json',
                 }
                 } ).then((res) => {
@@ -221,6 +220,7 @@ export default {
                 
             .catch(() => console.log('Impossible de récupérer les posts !'))
         },
+//DATE 
         dateFormat (createdDate) {
             const date = new Date(createdDate)
             const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'};
@@ -255,15 +255,12 @@ export default {
                 console.log('problem like')
             //    this.$router.push("/allposts");
             //alert("Vous disposer pas des doit de supprimer ce message, c'est que le auter ou administrateur");
-
-
-
      } )
         },
       
 //DELETE POST
         deletePost () {
-            const token = JSON.parse(localStorage.getItem("userToken"))
+            const token = localStorage.getItem("token")
 
             if (confirm("Voulez-vous vraiment supprimer le post") === true) {
 
@@ -290,7 +287,7 @@ export default {
             this.$router.push(`/postmodify/${this.id_param}`)
         },
 
-        //create comment
+//COMMENT
         createComment () {
             if( this.comment === ""){
                 alert('Veuillez remplir votre commentaire')
@@ -308,9 +305,11 @@ export default {
                 axios.post("http://localhost:3000/api/comments", data, {
                    
                     headers: {
-                    'Accept': 'application/json',
+                    'authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',   
+                    //'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    'authorization': `Bearer ${token}`
+                    
                     },
                     body: data                })
                 .then(() => {
@@ -321,6 +320,7 @@ export default {
             .catch(() => console.log(' Impossible de publier commentaire!'))
        }
         },
+//DELETE COMMENT
         deleteComment (index) {
             const token = localStorage.getItem("token")
 

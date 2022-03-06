@@ -3,9 +3,9 @@
         <img id="logo" src="../assets/images/logoMono.png" alt="Logo Groupomania" />
         <nav>
             
-            <router-link class="link" to="/profile" :href="$router.resolve({name: 'profile', params: { id: userId}}).href" aria-label="Profil">Mon profil</router-link>
+            <router-link class="link" to="/profile" :href="$router.resolve({name: 'Profile', params: { id: userId}}).href" aria-label="Profil">Mon profil</router-link>
             <router-link class="link" to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
-            <router-link class="link" to="/login  disconnect" @click="disconnectUser()"  >Déconexion</router-link>
+            <router-link class="link" to="/login  disconnect " @click="disconnectUser()"  >Déconexion</router-link>
         </nav>
 
     </header>
@@ -25,7 +25,7 @@ data () {
 methods: {
 	disconnectUser() {
 		localStorage.clear();
-		this.$router.push("/")
+		this.$router.push('/')
 	},
 	roleUser() {
 		this.role = JSON.parse(localStorage.getItem("role"))

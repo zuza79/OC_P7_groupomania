@@ -1,44 +1,28 @@
-//const Comment = require('../models/comment');
+const Comment = require('../models/comment');
 const Post = require('../models/post');
 const User = require('../models/user');
 const models = require('../models');
+
 const jwtUtils = require('../utils/jwt.utils.js');
-const fs = require('fs');
 
-//CREATE COMMENT
 exports.createComment = (req, res, next) => {
-    console.log("console log comments    "+ (req.body));
-    const headerAuth = req.headers['authorization'];
-    const userId = jwtUtils.getUserId(headerAuth);
-    const postId = req.body.post.id;
-    const content = req.body.content;
-
-    models.User.findOne({
-        where: { id: userId }
-    })
-    
-
-    .then(user => {
-        console.log("console log userId   " +userId)
-        
-if(user){ console.lot("verif console create")
+    console.log("create comment  " + req.body)
     models.Comment.create({
-        
-            content: content,
-            userId: userId,
-            postId: postId,
+            id : req.body.id,
+            content: req.body.content,
+            userId: req.body.userId,
+            postId: req.body.postId
         })
-        .then(() => res.status(201).json({message: 'Commentaire publier !'}))
+        .then(() => res.status(201).json({message: 'Commentaire créé !'}))
         .catch( error => res.status(400).json({error}));
-}})};
-//DELETE COMMENT
+};
+
 exports.deleteComment = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
-    console.log("delete comment   "+ req.body);
 
-    models.Comment.destroy({ where: { id: req.params.id } })
+    Comment.destroy({ where: { id: req.params.id } })
 
     .then((comment) => {
         if (userId === comment.userId || role === 0) {
@@ -52,9 +36,9 @@ exports.deleteComment = (req, res, next) => {
     })
     .catch( error => res.status(400).json({error}));
 };
-// DISPLAY ONE POST WITH COMMENTS
+
 exports.getPostComments = (req, res, next) => {
-    models.Comment.findAll({
+    Comment.findAll({
         where: {
         postId : req.params.postId
     },
@@ -67,9 +51,8 @@ exports.getPostComments = (req, res, next) => {
     .catch( error => res.status(400).json({error}))
 };
 
-//DISPLAY ALL COMMENTS
 exports.getAllComments = (req, res, next) => {
-    models.Comment.findAll({
+    Comment.findAll({
         include: [{
             model : User
         },{
@@ -79,25 +62,24 @@ exports.getAllComments = (req, res, next) => {
     })
 
     .then( comments => res.status(200).json(comments))
-    .catch( error => res.status(400).json({message: "impossible display comments"}))
+    .catch( error => res.status(400).json({error}))
 };
 
-// MODIFY COMMENT BY ADMIN
 exports.modifyComment = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
+    const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
-    console.log("modify comment   "+ req.body);
 
     Comment.findOne({ where: { id: req.params.id }})
         .then(() => {
-            if (role === 0) {
+            if (userId === post.userId || role === 0) {
                 const modifyComment = {
-                    role: req.body.role
+                    moderate: req.body.moderate
                 };
 
                 Comment.update(modifyComment , { where: { id: req.params.id } })
 
-                .then(() => res.status(200).json({message : 'Commentaire modifié par administrateur!'}))
+                .then(() => res.status(200).json({message : 'Commentaire modifié !'}))
                 .catch( error => res.status(400).json({error}));
 
             } else {

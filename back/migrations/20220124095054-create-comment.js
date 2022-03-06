@@ -35,11 +35,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      created_date: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW,
-        allowNull: false
-    },
+     
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

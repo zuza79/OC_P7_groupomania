@@ -12,15 +12,16 @@
                                 Publier par 
                                 <b>{{ post.user.nom }} 
                                 <span v-if="post.user.role != 0">{{ post.user.prenom }} </span></b>     
-                                <img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
+                               <!-- <img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
                                 <img class="photo-profil" v-else src="../assets/images/avatar.jpg" alt="photo de profil"><br>
-                                le <b>{{ dateFormat(post.created_date) }}</b>
-                                à <b>{{ hourFormat(post.created_date) }}</b><br>
+                                -->
+                                le <b>{{ dateFormat(post.createdAt) }}</b>
+                                à <b>{{ hourFormat(post.createdAt) }}</b><br>
                             </p>
-                            <p v-if="post.created_date != post.updated_date">
+                            <p v-if="post.createdAt != post.createdAt">
                                 Modification 
-                                le <b>{{ dateFormat(post.updated_date) }}</b>
-                                à <b>{{ hourFormat(post.updated_date) }}</b>
+                                le <b>{{ dateFormat(post.updatedAt) }}</b>
+                                à <b>{{ hourFormat(post.updatedAt) }}</b>
                             </p>
                         </div>
                     </div>
@@ -44,8 +45,9 @@
                                 Publication par 
                                 <b>{{ comment.user.nom }} 
                                 <span v-if="comment.user.role != 0">{{ comment.user.prenom }} </span></b> 
-                                <img class="photo-profil" v-if="comment.user.image" :src="comment.user.image" alt="photo de profil">
+                               <!-- <img class="photo-profil" v-if="comment.user.image" :src="comment.user.image" alt="photo de profil">
                                 <img class="photo-profil" v-else src="../assets/images/avatar.jpg" alt="photo de profil"><br>
+                               -->
                                 le <b>{{ dateFormat(comment.date) }}</b>
                                 à <b>{{ hourFormat(comment.date) }}</b>
                             </p>
@@ -88,8 +90,8 @@ export default {
             id_param: this.$route.params.id,
             post: {
                 content:'',
-                created_date:'',
-                updated_date:'',
+                createdAt:'',
+                updatedAt:'',
                 id:'',
                 image:'',
                 title:'',
@@ -118,41 +120,62 @@ export default {
             return this.displayCreateComment = false;
         },
         User() {
-            this.id = (localStorage.getItem("userId"))
-            this.role = JSON.parse(localStorage.getItem("role"))
+            this.id = localStorage.getItem("Id")
+            this.role = localStorage.getItem("role")
 
         },
 
-      /* headers: {
-           
-           'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
-                } ,
-    */
-      //display post  
+    
+      //DISPLAY POST 
         getOnePost() {
             
-            axios.get (`http://localhost:3000/api/posts/17`, { post : data})
-          //  axios.get (`http://localhost:3000/api/posts/${this.id_param}`, { post : data})
+            
+            axios.get (`http://localhost:3000/api/posts/${this.id_param}`, { 
            
-            .then (response => response.json())
-            .then (data => (this.post = data))
-            .catch(alert)
+               
+                headers: {
+                    'authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'application/json',
+                    //'Accept': 'application/json',
+                }
+                } ).then((res) => {
+
+                console.log(res.data);
+                this.posts = res.data;
+                this.users = res.data;
+                this.comments = res.data;
+                
+            })
+                
+            .catch(err => this.posts = [{title : "Impossible de récupérer les posts !"}]);
         },
-     // display comments   
+     // DISPLAY COMMENTS   
         
-          /*
-           headers: {'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
-           },
-*/
-        getPostComments() {    //route :post_id'
-            axios.get (`http://localhost:3000/api/comments/${this.id_param}`, { comment : data})
-                   
+           getPostComments() {    //route :post_id'
+            axios.get (`http://localhost:3000/api/comments/${this.postId}`, { 
+                
+                 headers: {
+                    'authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'application/json',
+                  
+                comment : data
+                }
+                 } ).then((res) => {
+
+                console.log(res.data);
+                this.posts = res.data;
+                this.users = res.data;
+                this.comments = res.data;
+
+                              
+            })
+                
+            .catch(err => this.posts = [{comments : "Impossible afficher les commentaires"}]);
+        },   
             
-            
-            .then (response => response.json())
-            .then (data => (this.comments = data))
-            .catch(alert)
-        },
+       
         dateFormat (createdDate) {
             const date = new Date(createdDate)
             const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'};
@@ -164,92 +187,83 @@ export default {
             return hour.toLocaleTimeString('fr-FR', options);
         },
 
-        //delete post
-        /*
-         headers: {
-           
-           'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
-                } ,
-                */
-        deletePost () {
-           
-
-            if (confirm("Voulez-vous vraiment supprimer le post") === true) {
-
-                axios.delete(`http://localhost:3000/api/posts/${this.id_param}`, {
-                   
-                })
-                .then(response => response.json())
-                .then(() => { 
-                    alert("La suppression du post est bien prise en compte")
-                    this.$router.push("/allposts") })
-                .catch(alert)
-            }
-        },
         modifyPost () {
             this.$router.push(`/modifypost/${this.id_param}`)
         },
 
-        //create comment
-       /*  headers: {'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
-           },
-           */
+//CREATE COMMENT
         createComment () {
+            const token = localStorage.getItem("token")
+            const Id = localStorage.getItem("userId")
             if( this.commentaire === ""){
                 alert('Veuillez remplir votre commentaire')
 
             } else {
-                const Id = JSON.parse(localStorage.getItem("userId"));
-                const token = JSON.parse(localStorage.getItem("token"))
+               
                 
                 let data = {
                     content: this.commentaire,
-                    post_id: this.id_param,
+                    postId: this.id_param,
                     userId: Id
                 }
 
-                axios.post("http://localhost:3000/api/comments", { data : post})
+                axios.post("http://localhost:3000/api/comments", data , {
+                 headers: {
+                        'Content-Type': 'multipart/form-data',
+                    'authorization': `Bearer ${token}`
+                    },
+                })
                     
                 
-                .then((response) => {
-                    return response.json();
-                })
-                .then(() => {
-                    this.$router.go()
-                })
-                .catch(alert)
-            }
+                .then((res) => {
+                alert ("Commentaire publier")
+                console.log(res.data);
+                this.comments = res.data
+            })
+                
+            .catch(() =>{ 
+                
+                console.log('impossible de publier commentaire')
+        
+          } )}
         },
 
-        //delete comment
+        //DELETE COMMENT
 
-        /*
-         headers: {'authorization': `Bearer ${JSON.parse(localStorage.getItem("token"))}`
-           },
-           */
-        deleteComment (index) {
+               deleteComment (index) {
             
 
             if (confirm("Voulez-vous vraiment supprimer ce commentaire") === true) {
 
-                axios.delete(`http://localhost:3000/api/comments/${this.comments[index].id}`, {data:post })
-                .then(response => response.json())
-                .then(() => { 
-                    alert("La suppression du commentaire est bien prise en compte")
-                    this.$router.go() })
-                .catch(alert)
-            }
-        }
-    },
+                axios.delete(`http://localhost:3000/api/comments/${this.comments[index].id}`, {
+                headers: {
+                        'authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
+                        data:post 
+                    }
+                })
+                .then((res) => {
+                alert ("commentaire supprimer")
+                console.log(res.data);
+                this.posts = res.data
+            })
+                
+            .catch(() =>{ 
+                alert("Vous n'avez pas autorisation de supprimer ce message!!")
+                console.log('Vous n avez pas autorisation de supprimer ce message!!')
+        
+          } )}
+        },
     mounted(){
         this.User()
         this.getOnePost ()
        // this.getPostComments ()
     }
-}
+}}
 </script>
 
 <style scoped>
+
 section {
     display: flex;
     flex-direction: column;
@@ -373,7 +387,7 @@ img {
 }
 
 
-/*
+
 @media screen and (max-width:1024px) {
 
     
@@ -411,5 +425,5 @@ img {
     }
 
 }
-*/
+
 </style>

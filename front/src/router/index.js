@@ -78,7 +78,7 @@ const routes = [
     component: NewPost
   },
   {
-    path: '/postcomment/:id',
+    path: '/postcomment',
     name: 'CommentPost',
     component: CommentPost
   },
