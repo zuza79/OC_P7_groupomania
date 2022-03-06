@@ -124,6 +124,7 @@ export default {
         headers: {
           'authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
+          //'Cross-Origin-Resource-Policy': 'same-site',
         }
             }).then(res => {
         this.user.id = res.data.id;
@@ -155,9 +156,10 @@ export default {
         },
     //MODIFY USER
         modifyUser() {
-            const Id = JSON.parse(localStorage.getItem("userId"))
+             const token = localStorage.getItem('token');
+            const Id = localStorage.getItem("userId")
             const userId = this.$route.params.id;
-            const token = localStorage.getItem('token');
+           
             const fileField = document.querySelector('input[type="file"]');
 
             const regexText = /^[a-zA-Z-\s]+$/;
@@ -187,21 +189,20 @@ export default {
                         'Content-Type': 'application/json',
                         'authorization': `Bearer ${token}`
                         },
-                        body: JSON.stringify(this.user)
+                        //body: data
                 })
-                .then(response => response.json())
-                .then(data => (this.user = data))
-                .then(() => {
-                    alert("Votre modification est bien prise en compte")
-                    this.$router.go();
+                .then((res) => {
+                   this.user = res.data;
+                   alert("Votre modification est bien prise en compte")
+                    this.$router.push("/profile");
                 })
-                .catch(error => console.log(error))
+               .catch(() => console.log(' Impossible de modifier'))
         
             } else if ((regexText.test(this.user.nom) === true) && regexText.test(this.user.prenom) === true && regexEmail.test(this.user.email) === true && this.user.image != null) {
                 let data = new FormData()
                 data.append('nom', this.user.nom)
                 data.append('prenom', this.user.prenom)
-                //data.append('email', this.user.email)
+                data.append('email', this.user.email)
                 data.append('image', this.image)
                 data.append('image', fileField.files[0])
 
@@ -209,8 +210,9 @@ export default {
                 axios.put(`http://localhost:3000/api/auth/profile/${Id}`, data,{
                    
                         headers: {
+                            'authorization': `Bearer ${token}`,
                             'Content-Type': 'multipart/form-data',
-                        'authorization': `Bearer ${token}`
+             
                         },
                         body: data
                 })
@@ -221,7 +223,7 @@ export default {
                 
             })
                 
-            .catch(() => console.log('Impossible de récupérer les informations !'))
+           .catch(error => console.log(error))
             }
         },
         //DELETE USER
