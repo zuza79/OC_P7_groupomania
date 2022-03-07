@@ -5,27 +5,38 @@ const models = require('../models');
 
 const jwtUtils = require('../utils/jwt.utils.js');
 
+// CREATE COMMENT
 exports.createComment = (req, res, next) => {
-    console.log("create comment  " + req.body)
-    models.Comment.create({
-            id : req.body.id,
+  console.log("console log create comment  " + JSON.stringify (req.body));
+  
+  console.log("console log userId  " +req.body.userId)
+  console.log("console log id  " +req.body.id)
+  console.log("console log postId  " +req.body.postId)
+  console.log("console log content  " +req.body.content)
+   
+
+  models.Comment.create({
+        
+            id: req.body.id,
             content: req.body.content,
-            userId: req.body.userId,
+            UserId: req.body.userId,
             postId: req.body.postId
         })
+        
+        
         .then(() => res.status(201).json({message: 'Commentaire créé !'}))
         .catch( error => res.status(400).json({error}));
 };
-
+// DELETE COMMENT
 exports.deleteComment = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
 
-    Comment.destroy({ where: { id: req.params.id } })
+    models.Comment.destroy({ where: { id: req.params.id } })
 
     .then((comment) => {
-        if (userId === comment.userId || role === 0) {
+        if (userId === comment.UserId || role === 0) {
             res.status(200).json({message : 'Commentaire supprimé !'})
 
         } else {
@@ -36,23 +47,24 @@ exports.deleteComment = (req, res, next) => {
     })
     .catch( error => res.status(400).json({error}));
 };
-
+// DISPLAY ALL COMMENTS OF POST
 exports.getPostComments = (req, res, next) => {
-    Comment.findAll({
+    console.log("console log getPostComment  " + JSON.stringify (req.body));
+    models.Comment.findAll({
         where: {
-        postId : req.params.postId
+        postId : req.params.id
     },
         include: [{
         model : User,
     }],
         order: [["date", "ASC"]]})
 
-    .then( comments => res.status(200).json(comments))
-    .catch( error => res.status(400).json({error}))
+    .then( comments => res.status(200).json({message: "Commentaires afficher"}))
+    .catch( error => res.status(400).json({message: "Erreur affichager le commentaire "}))
 };
-
+// DISPLAY ALL COMMENTS 
 exports.getAllComments = (req, res, next) => {
-    Comment.findAll({
+    models.Comment.findAll({
         include: [{
             model : User
         },{
@@ -64,7 +76,7 @@ exports.getAllComments = (req, res, next) => {
     .then( comments => res.status(200).json(comments))
     .catch( error => res.status(400).json({error}))
 };
-
+//MODIFY COMMENT
 exports.modifyComment = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);

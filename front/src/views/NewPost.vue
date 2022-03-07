@@ -85,7 +85,7 @@ export default {
                     
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                    'authorization': `Bearer ${token}`
+                        'authorization': `Bearer ${token}`
                     },
                  
                 body: data
