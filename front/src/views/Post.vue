@@ -2,18 +2,7 @@
     <div>
         <HeaderProfile />
          
-   <!--     
-            <div class="like">
-          <button class="btnSave" @click="likePost">
-            <div><i class="fas fa-thumbs-up like"></i>{{ like }}</div>
-          </button>
-
-         <button class="btnDelete ">
-            <div><i class="fas fa-thumbs-down dislike"></i>{{ dislike }}</div>
-          </button>
    
-      </div>
-   --> 
  
             <section>
      <div class="header">
@@ -23,12 +12,9 @@
                         <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled ></textarea></td>
                         <td><img v-if="post.image" :src="post.image" alt="Image du post"></td>
                     </tr>
-                    
-
-
-                    <div>
-                        
-                        <div class="info">
+                       
+                       <div>
+                       <div class="info">
                             <p>
                                 Posté par 
                                 <b>{{ user.nom }} 
@@ -50,7 +36,18 @@
                     
                 </div>
                 
-
+     
+            <div class="like">
+          <button class="btnSave" @click="likePost">
+            <div><i class="fas fa-thumbs-up like"></i>{{ like }}</div>
+          </button>
+<!--
+         <button class="btnDelete ">
+            <div><i class="fas fa-thumbs-down dislike"></i>{{ dislike }}</div>
+          </button>
+   -->
+      </div>
+    
                 <div class="content">
                     <p class="modif">
                         <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier ce post</button>
@@ -62,9 +59,9 @@
                    -->  
                 </div>
 
-
-                <button v-if="comments.length != 0 && displaycomments === false " v-on:click="show" class="comment-button" aria-label="Voir commentaire">Voir {{ comments.length }} commentaire<span v-if="comments.length >= 2">s</span></button>
-                <article v-if="displaycomments">
+<!-- DISPLAY COMMENT -->
+                <button v-if="displaycomments === false " v-on:click="show" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
+                <article v-if="displaycomments" @click="getPostComments()">
                     <div v-bind:key="index" v-for="(comment, index) in comments" class="comment">
                         <div>
                             <p class="info">
@@ -78,18 +75,18 @@
                                 à <b>{{ hourFormat(comment.date) }}</b>
                             </p>
                             <p>
-                                <button v-if="comment.userId === id || role === 0" @click="deleteComment(index)" class="button-comment" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
+                                <button v-if="comment.userId === id || role === 0" @click="deleteComment(index)" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
                             </p>
                         </div>                        
                         <hr>
                         <p class="comment-content">{{ comment.content }}</p>
                     </div>
-                    <button v-on:click="hide" class="comment-button" aria-label="Cacher commentaire">Cacher le<span v-if="comments.length >= 2">s</span> commentaire<span v-if="comments.length >= 2">s</span></button>
+                    <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentairs">Masquer les commentaires</button>
                 </article>
-
+<!-- CREATE COMMENT -->
                 <button v-if="displayCreateComment === false" v-on:click="show2" class="btnSave" aria-label="Ecrire un commentaire"><i class="far fa-edit"></i>Commenter</button>
                 <article v-if="displayCreateComment" class="createcomment">
-                    <textarea v-model="commentaire" placeholder="Faire ton commentaire..." cols="60" rows="5" aria-label="Message du commentaire"></textarea>
+                    <textarea v-model="content" placeholder="Faire ton commentaire..." cols="60" rows="5" aria-label="Message du commentaire"></textarea>
                     <div class=btnComment>
                     <button @click="createComment()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
                     <button v-on:click="hide2" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
@@ -117,11 +114,8 @@ export default {
     data () {
         return {
              id_param: this.$route.params.id,
-          //  like: this.post.like,
+           // like: this.post.like,
            // dislike: this.post.dislike,
-
-           
-
             props: ['post'],
             posts: [],
             users: [],
@@ -140,10 +134,13 @@ export default {
                 nom: '',
             },
             comments: [],
+             content: '',
+             userId:'',
+             postId:'',
+             id:'',
+
             displaycomments: false,
             displayCreateComment: false,
-            commentaire:'',
-            id:'',
             role: ''
         }
     },
@@ -176,6 +173,7 @@ export default {
        // DISPLAY ONE POST
         getOnePost() {
             const token = localStorage.getItem("token")
+
             axios.get (`http://localhost:3000/api/posts/${this.id_param}` ,  {
               
                 headers: {
@@ -218,7 +216,7 @@ export default {
                 this.posts = res.data
             })
                 
-            .catch(() => console.log('Impossible de récupérer les posts !'))
+            .catch(() => console.log('Impossible de récupérer les commentaires!'))
         },
 //DATE 
         dateFormat (createdDate) {
@@ -240,6 +238,7 @@ export default {
                  headers: {
                         'authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data',
+                        'Content-Type': boundary=likePost,
                     }
                 })
                 .then(() => {
@@ -287,22 +286,21 @@ export default {
             this.$router.push(`/postmodify/${this.id_param}`)
         },
 
-//COMMENT
+//CREATE COMMENT
         createComment () {
-            if( this.comment === ""){
+            if( this.content === ""){
                 alert('Veuillez remplir votre commentaire')
 
             } else {
-                const Id = localStorage.getItem("userId");
+                const Id = JSON.parse(localStorage.getItem("userId"))
                 const token = localStorage.getItem("token")
                 
-                let data = {
-                    content: this.commentaire,
-                    postId: this.id_param,
-                    userId: Id
-                }
-
-                axios.post("http://localhost:3000/api/comments", data, {
+               /* let data = new FormData()
+                    data.append('content',this.content)
+                    data.append('postId',this.id_param)
+                    data.append('userId', Id)
+               */                                             // data,
+                axios.post("http://localhost:3000/api/comments", {
                    
                     headers: {
                     'authorization': `Bearer ${token}`,

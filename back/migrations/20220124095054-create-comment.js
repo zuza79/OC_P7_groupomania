@@ -24,13 +24,6 @@ module.exports = {
           key: 'id'
         }
       },
-    /*  postId: {
-        type: Sequelize.SMALLINT
-      },
-      
-      administration: {
-        type: Sequelize.BOOLEAN
-      },*/
       content: {
         allowNull: false,
         type: Sequelize.STRING
