@@ -1,10 +1,7 @@
 <template>
     <div>
         <HeaderProfile />
-         
-   
- 
-            <section>
+               <section>
      <div class="header">
        <!-- DISPLAY POST --> 
                     <tr class = "card" >
@@ -50,39 +47,32 @@
     
                 <div class="content">
                     <p class="modif">
-                        <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier ce post</button>
-                        <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete espacement" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer ce post</button>
+                        <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
+                        <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete espacement" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
                     </p>
-                   <!-- <p>{{ post.content }}</p>
-                    <hr v-if="post.userId === id || role === 0">
-                    <img v-if="post.image" :src="post.image" alt="Image du post">
-                   -->  
                 </div>
 
 <!-- DISPLAY COMMENT -->
                 <button v-if="displaycomments === false " v-on:click="show" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
-                <article v-if="displaycomments" @click="getPostComments()">
-                    <div v-bind:key="index" v-for="(comment, index) in comments" class="comment">
+                <table v-if="displaycomments" @click="getPostComments()">
+                    <tr>
+                        <th>Posté par</th>
+                        <th>Commentaire</th>
+                        <th>Date</th>
+                    </tr>   
+                    
+                    <tr class = "card" v-bind:key="index" v-for="(comment, index) in comments" >
+                        <td><input type="text" v-model="comment.user.nom" required aria-label="Auteur de commentaire" disabled></td>
+                        <td><textarea type="text" v-model="comment.content" required aria-label="Commentaire" disabled></textarea></td>
+                        <td>le <b>{{ dateFormat(comment.date) }}</b>
+                             à <b>{{ hourFormat(comment.date) }}</b></td>
                         <div>
-                            <p class="info">
-                                Posté par 
-                                <b>{{ comment.user.nom }} 
-                                <span v-if="comment.user.role != 0">{{ comment.user.prenom }} </span></b> 
-                               <!-- <img class="photo-profil" v-if="comment.user.image" :src="comment.user.image" alt="photo de profil">
-                                <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
-                               -->
-                                le <b>{{ dateFormat(comment.date) }}</b>
-                                à <b>{{ hourFormat(comment.date) }}</b>
-                            </p>
-                            <p>
-                                <button v-if="comment.userId === id || role === 0" @click="deleteComment(index)" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
-                            </p>
-                        </div>                        
-                        <hr>
-                        <p class="comment-content">{{ comment.content }}</p>
-                    </div>
-                    <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentairs">Masquer les commentaires</button>
-                </article>
+                            <button v-if="comment.userId === id || role === 0" @click="deleteComment(index)" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
+                            <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentairs">Masquer les commentaires</button>
+                        </div>  
+                    </tr>  
+                </table> 
+                       
 <!-- CREATE COMMENT -->
                 <button v-if="displayCreateComment === false" v-on:click="show2" class="btnSave" aria-label="Ecrire un commentaire"><i class="far fa-edit"></i>Commenter</button>
                 <article v-if="displayCreateComment" class="createcomment">
@@ -204,7 +194,7 @@ export default {
         getPostComments() {
             const token = localStorage.getItem("token")
 
-            axios.get (`http://localhost:3000/api/comments/${this.id_param}}`, {
+            axios.get(`http://localhost:3000/api/comments/${this.id_param}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`
@@ -213,7 +203,7 @@ export default {
             
             .then((res) => {
                 console.log(res.data);
-                this.posts = res.data
+                this.comments = res.data
             })
                 
             .catch(() => console.log('Impossible de récupérer les commentaires!'))
@@ -299,13 +289,18 @@ export default {
                     data.append('content',this.content)
                     data.append('postId',this.id_param)
                     data.append('userId', Id)
-               */                                             // data,
-                axios.post("http://localhost:3000/api/comments", {
+               */  
+                 let data = {
+                    content: this.content,
+                    postId: this.id_param,
+                    userId: Id
+                }                                        // 
+                axios.post("http://localhost:3000/api/comments", data, {
                    
                     headers: {
                     'authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',   
-                    //'Accept': 'application/json',
+                   // 'Content-Type': 'multipart/form-data',   
+                    'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     
                     },
@@ -331,6 +326,7 @@ export default {
                     },
                 })
                  .then((res) => {
+                     alert("La suppression du commentaire est bien prise en compte")
                 console.log(res.data);
                 this.posts = res.data
             })
@@ -342,8 +338,8 @@ export default {
     mounted(){
         
         this.getOnePost ()
-       //this.getOneUser()
-       //this.getComments ()
+       this.getOneUser()
+       this.getComments ()
     }
 }
 </script>

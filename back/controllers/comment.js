@@ -52,16 +52,19 @@ exports.getPostComments = (req, res, next) => {
     console.log("console log getPostComment  " + JSON.stringify (req.body));
     models.Comment.findAll({
         where: {
-        postId : req.params.id
+        postId : req.params.postId
     },
         include: [{
         model : User,
     }],
         order: [["date", "ASC"]]})
 
-    .then( comments => res.status(200).json({message: "Commentaires afficher"}))
-    .catch( error => res.status(400).json({message: "Erreur affichager le commentaire "}))
-};
+    .then( res.status(201).json({"message": "Commentaires afficher"}))
+    .catch( error => {
+        console.log(error);
+        res.status(400).json({"message": "Erreur affichager des commentaires "});
+});
+}
 // DISPLAY ALL COMMENTS 
 exports.getAllComments = (req, res, next) => {
     models.Comment.findAll({

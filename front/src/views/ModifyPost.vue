@@ -12,7 +12,7 @@
                         </li>
                         <li>
                             <label for="message" aria-label="Message">Message</label>
-                            <textarea v-model="post.content" placeholder="Afficher le message..." rows="10" cols="60" required aria-label="Message du post"></textarea>
+                            <textarea v-model="post.content" placeholder="Vous pouvez modifier la publication..." rows="10" cols="60" required aria-label="Message du post"></textarea>
                         </li>
                         
                         <li v-if="post.image">
@@ -124,7 +124,8 @@ export default {
                         alert("Modification de message sans image réusi")
                 console.log("modification ok");
                 this.posts = res.data
-                //this.$router.push(`/post/${this.id_param}`);
+                //this.$router.push("/post/${this.id_param}");
+                this.$router.push("/allposts");
                 })
                    
                 .catch(() =>{ 

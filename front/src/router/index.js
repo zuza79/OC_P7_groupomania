@@ -1,23 +1,23 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
 import Home from '../views/Home.vue'
 import Signup from '../views/Signup.vue'
 import Login from '../views/Login.vue'
 import Profile from '../views/Profile.vue'
 import Allposts from '../views/Allposts.vue'
-//import AdminDisplay from '../views/AdminDisplay.vue'
-//import AdminComments from '../views/AdminComments.vue'/
-//import AdminPosts from '../views/AdminPosts.vue'
-//import AdminUsers from '../views/AdminUsers.vue'
 import Post from '../views/Post.vue'
 import NewPost from '../views/NewPost.vue'
 import CommentPost from '../views/CommentPost.vue'
 import ModifyPost from '../views/ModifyPost.vue'
 import ModifyComment from '../views/ModifyComment.vue'
 
+//import AdminDisplay from '../views/AdminDisplay.vue'
+//import AdminComments from '../views/AdminComments.vue'/
+//import AdminPosts from '../views/AdminPosts.vue'
+//import AdminUsers from '../views/AdminUsers.vue'
 
 Vue.use(VueRouter)
-
 const routes = [
   {
     path: '/',

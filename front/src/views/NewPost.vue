@@ -92,6 +92,7 @@ export default {
                 })
                 .then(() => {
                      alert("Message  sans image publier")
+                      this.$router.push("/allposts");
                             console.log('ok')
                     
                 })
@@ -124,6 +125,7 @@ export default {
                     })
                     .then((res) => {
                     alert("Message publier")
+                     this.$router.push("/allposts");
                 console.log(res.data);
                 this.posts = res.data
             })

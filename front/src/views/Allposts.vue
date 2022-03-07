@@ -18,33 +18,31 @@
             </router-link>
         
         <table>
-                    <tr>
-                       
-                        <th>Titre</th>
-                        <th>Message</th>
-                        <th>Image</th>
-                    </tr>
-                    <!-- <tr v-for="(post, index) in posts" :key="index" :post="post">{{post}}
-                    -->
-                     <tr class = "card" v-bind:key="index" v-for="(post, index) in posts">
+                    <tr class = "card cardPost" v-bind:key="index" v-for="(post, index) in posts">
                         
                         <td><input type="text" v-model="post.title" required aria-label="Titre" disabled></td>
-                        <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled></textarea></td>
+                        <td><textarea class="tdHeight" type="text" v-model="post.content" required aria-label="Message" disabled></textarea></td>
                         <td><img v-if="post.image" :src="post.image" alt="Image"></td>
                   
-                        <div class="icone">
-                         <!--to="/post/${post.id}"  === ok==== 
-                         :to="`/post/${post.id}`"
-                          
-                             
-                             ====--> 
-                           
-                           <router-link :to="`/post/${post.id}`" :href="$router.resolve({name: 'Post', params: { id: post.id}}).href" aria-label="Afficher le message">
-                          
-                             <button class="btnIconeSave" ><i class="far fa-edit"></i></button>
-                           </router-link>
+                        <td class="icone">
+                            <router-link :to="`/post/${post.id}`" :href="$router.resolve({name: 'Post', params: { id: post.id}}).href" aria-label="Afficher le message">
+                            <button class="btnIconeSave" ><i class="far fa-edit"></i></button>
+                            </router-link>
                             <button @click="deletePost(index)" class="btnIconeDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
-                        </div>
+                        </td>
+                        <td class="info">
+                            <p>
+                                Posté 
+                                le <b>{{ dateFormat(post.createdAt) }}</b>
+                                à <b>{{ hourFormat(post.createdAt) }}</b><br>
+                            </p>
+                            <p v-if="post.createdAt != post.updatedAt">
+                                Modifié 
+                                le <b>{{ dateFormat(post.updatedAt) }}</b>
+                                à <b>{{ hourFormat(post.updatedAt) }}</b>
+                            </p>
+                        </td>
+                    
                     </tr>
                 </table>
          <!--posts -->
@@ -106,6 +104,17 @@ export default {
                 
             .catch(() => console.log('Impossible de récupérer les posts !'))
         },
+        //DATE 
+        dateFormat (createdDate) {
+            const date = new Date(createdDate)
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'};
+            return date.toLocaleDateString('fr-FR', options);
+        },
+        hourFormat (createdHour) {
+            const hour = new Date(createdHour)
+            const options = { hour: 'numeric', minute:'numeric', second:'numeric'};
+            return hour.toLocaleTimeString('fr-FR', options);
+        },
         //DELETE POST
         deletePost (index) {
             const token = localStorage.getItem("token")
@@ -157,7 +166,7 @@ h2 {
 
 
 .info {
-    font-size: 0.8vw;
+    font-size: 15px;
 }
 
 .image {
@@ -171,12 +180,26 @@ h2 {
     text-decoration: none;
     color: #000000;
 }
+td{
+    margin-top:10px;
+}
+.tdHeight{
+    height:100px;
+}
 
 .header,
 .content {
     width: 40%;
     background: #ffd7d7;
     border: 2px solid black;
+}
+.cardPost{
+    width: 90%;
+    margin: 10px auto 10px auto;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid black;
+    border-radius: 15px;
 }
 table{
     margin: 0 auto 0 auto ;
