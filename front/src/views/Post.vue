@@ -13,10 +13,10 @@
                        <div>
                        <div class="info">
                             <p>
-                                Posté par 
-                                <b>{{ user.nom }} 
-                                <span v-if="post.user.role != 1">{{ post.user.prenom }} </span></b>     
-                               <!-- <img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
+                               Posté par 
+                              <!--  <b>{{ post.User.nom }} </b>
+                                 <span v-if="post.User.role != 1">{{ post.User.prenom }} </span>     
+                                <img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
                                 <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
                                -->
                                 le <b>{{ dateFormat(post.createdAt) }}</b>
@@ -33,7 +33,7 @@
                     
                 </div>
                 
-     
+   <!--LIKE -->  
             <div class="like">
           <button class="btnSave" @click="likePost">
             <div><i class="fas fa-thumbs-up like"></i>{{ like }}</div>
@@ -44,7 +44,7 @@
           </button>
    -->
       </div>
-    
+  <!-- MODIFY/DELETE POST -->  
                 <div class="content">
                     <p class="modif">
                         <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
@@ -53,24 +53,29 @@
                 </div>
 
 <!-- DISPLAY COMMENT -->
-                <button v-if="displaycomments === false " v-on:click="show" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
-                <table v-if="displaycomments" @click="getPostComments()">
-                    <tr>
-                        <th>Posté par</th>
-                        <th>Commentaire</th>
-                        <th>Date</th>
-                    </tr>   
+                <button v-if="displaycomments === false " v-on:click="show" @click="getPostComments()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
+                <table class = "header" v-if="displaycomments" >
+                    <h2>Les commentaires:</h2>
+                         
                     
                     <tr class = "card" v-bind:key="index" v-for="(comment, index) in comments" >
-                        <td><input type="text" v-model="comment.user.nom" required aria-label="Auteur de commentaire" disabled></td>
+                        <td><input type="text" v-model="comment.User.nom" required aria-label="Auteur de commentaire" disabled></td>
                         <td><textarea type="text" v-model="comment.content" required aria-label="Commentaire" disabled></textarea></td>
                         <td>le <b>{{ dateFormat(comment.date) }}</b>
                              à <b>{{ hourFormat(comment.date) }}</b></td>
-                        <div>
-                            <button v-if="comment.userId === id || role === 0" @click="deleteComment(index)" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i></button>
-                            <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentairs">Masquer les commentaires</button>
-                        </div>  
-                    </tr>  
+                             
+                      <!-- MODIFY/DELETE COMMENT -->  
+                <div class="content">
+                    <p class="modif">
+                        <button @click="modifyComment()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
+                        <button @click="deleteComment(index)" v-if="post.userId === id || role === 0" class="btnDelete espacement" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
+                    </p>
+                </div>  
+                      
+                     
+                      <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentairs">Masquer les commentaires</button>
+                     </tr>    
+                      
                 </table> 
                        
 <!-- CREATE COMMENT -->
@@ -120,14 +125,15 @@ export default {
                 user: { },
                 userId:''
             },
-            user : {
-                nom: '',
-            },
+            //user : {
+            //    nom: '',
+            //},
             comments: [],
+             id:'',
              content: '',
              userId:'',
              postId:'',
-             id:'',
+             
 
             displaycomments: false,
             displayCreateComment: false,
@@ -184,26 +190,36 @@ export default {
                 this.post.image = res.data.image;
                 this.post.createdAt = res.data.createdAt;
                 this.post.updatedAt = res.data.updatedAt;
-                this.user.nom = res.data.nom;
-                
+              // this.post.User.nom = res.data.nom          
             })
-                
             .catch(err => this.posts = [{title : "Impossible de récupérer les posts !"}]);
         },
 // DISPLAY ALL COMMENTS OF POST
         getPostComments() {
             const token = localStorage.getItem("token")
+             const Id = JSON.parse(localStorage.getItem("userId"))
+            let data = {
+                    content: this.content,
+                    postId: this.id_param,
+                    userId: Id
+                }                  
 
-            axios.get(`http://localhost:3000/api/comments/${this.id_param}`, {
+            axios.get(`http://localhost:3000/api/comments/${this.postId}`,data,  {
                    
                     headers: {
-                        'authorization': `Bearer ${token}`
+                        'authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
                     }
             })
             
             .then((res) => {
                 console.log(res.data);
                 this.comments = res.data
+                this.users = res.data
+
+                this.comment.content = res.data.content;
+                this.comment.date = res.data.date;
+              //  this.comment.User.nom = res.data.nom;
             })
                 
             .catch(() => console.log('Impossible de récupérer les commentaires!'))
@@ -274,6 +290,11 @@ export default {
         //MODIFY POST
         modifyPost () {
             this.$router.push(`/postmodify/${this.id_param}`)
+        },
+
+        //MODIFY COMMENT
+        modifyComment () {
+            this.$router.push(`/commentmodify/${this.id_param}`)
         },
 
 //CREATE COMMENT
@@ -357,6 +378,11 @@ section {
 .card {
     display: flex;
     flex-direction: column;
+    margin-top: 15px;
+}
+.cardComment {
+    display: flex;
+    flex-direction: row;
     margin-top: 15px;
 }
 input{

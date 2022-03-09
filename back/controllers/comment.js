@@ -20,7 +20,7 @@ exports.createComment = (req, res, next) => {
             id: req.body.id,
             content: req.body.content,
             UserId: req.body.userId,
-            postId: req.body.postId
+            PostId: req.body.postId
         })
         
         
@@ -50,15 +50,20 @@ exports.deleteComment = (req, res, next) => {
 // DISPLAY ALL COMMENTS OF POST
 exports.getPostComments = (req, res, next) => {
     console.log("console log getPostComment  " + JSON.stringify (req.body));
+    models.Comment.findOne({ 
+        where: { id: req.params.id }})
+        console.log("findOneComm   " +id )
+        
     models.Comment.findAll({
         where: {
         postId : req.params.postId
     },
         include: [{
-        model : User,
+        model : models.User,
     }],
-        order: [["date", "ASC"]]})
-
+    
+        order: [["createdAt", "ASC"]]})
+console.log("findallComm   " +postId )
     .then( res.status(201).json({"message": "Commentaires afficher"}))
     .catch( error => {
         console.log(error);
@@ -67,13 +72,15 @@ exports.getPostComments = (req, res, next) => {
 }
 // DISPLAY ALL COMMENTS 
 exports.getAllComments = (req, res, next) => {
+    console.log("console log getAllComment  " +(req.body));
+
     models.Comment.findAll({
         include: [{
-            model : User
+            model : models.User
         },{
-            model : Post
+            model : models.Post
         }],
-        order: [["date", "ASC"]]
+        order: [["createdAt", "ASC"]]
     })
 
     .then( comments => res.status(200).json(comments))
@@ -85,7 +92,7 @@ exports.modifyComment = (req, res, next) => {
     const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
 
-    Comment.findOne({ where: { id: req.params.id }})
+    models.Comment.findOne({ where: { id: req.params.id }})
         .then(() => {
             if (userId === post.userId || role === 0) {
                 const modifyComment = {

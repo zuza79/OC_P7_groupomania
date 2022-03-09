@@ -42,7 +42,7 @@
                         <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer la photo de profil"> <i class="far fa-trash-alt"></i> Supprimer</button>
                         <input type="file" accept="image/jpeg, image/jpg, image/png, image/webp" v-on:change="uploadFile" id="file" class="input-file" aria-label="Photo de profil">
                     </div>
-                <!--modify password 
+                <!--modify password -->
                 
                     <div class="modifyPassword">
                         <button v-on:click="show" class="button">Modifier<br> mot de passe</button>
@@ -53,7 +53,7 @@
                             <button @click.prevent="modifyPassword()" class="btnSave"><i class="fas fa-edit"></i>Enregistrer nouveau mot de passe</button>
                         </li>
                     </div>
-                -->
+                
             </nav>
 
                 <div class="submit">
@@ -278,7 +278,7 @@ export default {
                             alert("La suppression du compte est bien prise en compte")
                             localStorage.clear();
                         })
-                        .then(this.$router.push('/'))
+                        .then(this.$router.push("/"))
                 })
                 .catch(alert)
             }
@@ -298,10 +298,9 @@ export default {
         },
         
         //MODIFY PASSWORD
-      /*  modifyPassword() {
-            const Id = JSON.parse(localStorage.getItem("userId"))
-     const userId = this.$route.params.id;
-      const token = localStorage.getItem('token');
+        modifyPassword() {
+            const Id = localStorage.getItem("userId")
+            const token = localStorage.getItem('token');
             const regexPassword = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{3,50}$/;
 
 
@@ -346,7 +345,7 @@ export default {
 			}
             
         },
-        */
+        
     mounted() {
         this.getOneUser()
     }

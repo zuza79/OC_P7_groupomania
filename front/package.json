@@ -14,15 +14,16 @@
     "core-js": "^3.20.3",
     "dotenv": "^14.3.2",
     "vue": "^2.6.14",
-    "vue-router": "^3.5.3"
+    "vue-router": "^3.5.3",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@vue/cli": "^4.5.15",
     "@vue/cli-service": "^3.12.1",
     "eslint": "^8.10.0",
     "vue-template-compiler": "^2.6.11",
-    "vuejs-emoji": "^0.1.8",
-    "vuex": "^3.6.2"
+    "vuejs-emoji": "^0.1.8"
+    
   },
   "license": "ISC"
 }

@@ -32,7 +32,8 @@
                         </td>
                         <td class="info">
                             <p>
-                                Posté 
+                                Posté par 
+                                <b>{{ post.User.nom }}</b>
                                 le <b>{{ dateFormat(post.createdAt) }}</b>
                                 à <b>{{ hourFormat(post.createdAt) }}</b><br>
                             </p>
@@ -99,7 +100,8 @@ export default {
                 })    
              .then((res) => {
                 console.log(res.data);
-                this.posts = res.data
+                this.posts = res.data;
+                this.users = res.data;
             })
                 
             .catch(() => console.log('Impossible de récupérer les posts !'))

@@ -63,12 +63,25 @@ exports.createPost = (req, res, next) => {
 exports.getOnePost = (req, res, nest) => {
     console.log("getOnePost  " + req.body)
     models.Post.findOne({
-        include: [{
-            model : models.User,
-            attributes: [ 'nom']
-        }], 
-         
-        where: { id: req.params.id }})
+        where: { id: req.params.id },
+        include: [{ model : models.User, 
+                    attributes: [ 'nom','prenom', 'id' ]          
+                    },
+                /*  {model: models.Like,
+                    attributes: [ 'PostId', 'UserId' ]
+                },
+                 	{model: models.Dislike,
+                    attributes: [ 'PostId', 'UserId' ]
+                }, 
+                {model: models.Comment,
+                    attributes: [ 'content', 'id' , 'updatedAt','createdAt', 'UserId','PostId' ],
+                    include: [ { model: models.User, 
+                                 attributes: [ 'nom','prenom','id' ] 
+                                }] 
+                 } 
+                 */
+    ],
+        })
     
      
     .then( post => res.status(200).json(post))
@@ -82,49 +95,28 @@ exports.getAllPosts = (req, res, next) => {
     console.log("all post  " + req.body);
   
     models.Post.findAll({ 
-        include: [{
-            model : models.User
-        }
-    ],
-    
-        order: [["id", "DESC"]]})
+        order: [["id", "DESC"]],
+        include: [{ model : models.User,
+                    attributes: [ 'nom','prenom', 'id' ]
+                 },
+             /*   { model: models.Like, 
+                   attributes: [ 'UserId' ] 
+                }, 				
+                {model: models.Dislike,
+                attributes: ['UserId' ] 
+                }, 
+                 {model: models.Comment,
+                attributes: [ 'content', 'id' , 'updatedAt','createdAt', 'UserId','PostId' ],
+                include: [ { model: models.User, 
+                             attributes: [ 'nom','prenom','id' ] 
+                            }] 
+                } 
+        */
+      ]})
 
     .then( post => res.status(200).json(post))
     .catch( error => res.status(400).json({error}))
 };
-/*  const post =  models.Post.findAll({
-			// on récupère le post avec l'id fourni en incluant les tables et attributs nécessaires
-			where: { userId: userId},
-			order: [  ['updatedAt', 'DESC'],	 
-			[models.comment , 'updatedAt', 'DESC'],
-		    ],
-			attributes: [ 'id', 'content', 'image',  'updatedAt' ],
-			include: [
-				{
-					model: models.User,
-					attributes: [ 'prenom','nom', 'id' ]
-				},
-				{
-					model: models.Like,
-					attributes: [ 'PostId', 'UserId' ]
-				},
-				{
-					model: models.Dislike,
-					attributes: [ 'PostId', 'UserId' ]
-				},
-				{
-					model: models.comment,
-					
-					attributes: [ 'content', 	'id' , 'updatedAt','createdAt', 'UserId','PostId' ],
-					include: [
-						{
-							model: models.User, //'profile_picture'
-							attributes: ['nom','prenom' , 'id'  ]
-						}
-					]
-				}
-			]
-		})*/
 
 // DISPLAY ALL POSTS  - ONE USER
 
@@ -273,8 +265,66 @@ exports.deletePost = (req, res, next) => {
 }
 
 
+/////////// LIKE/DISLIKE
+//LIKE 
+exports.like = (req, res, next) => {
+    const postId = req.params.id;
+    switch (req.body.like) {
+    case 0:    // default = 0  
+    
+    models.Post.findOne({ 
+        where: {id: postId }
+        })    
+          .then((post) => {
+            //LIKE
+            if (post.usersLiked.find(user => user === req.body.userId)) {   
+              models.Post.updateOne({id: postId }, {
+                $inc: { likes: -1 },           
+                $pull: { usersLiked: req.body.userId },     // if user LIKE, the body make update and user can't make another LIKE 
+               id: postId
+              })
+                .then(() => { res.status(201).json({ message: 'Ton like a été pris en compte! Merci.' }); })
+                .catch((error) => { res.status(400).json({ error: error }); });
+             //DISLIKE
+            } if (post.usersDisliked.find(user => user === req.body.userId)) {      
+                models.Post.updateOne({id: postId }, {
+                $inc: { dislikes: -1 },
+                $pull: { usersDisliked: req.body.userId },      
+               id: postId
+              })
+                .then(() => { res.status(201).json({ message: 'Ton dislike a été pris en compte! Merci.' }); })
+                .catch((error) => { res.status(400).json({ error: error }); }); 
+            }
+          })
+          .catch((error) => { res.status(404).json({ error: error }); });
+        break;
+  
+        //update LIKE
+      case 1:
+        models.Post.updateOne({id: postId }, {
+          $inc: { likes: 1 },
+          $push: { usersLiked: req.body.userId },
+         id: postId
+        })
+          .then(() => { res.status(201).json({ message: 'Ton like a été pris en compte! Merci.' }); })
+          .catch((error) => { res.status(400).json({ error: error }); });
+        break;
+  
+        // update DISLIKE
+      case -1:
+        models.Post.updateOne({id: postId }, {
+          $inc: { dislikes: +1 },
+          $push: { usersDisliked: req.body.userId },
+         id: postId
+        })
+          .then(() => { res.status(201).json({ message: 'Ton dislike a été pris en compte!' }); })
+          .catch((error) => { res.status(400).json({ error: error }); });
+        break;
+        default:
+    }
+  };
 //LIKE POST 
-exports.likePost = (req, res, next) => {
+/*exports.like = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const postId = req.params.id;
@@ -290,4 +340,4 @@ exports.likePost = (req, res, next) => {
                 .catch((err) => res.status(500).json({ err }))
         })
         .catch(() => res.status(404).json({ error: 'Post introuvable !' }));
-};
+};*/
