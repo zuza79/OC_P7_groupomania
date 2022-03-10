@@ -62,8 +62,10 @@ exports.createPost = (req, res, next) => {
 // DISPLAY ONE POST
 exports.getOnePost = (req, res, nest) => {
     console.log("getOnePost  " + req.body)
+    const headerAuth = req.headers['authorization'];
+    const userId = jwtUtils.getUserId(headerAuth);
     models.Post.findOne({
-        where: { id: req.params.id },
+        where: { id : req.params.id },
         include: [{ model : models.User, 
                     attributes: [ 'nom','prenom', 'id' ]          
                     },
@@ -128,7 +130,7 @@ exports.getPostsUser = (req, res, next) => {
         include: [{
             model : models.User,
         }],
-        order: [["created_date", "ASC"]]})
+        order: [["createdAt", "ASC"]]})
 
     .then( posts => res.status(200).json(posts))
     .catch( error => res.status(400).json({error}))

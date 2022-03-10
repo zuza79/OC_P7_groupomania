@@ -63,6 +63,7 @@ exports.getPostComments = (req, res, next) => {
     }],
     
         order: [["createdAt", "ASC"]]})
+        
 console.log("findallComm   " +postId )
     .then( res.status(201).json({"message": "Commentaires afficher"}))
     .catch( error => {
@@ -88,18 +89,16 @@ exports.getAllComments = (req, res, next) => {
 };
 //MODIFY COMMENT
 exports.modifyComment = (req, res, next) => {
+    console.log("console log modifyComment  " +(req.body));
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
 
     models.Comment.findOne({ where: { id: req.params.id }})
-        .then(() => {
-            if (userId === post.userId || role === 0) {
-                const modifyComment = {
-                    moderate: req.body.moderate
-                };
-
-                Comment.update(modifyComment , { where: { id: req.params.id } })
+        .then(comment => {
+            if (userId === comment.userId || role === 0) {
+                const modifyComment = {content: req.body.content};
+                models.Comment.update(modifyComment , { where: { id: req.params.id } })
 
                 .then(() => res.status(200).json({message : 'Commentaire modifié !'}))
                 .catch( error => res.status(400).json({error}));

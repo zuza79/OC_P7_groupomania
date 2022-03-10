@@ -2,20 +2,19 @@
     <div>
         <HeaderProfile />
                <section>
-     <div class="header">
+     <article class="header">
        <!-- DISPLAY POST --> 
                     <tr class = "card" >
                         <td><input type="text" v-model="post.title" required aria-label="Titre" disabled size="50" ></td>  <!--rows="10" cols="25" -->
                         <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled ></textarea></td>
                         <td><img v-if="post.image" :src="post.image" alt="Image du post"></td>
-                    </tr>
+                                   
                        
-                       <div>
-                       <div class="info">
+                       <td class="info">
                             <p>
                                Posté par 
-                              <!--  <b>{{ post.User.nom }} </b>
-                                 <span v-if="post.User.role != 1">{{ post.User.prenom }} </span>     
+                                 <b>{{ post.user.nom }}</b>
+                               <!--   <span v-if="post.User.role != 1">{{ post.User.prenom }} </span>     
                                 <img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
                                 <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
                                -->
@@ -27,13 +26,19 @@
                                 le <b>{{ dateFormat(post.updatedAt) }}</b>
                                 à <b>{{ hourFormat(post.updatedAt) }}</b>
                             </p>
-                        </div>
+                        </td>
+                    </tr>
                     
-                    </div>
-                    
-                </div>
-                
-   <!--LIKE -->  
+      
+  <!-- MODIFY/DELETE POST -->  
+                <div class="content">
+                    <p class="modif">
+                        <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
+                        <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
+                    </p>
+                </div> 
+     </article>
+<!--LIKE -->  
             <div class="like">
           <button class="btnSave" @click="likePost">
             <div><i class="fas fa-thumbs-up like"></i>{{ like }}</div>
@@ -44,39 +49,35 @@
           </button>
    -->
       </div>
-  <!-- MODIFY/DELETE POST -->  
-                <div class="content">
-                    <p class="modif">
-                        <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
-                        <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete espacement" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
-                    </p>
-                </div>
-
 <!-- DISPLAY COMMENT -->
                 <button v-if="displaycomments === false " v-on:click="show" @click="getPostComments()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
-                <table class = "header" v-if="displaycomments" >
+                <table class = "header " v-if="displaycomments" >
+                    
                     <h2>Les commentaires:</h2>
                          
-                    
-                    <tr class = "card" v-bind:key="index" v-for="(comment, index) in comments" >
+                    <tr class = "card displayComment" v-bind:key="index" v-for="(comment, index) in comments" >
                         <td><input type="text" v-model="comment.User.nom" required aria-label="Auteur de commentaire" disabled></td>
+                        <td>le <b>{{ dateFormat(comment.createdAt) }}</b>
+                             à <b>{{ hourFormat(comment.createdAt) }}</b></td>
                         <td><textarea type="text" v-model="comment.content" required aria-label="Commentaire" disabled></textarea></td>
-                        <td>le <b>{{ dateFormat(comment.date) }}</b>
-                             à <b>{{ hourFormat(comment.date) }}</b></td>
-                             
-                      <!-- MODIFY/DELETE COMMENT -->  
-                <div class="content">
-                    <p class="modif">
-                        <button @click="modifyComment()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
-                        <button @click="deleteComment(index)" v-if="post.userId === id || role === 0" class="btnDelete espacement" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
-                    </p>
+                <!-- MODIFY/DELETE COMMENT -->  
+                <div class="content displayComment">
+                    <div class="modif">                                                                   <!-- v-if="post.userId === id"-->
+                        <button v-if="modifyComment  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier publication</button>
+                        <article v-if="modifyComment" class = "header " >
+                                <textarea v-model="content" placeholder="Modifier commentaire..." cols="60" rows="5" aria-label="Modification du commentaire"></textarea>
+                                <div class=btnComment>
+                                    <button @click="modifyComment(index)" v-if="post.userId === id || role === 0" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
+                                    <button v-on:click="hide3" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
+                                 </div>
+                        </article>
+                                
+                        <button @click="deleteComment(index)" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i> Supprimer publication</button>
+                        <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentairs">Masquer les commentaires</button>
+                    </div>
                 </div>  
-                      
-                     
-                      <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentairs">Masquer les commentaires</button>
-                     </tr>    
-                      
-                </table> 
+                    </tr>    
+         </table> 
                        
 <!-- CREATE COMMENT -->
                 <button v-if="displayCreateComment === false" v-on:click="show2" class="btnSave" aria-label="Ecrire un commentaire"><i class="far fa-edit"></i>Commenter</button>
@@ -123,11 +124,14 @@ export default {
                 id:'',
                 image:'',
                 user: { },
+                user : {
+                        nom: '',
+                        },
                 userId:''
             },
-            //user : {
-            //    nom: '',
-            //},
+            user : {
+                nom: '',
+            },
             comments: [],
              id:'',
              content: '',
@@ -137,6 +141,7 @@ export default {
 
             displaycomments: false,
             displayCreateComment: false,
+            modifyComment: false,
             role: ''
         }
     },
@@ -159,6 +164,12 @@ export default {
         hide2: function () {
             return this.displayCreateComment = false;
         },
+        show3: function () {
+            return this.modifyComment = true;
+        },
+        hide3: function () {
+            return this.modifyComment = false;
+        },
         User() {
             this.id = localStorage.getItem("Id")
             this.role = localStorage.getItem("role")
@@ -169,13 +180,14 @@ export default {
        // DISPLAY ONE POST
         getOnePost() {
             const token = localStorage.getItem("token")
+            const Id = JSON.parse(localStorage.getItem("userId"))
 
             axios.get (`http://localhost:3000/api/posts/${this.id_param}` ,  {
               
                 headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
-                    'Content-Type': 'application/json',
+                    //'Content-Type': 'application/json',
                     //'Cross-Origin-Resource-Policy': 'same-site',
                     //'Accept': 'application/json',
                 }
@@ -186,11 +198,11 @@ export default {
                 this.users = res.data;
 
                 this.post.title = res.data.title;
-                this.post.content = res.data.content;
+               this.post.content = res.data.content;
                 this.post.image = res.data.image;
                 this.post.createdAt = res.data.createdAt;
                 this.post.updatedAt = res.data.updatedAt;
-              // this.post.User.nom = res.data.nom          
+               this.post.user.nom = res.data.nom          
             })
             .catch(err => this.posts = [{title : "Impossible de récupérer les posts !"}]);
         },
@@ -292,18 +304,14 @@ export default {
             this.$router.push(`/postmodify/${this.id_param}`)
         },
 
-        //MODIFY COMMENT
-        modifyComment () {
-            this.$router.push(`/commentmodify/${this.id_param}`)
-        },
-
+      
 //CREATE COMMENT
         createComment () {
             if( this.content === ""){
                 alert('Veuillez remplir votre commentaire')
 
             } else {
-                const Id = JSON.parse(localStorage.getItem("userId"))
+                const Id = localStorage.getItem("userId")
                 const token = localStorage.getItem("token")
                 
                /* let data = new FormData()
@@ -334,6 +342,35 @@ export default {
             .catch(() => console.log(' Impossible de publier commentaire!'))
        }
         },
+        //MODIFY COMMENT
+        
+modifyComment(index) {
+            const token = localStorage.getItem("token")
+            const Id = localStorage.getItem("userId")
+
+            if (confirm("Voulez-vous vraiment modifier commentaire") === true) {
+               
+               let data = { content: this.content}
+                
+    axios.put(`http://localhost:3000/api/comments/${this.comments[index].id}`,data, {
+                    
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'authorization': `Bearer ${token}`
+                    },
+                    body: data 
+                })
+                 .then(() => {
+                                alert("commentaire modifié")
+                                console.log("modify OK")
+                            })
+                
+            .catch(() =>{
+                 alert("Vous n'avez pas autorisation de modifier commentaire!!")
+             console.log(' Impossible de publier commentaire!')
+       } )}
+        },
+
 //DELETE COMMENT
         deleteComment (index) {
             const token = localStorage.getItem("token")
@@ -376,8 +413,12 @@ section {
     margin: 0 auto 0 auto;
 }
 .card {
+    width: 95%;
     display: flex;
     flex-direction: column;
+    margin-top: 15px;
+}
+h2{
     margin-top: 15px;
 }
 .cardComment {
@@ -388,6 +429,8 @@ section {
 input{
     width: 60%;
     height: 30px;
+    margin-top: 10px;
+    color: #000000;
     text-align: center ;
     font-size: 20px;
     font-weight: bolder;
@@ -398,7 +441,7 @@ h1 {
 }
 
 textarea {
-    width: 80%;
+    width: 90%;
     height: 150px;
     font-size: 1.2rem;
     margin: 10px auto 10px auto;
@@ -406,16 +449,16 @@ textarea {
 
 .header,
 .content {
-    width: 50%;
+    width: 60%;
     background:gray;
-    border: 2px solid black;
-}
+    border-radius: 20px ;
+    }
 
 .header {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    border-radius: 20px 20px 0 0;
+    border-radius: 20px;
 }
 
 .content {
@@ -423,14 +466,19 @@ textarea {
 }
 
 .info {
-    font-size: 0.8rem;
+    font-size: 13px;
 }
 
 .modif {
     margin: 0;
+    
+}
+.btnDelete{
+    margin-bottom: 10px;
 }
 .btn{
     text-align: center;
+     width: 30%;
 }
 .content {
     margin-bottom: 30px;
@@ -441,8 +489,10 @@ textarea {
     flex-direction: column;
 }
 
-.btn{
-    width: 30%;
+.displayComment{
+    border-radius: 20px;
+    margin: 10px auto 10px auto ;
+    background: rgba(207, 203, 203, 0.877);
 }
 .btnComment{
     display: flex;
@@ -459,10 +509,6 @@ textarea {
     background: #ffd7d7;
     font-size: 1rem;
     cursor: pointer;
-}
-
-.espacement {
-    margin: 5px 0 0 10px;
 }
 
 .link {
@@ -517,7 +563,7 @@ img {
         width: 90%;
     }
 section{
-    width: 80%;
+    width: 95%;
 }
 
 }
@@ -530,7 +576,7 @@ section{
         width: 98%;
     }
 section{
-    width: 80%;
+    width: 95%;
     
 }
     .modif{
@@ -539,11 +585,7 @@ section{
         align-items: center;
     }
 
-    .espacement{
-        margin: 0;
-    }
-
-    .button {
+      .button {
         width: 50%;
     }
 
