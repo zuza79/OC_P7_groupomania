@@ -30,6 +30,9 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING,
     like: DataTypes.INTEGER,
     dislike: DataTypes.INTEGER,
+    usersLiked: DataTypes.STRING,
+    usersDisliked: DataTypes.STRING,
+
     
   }, {
     sequelize,
