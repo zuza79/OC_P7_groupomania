@@ -53,6 +53,8 @@ export default {
         return {
             id_param: this.$route.params.id,
             post: [],
+            createdAt: '',
+            updatedAt:'',
             preview: null,
              button : false
         }
@@ -89,7 +91,8 @@ export default {
                 this.posts = res.data;
                 this.post.title = res.data.title;
                 this.post.image = fileField.files[0];
-               
+               this.post.createdAt = res.data.createdAt;
+                this.post.updatedAt = res.data.updatedAt;
             })
             .catch(() => console.log('Impossible de récupérer les posts !'))
         },
@@ -166,6 +169,17 @@ export default {
                 console.log('Vous n avez pas autorisation de modifier!!')
         
           } )}
+        },
+        //DATE 
+        dateFormat (updatedDate) {
+            const date = new Date(updatedDate)
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'};
+            return date.toLocaleDateString('fr-FR', options);
+        },
+        hourFormat (updatedHour) {
+            const hour = new Date(updatedHour)
+            const options = { hour: 'numeric', minute:'numeric', second:'numeric'};
+            return hour.toLocaleTimeString('fr-FR', options);
         },
     //UPLOAD POST
         uploadFile(e) {

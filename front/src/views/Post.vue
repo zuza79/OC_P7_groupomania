@@ -66,16 +66,16 @@
                 <!-- MODIFY/DELETE COMMENT -->  
                 <div class="content displayComment">
                     <div class="modif">                                                                   <!-- v-if="post.userId === id"-->
-                        <button v-if="modifyComment  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier publication</button>
+                        <button v-if="modifyComment  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier commentaire</button>
                         <article v-if="modifyComment" class = "header " >
                                 <textarea v-model="content" placeholder="Modifier commentaire..." cols="60" rows="5" aria-label="Modification du commentaire"></textarea>
-                                <div class=btnComment>
-                                    <button @click="modifyComment(index)" v-if="post.userId === id || role === 0" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
+                                <div class=btnComment>                          <!--v-if="post.userId === id || role === 0" -->
+                                    <button @click="modifyComment(index)"  class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
                                     <button v-on:click="hide3" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
                                  </div>
                         </article>
                                 
-                        <button @click="deleteComment(index)" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i> Supprimer publication</button>
+                        <button @click="deleteComment(index)" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i> Supprimer commentaire</button>
                         <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentairs">Masquer les commentaires</button>
                     </div>
                 </div>  
@@ -359,7 +359,7 @@ modifyComment(index) {
                
                let data = { content: this.content}
                 
-    axios.put(`http://localhost:3000/api/comments/${this.comments[index].id}`,data, {
+    axios.put(`http://localhost:3000/api/comments/${this.comments[index].Id}`,data, {
                     
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -396,7 +396,9 @@ modifyComment(index) {
                 this.posts = res.data
             })
                 
-            .catch(() => console.log('Impossible de récupérer les posts !'))
+            .catch(() => {
+                alert("Vous n'avez pas autorisation de supprimer ce commentaire!!")
+                console.log('Impossible de récupérer les posts !')})
        }
         },
     },
