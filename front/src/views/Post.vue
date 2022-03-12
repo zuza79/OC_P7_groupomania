@@ -183,7 +183,7 @@ export default {
        // DISPLAY ONE POST
         getOnePost() {
             const token = localStorage.getItem("token")
-            const Id = JSON.parse(localStorage.getItem("userId"))
+            const Id = localStorage.getItem("userId")
 
             axios.get (`http://localhost:3000/api/posts/${this.id_param}` ,  {
               
@@ -343,6 +343,7 @@ export default {
                 .then(() => {
                                 alert("commentaire publié")
                                 console.log("commentaire OK")
+                                this.$router.push("/allposts");
                             })
                 
             .catch(() => console.log(' Impossible de publier commentaire!'))
