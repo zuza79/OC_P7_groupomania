@@ -185,7 +185,7 @@ exports.getAllUsers = (req, res, next) => {
 
 ////// MODIFY USER AND UPDATE
 exports.modifyUser = (req, res, next) => {
-    console.log("get all users" + JSON.stringify(req.body));
+    console.log("modif info users" + JSON.stringify(req.body));
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
@@ -215,7 +215,7 @@ exports.modifyUser = (req, res, next) => {
                     });
                 };
 
-                // UPDATE PROFILE, new infp
+                // UPDATE PROFILE, new info
                 user.update({
                     email: (email ? email : user.email),
                     nom: (nom ? nom : user.nom),
@@ -243,8 +243,9 @@ exports.modifyUser = (req, res, next) => {
 }
 
 
-//modify password
+//MODIFY PASSWORD
 exports.modifyPassword = (req, res, next) => {
+    console.log("modif password" + JSON.stringify(req.body));
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
@@ -253,15 +254,12 @@ User.findOne({ where: { id: userId } })
         .then(user => {
             if(userId === user.id || role === 0) {
                 controle.log('oldPasword   ' + req.body.oldPassword),
-                controle.log('new pssaword    ' + User.password)
-            bcrypt.compare(req.body.oldPassword, User.password)
+                controle.log('new pssaword    ' + user.password)
+            bcrypt.compare(req.body.oldPassword, user.password)
                 .then(valid => {
-                   
-
-                    if (!valid) {
+                        if (!valid) {
                         return res.status(401).json("Mot de passe actuel incorrect");
                     }
-
                     if (!schema.validate(req.body.password)) {
                         return res.status(401).json('Le nouveau mot de passe doit avoir une longueur de 3 à 50 caractères avec au moins un chiffre, une minuscule, une majuscule !!!')
                     }
@@ -272,7 +270,7 @@ User.findOne({ where: { id: userId } })
                                 password: hash
                             };
 
-                            User.update(newPassword, { where: { id: req.params.id } })
+                            user.update(newPassword, { where: { id: req.params.id } })
                             console.log('newpass   ' + newPassword)
                                 .then(() => { res.status(201).json({ message: 'Mot de passe modifié !' }) })
                                 .catch(() => res.status(400).json({message: "imposible de modifier mot de pass" }));
