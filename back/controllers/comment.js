@@ -81,7 +81,9 @@ exports.getAllComments = (req, res, next) => {
         },{
             model : models.Post
         }],
-        order: [["createdAt", "ASC"]]
+        order: [["createdAt", "DESC"]],
+        offset: 10 * req.body.pageNbr - 10,
+        limit: 10   
     })
 
     .then( comments => res.status(200).json(comments))

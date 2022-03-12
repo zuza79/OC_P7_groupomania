@@ -18,6 +18,8 @@
           </li>
           <li>
             <input type="password" v-model="password" placeholder="Pass2word" size="50" required aria-label="Mot de passe">
+            
+          
           </li>
         </ul>
       </form>   
@@ -51,7 +53,11 @@ export default {
 
   methods: {
     signup() {
+     /* if (this.password != this.confirmPassword ){
+         alert("Mot de passe doit être identique avec confirmation !!!")
+      }*/
       let data = {
+        
           nom: this.nom,
           prenom: this.prenom,
           email: this.email,

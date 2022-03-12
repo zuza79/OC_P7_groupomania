@@ -4,8 +4,8 @@
         <div>
             <h1>Mon profil</h1>
           <!--DISPLAY ALL POSTS  - ONE USER
-            pridat afficher les post, modifier, dlete post-->
-         
+            pridat afficher les post, modifier, dlete post
+         --> 
 
          <button v-if="displayPostsUser === false" v-on:click="show2" class="btnSave" aria-label="afficher toutes mes publications">Afficher toutes mes publications</button>
          <tr class = "card" v-bind:key="index" v-for="(post, index) in posts">
@@ -18,7 +18,8 @@
                         <button v-on:click="hide2" class="btnIconeDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
                     </div>
                 </article>
-        </tr>                    
+        </tr>        
+                   
         <!--user info nom, prenom, email -->
             <form>
                 <ul>
@@ -33,13 +34,14 @@
                     </li>
                     </ul>
             </form>
+
             <nav class="modify" >
 
-                <!--modify image -->
-                    <div class="modifyImage btnModifyImg" id="modifyImage">
+                <!--modify image --><!-- -->
+                    <div class="modifyImage btnModifyImg" >   
                         <img v-if="user.image" :src="user.image" alt="Photo de profil" class="file" width="150px" height="150px" border-radius="15px">
                         <label v-if="!user.image" for="file" class="label-file btnModifyImg" aria-label="Inserer votre photo de profil" ><i class="fas fa-upload"></i><br>Inserer <br>votre photo de profil</label>
-                        <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer la photo de profil"> <i class="far fa-trash-alt"></i> Supprimer</button>
+                        <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer la photo de profil"> <i class="far fa-trash-alt"></i></button>
                         <input type="file" accept="image/jpeg, image/jpg, image/png, image/webp" v-on:change="uploadFile" id="file" class="input-file" aria-label="Photo de profil">
                     </div>
                 <!--modify password -->
@@ -187,9 +189,10 @@ export default {
                         headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'authorization': `Bearer ${token}`
+                        'authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
                         },
-                        //body: data
+                        body: data
                 })
                 .then((res) => {
                    this.user = res.data;
@@ -228,15 +231,16 @@ export default {
         },
         //DELETE USER
         deleteUser() {
-            const Id = JSON.parse(localStorage.getItem("userId"))
+            const Id = localStorage.getItem("userId")
             if (confirm("Voulez-vous vraiment supprimer le compte?") == true) {
                 const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
 
-                axios.delete(`http://localhost:3000/api/auth/profile/${Id}`, {
+                axios.deleteUser(`http://localhost:3000/api/auth/profile/${Id}`, {
                    
                     headers: {
-                        'authorization': `Bearer ${token}`
+                        'authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
                     },
                 })
 
@@ -258,6 +262,7 @@ export default {
                             .then(() => {
                                 alert("les posts suprimer")
                                 console.log("les posts supprimer")
+                                .then(this.$router.push("/"))
                             })
                             .catch(alert ("impossilbe supprimer les posts"))
                         }
@@ -270,7 +275,8 @@ export default {
                         headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'authorization': `Bearer ${token}`
+                        'authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
                         }
                     })
                         .then(response => response.json())
@@ -334,7 +340,7 @@ export default {
                 .then(() => {
                     alert("Le nouveau mot de passe enregistrer")
                 console.log("Le nouveau mot de passe enregistrer");
-                // this.$router.push("/allposts");
+                 this.$router.push("/profile");
                 
             })
                 

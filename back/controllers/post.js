@@ -130,7 +130,11 @@ exports.getPostsUser = (req, res, next) => {
         include: [{
             model : models.User,
         }],
-        order: [["createdAt", "ASC"]]})
+        order: [["createdAt", "ASC"]],
+       /* offset: 10 * req.body.pageNbr - 10,
+        limit: 10*/
+    
+    })
 
     .then( posts => res.status(200).json(posts))
     .catch( error => res.status(400).json({error}))
@@ -270,19 +274,19 @@ exports.deletePost = (req, res, next) => {
 /////////// LIKE/DISLIKE
 //LIKE 
 exports.like = (req, res, next) => {
+    console.log("msg like   "+ req.body);
     const postId = req.params.id;
     switch (req.body.like) {
     case 0:    // default = 0  
     
     models.Post.findOne({ 
-        where: {id: postId }
-        })    
+        where: { id: req.params.id }})  
           .then((post) => {
             //LIKE
             if (post.usersLiked.find(user => user === req.body.userId)) {   
               models.Post.updateOne({id: postId }, {
-                $inc: { likes: -1 },           
-                $pull: { usersLiked: req.body.userId },     // if user LIKE, the body make update and user can't make another LIKE 
+                $likeInc: { likes: -1 },           
+                $likePull: { usersLiked: req.body.userId },     // if user LIKE, the body make update and user can't make another LIKE 
                id: postId
               })
                 .then(() => { res.status(201).json({ message: 'Ton like a été pris en compte! Merci.' }); })
@@ -290,8 +294,8 @@ exports.like = (req, res, next) => {
              //DISLIKE
             } if (post.usersDisliked.find(user => user === req.body.userId)) {      
                 models.Post.updateOne({id: postId }, {
-                $inc: { dislikes: -1 },
-                $pull: { usersDisliked: req.body.userId },      
+                $likeInc: { dislikes: -1 },
+                $likePull: { usersDisliked: req.body.userId },      
                id: postId
               })
                 .then(() => { res.status(201).json({ message: 'Ton dislike a été pris en compte! Merci.' }); })
@@ -304,8 +308,8 @@ exports.like = (req, res, next) => {
         //update LIKE
       case 1:
         models.Post.updateOne({id: postId }, {
-          $inc: { likes: 1 },
-          $push: { usersLiked: req.body.userId },
+          $likeInc: { likes: 1 },
+          $likePull: { usersLiked: req.body.userId },
          id: postId
         })
           .then(() => { res.status(201).json({ message: 'Ton like a été pris en compte! Merci.' }); })
@@ -315,8 +319,8 @@ exports.like = (req, res, next) => {
         // update DISLIKE
       case -1:
         models.Post.updateOne({id: postId }, {
-          $inc: { dislikes: +1 },
-          $push: { usersDisliked: req.body.userId },
+          $likeInc: { dislikes: +1 },
+          $likePull: { usersDisliked: req.body.userId },
          id: postId
         })
           .then(() => { res.status(201).json({ message: 'Ton dislike a été pris en compte!' }); })
@@ -325,21 +329,3 @@ exports.like = (req, res, next) => {
         default:
     }
   };
-//LIKE POST 
-/*exports.like = (req, res, next) => {
-    const headerAuth = req.headers['authorization'];
-    const userId = jwtUtils.getUserId(headerAuth);
-    const postId = req.params.id;
-    console.log('like post:    ' + req.body.like);
-
-    models.Post.findOne({ where: { id: postId } })
-        .then(post => {
-            console.log("console post dataValues   "   +post.dataValues);
-            post.update({
-                like: req.body.like
-            })
-                .then(() => res.status(200).json({ message: 'Données mises à jour !' }))
-                .catch((err) => res.status(500).json({ err }))
-        })
-        .catch(() => res.status(404).json({ error: 'Post introuvable !' }));
-};*/

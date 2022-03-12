@@ -40,21 +40,24 @@
      </article>
 <!--LIKE -->  
             <div class="like">
-          <button class="btnSave" @click="likePost">
+          <button class="btnSave" @click="like">
             <div><i class="fas fa-thumbs-up like"></i>{{ like }}</div>
           </button>
-<!--
-         <button class="btnDelete ">
+
+         <button class="btnDelete" @click="like">
             <div><i class="fas fa-thumbs-down dislike"></i>{{ dislike }}</div>
           </button>
-   -->
+<!--   -->
       </div>
 <!-- DISPLAY COMMENT -->
                 <button v-if="displaycomments === false " v-on:click="show" @click="getPostComments()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
                 <table class = "header " v-if="displaycomments" >
                     
+                    
                     <h2>Les commentaires:</h2>
-                         
+                         <article v-if="comment in comments">
+                        <p>Oups! Pour instant pas de commentaire!</p>
+                    </article>
                     <tr class = "card displayComment" v-bind:key="index" v-for="(comment, index) in comments" >
                         <td><input type="text" v-model="comment.User.nom" required aria-label="Auteur de commentaire" disabled></td>
                         <td>le <b>{{ dateFormat(comment.createdAt) }}</b>
@@ -110,7 +113,7 @@ export default {
     data () {
         return {
              id_param: this.$route.params.id,
-           // like: this.post.like,
+            //like: this.post.like,
            // dislike: this.post.dislike,
             props: ['post'],
             posts: [],
@@ -248,15 +251,17 @@ export default {
             return hour.toLocaleTimeString('fr-FR', options);
         },
 // LIKE POST
-        likePost(){
+        like(){
             console.log(this.post);
-             const token = localStorage.getItem('token');
-            
-             axios.put(`http://localhost:3000/api/posts/${this.id_param}`, {like: this.likeIncrement}, {
+                        const token = localStorage.getItem('token');
+                        
+                                                            //router.post('/:id/like', auth, postCtrl.like);
+             axios.post(`http://localhost:3000/api/posts/${this.id_param}/${this.likeInc}` , {
                  headers: {
                         'authorization': `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data',
-                        'Content-Type': boundary=likePost,
+                        //'Content-Type: multipart/form-data; boundary=like',
+                       // 'Content-Type': 'multipart/form-data',
+                       //'Content-Type': boundary=like,
                     }
                 })
                 .then(() => {
@@ -290,7 +295,8 @@ export default {
                 .then((res) => {
                 alert ("Publication supprimer")
                 console.log(res.data);
-                this.posts = res.data
+               // this.posts = res.data;
+                this.$router.push("/allposts");
             })
                 
             .catch(() =>{ 

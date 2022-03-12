@@ -182,113 +182,66 @@ exports.getAllUsers = (req, res, next) => {
         .then((users) => res.status(200).json(users))
         .catch((error) => res.status(400).json(error))
 };
-////// MODIFY USER AND UPDATE
 
+////// MODIFY USER AND UPDATE
 exports.modifyUser = (req, res, next) => {
-    console.log("console log modify post   "+ JSON.stringify(req.body));
+    console.log("get all users" + JSON.stringify(req.body));
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
+
+    const email = req.body.email
+    const nom = req.body.nom;
+    const prenom = req.body.prenom;
+    const image = req.file ? `${req.protocol}://${req.get('host')}/images/profiles/${req.file.filename}` : null;
+   
     
-
-    if (req.file) {
-
-        User.findOne({ where: { id: req.params.id }})
-        .then(user => {
-            console.log('consol log 198')
-            if (userId === user.id || role === 0) {
-                if (user.image) {       //(req.file){      
-                const filename = user.image.split('/images/profiles/')[1];
-                fs.unlink(`images/profiles/${filename}`, () => {
-                    const modifyUser = {
-                        nom: req.body.nom,
-                        prenom: req.body.prenom,
-                        email: req.body.email,
-                        image: `${req.protocol}://${req.get('host')}/images/profiles/${req.file.filename}`,
-                    };
-        
-                    User.update(modifyUser , { where: { id: req.params.id } })
-                
-                        .then(() => res.status(200).json({message : 'Utilisateur modifié !'}))
-                        .catch( error => res.status(400).json({error}));
-                })} else { console.log ('console log 214')
-                    const modifyUser = {
-                        nom: req.body.nom,
-                        prenom: req.body.prenom,
-                        email: req.body.email,
-                        image: `${req.protocol}://${req.get('host')}/images/profiles/${req.file.filename}`
-                    };
-            
-                    User.update(modifyUser , { where: { id: req.params.id } })
-            
-                        .then(() => res.status(200).json({message : 'Utilisateur modifié !'}))
-                        .catch( error => res.status(400).json({error}));
-                }
-            } else { console.log ('console log 227')
-                res.status(401).json({
-                    message: 'Requête non autorisée !'
-                });
-            }
-        })
-        .catch( error => res.status(400).json({error}));
-
-    } else { console.log('console log 235')
-        User.findOne({ where: { id: req.params.id }})
-        .then(user => {
-            if (userId === req.params.id || role === 0) {
-                if (user.image && req.body.image === '') {
-                    const filename = user.image.split('/images/profiles/')[1];
-                    fs.unlink(`images/profiles/${filename}`, () => {
-                        const modifyUser = {
-                            nom: req.body.nom,
-                            prenom: req.body.prenom,
-                            email: req.body.email,
-                            image: ''
-                        };
-
-                        User.update(modifyUser , { where: { id: req.params.id } })
-
-                            .then(() => res.status(200).json({message : 'Utilisateur modifié !'}))
-                            .catch( error => res.status(400).json({error}));
-                    })
-                } else { console.log('console log 254')
-                    const modifyUser = {
-                        nom: req.body.nom,
-                        prenom: req.body.prenom,
-                        email: req.body.email,
-                    };
-            
-                    User.update(modifyUser , { where: { id: req.params.id } })
-            
-                        .then(() => res.status(200).json({message : 'Utilisateur modifié !'}))
-                        .catch( error => res.status(400).json({error}));
-                }
-            } else { console.log('console log 266')
-                res.status(401).json({
-                    message: 'Requête non autorisée !'
-                });
-            }
-        })
-        .catch( error => res.status(400).json({error}));
-    }
-};
-
-//admin modify user
-exports.AdminModifyUser = (req, res, next) => {
-
-    const modifyUser = {
-        nom: req.body.nom,
-        prenom: req.body.prenom,
-        email: req.body.email,
-        role: req.body.role
-    };
-
-    user.update(modifyUser, {
-        where: { id: req.params.id }
+    User.findOne({
+        attributes: ['id', 'email', 'nom', 'prenom', 'image'],
+        where: { id: userId }
     })
-        .then(() => res.status(200).json({ message: 'Utilisateur modifié !' }))
-        .catch((error) => res.status(400).json({ error }));
-};
+        .then(user => {
+            if(userId === user.id || role === 0) {
+
+                
+                if(image != null) {
+                    const filename = user.image.split('/images/profiles')[1];
+                    fs.unlink(`images/${filename}`, (error) => {
+                        if(error){
+                            console.log("Echec de suppression de l'image : " + error);
+                        } else {
+                            console.log("Image supprimée avec succès !");
+                        };
+                    });
+                };
+
+                // UPDATE PROFILE, new infp
+                user.update({
+                    email: (email ? email : user.email),
+                    nom: (nom ? nom : user.nom),
+                    prenom: (prenom ? prenom : user.prenom),
+                    image: (image ? image : user.image)
+                })
+                .then(user => {
+                    if(userId === user.id || role === 0){
+                        return res.status(201).json(user)
+                    } else {
+                        res.status(500).json({ 'erreur': 'Impossible de mettre a jour le profil de l\'utilisateur' })
+                    }
+                })
+                .catch(() => {
+                    res.status(500).json({ 'erreur': 'impossible de mettre à jour l\'utilisateur' })
+                });
+            } else {
+                res.status(404).json({ 'erreur': 'Utilisateur introuvable !' })
+            }
+        })
+        .catch(() => {
+            res.status(500).json({ 'erreur': 'impossible de vérifier l\'utilisateur' })
+        })
+    
+}
+
 
 //modify password
 exports.modifyPassword = (req, res, next) => {
@@ -296,10 +249,10 @@ exports.modifyPassword = (req, res, next) => {
     const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
 
-
-    User.findOne({ where: { id: req.params.id } })
+User.findOne({ where: { id: userId } })
         .then(user => {
-            controle.log('oldPasword   ' + req.body.oldPassword),
+            if(userId === user.id || role === 0) {
+                controle.log('oldPasword   ' + req.body.oldPassword),
                 controle.log('new pssaword    ' + User.password)
             bcrypt.compare(req.body.oldPassword, User.password)
                 .then(valid => {
@@ -319,7 +272,7 @@ exports.modifyPassword = (req, res, next) => {
                                 password: hash
                             };
 
-                            user.update(newPassword, { where: { id: req.params.id } })
+                            User.update(newPassword, { where: { id: req.params.id } })
                             console.log('newpass   ' + newPassword)
                                 .then(() => { res.status(201).json({ message: 'Mot de passe modifié !' }) })
                                 .catch(() => res.status(400).json({message: "imposible de modifier mot de pass" }));
@@ -328,7 +281,7 @@ exports.modifyPassword = (req, res, next) => {
                         .catch(error => res.status(500).json({ error }));
                 })
                 .catch(error => res.status(500).json({ error }));
-        })
+        }})
         .catch(error => res.status(500).json({ error }));
 }
 
