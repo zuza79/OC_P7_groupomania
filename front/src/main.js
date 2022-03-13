@@ -1,4 +1,4 @@
-/*import Vue2Emoji from 'vuejs-emoji'??????*/
+
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
