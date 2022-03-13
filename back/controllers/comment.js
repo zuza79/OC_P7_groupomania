@@ -33,10 +33,16 @@ exports.deleteComment = (req, res, next) => {
     const userId = jwtUtils.getUserId(headerAuth);
     const role = jwtUtils.getRoleUser(headerAuth);
 
-    models.Comment.destroy({ where: { id: req.params.id } })
+    models.Comment.findOne({
+        where: { id: req.params.id }
+       })
 
-    .then((comment) => {
-        if (userId === comment.UserId || role === 0) {
+   
+
+    .then(comment => {
+        if (userId === comment.UserId || role === 0) 
+        {
+             models.Comment.destroy({ where: { id: req.params.id } })
             res.status(200).json({message : 'Commentaire supprimé !'})
 
         } else {

@@ -46,6 +46,14 @@ module.exports = {
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      usersLiked: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      usersDisliked: {
+        allowNull: false,
+        type: Sequelize.INTEGER
       }
     });
   },

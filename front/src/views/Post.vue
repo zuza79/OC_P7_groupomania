@@ -13,7 +13,7 @@
                        <td class="info">
                             <p>
                                Posté par 
-                                 <b>{{ post.user.nom }}</b>
+                                 <b>{{ post.nom }}</b>
                                <!--   <span v-if="post.User.role != 1">{{ post.User.prenom }} </span>     
                                 <img class="photo-profil" v-if="post.user.image" :src="post.user.image" alt="photo de profil">
                                 <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
@@ -37,18 +37,21 @@
                         <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
                     </p>
                 </div> 
-     </article>
-<!--LIKE -->  
-            <div class="like">
-          <button class="btnSave" @click="like">
-            <div><i class="fas fa-thumbs-up like"></i>{{ like }}</div>
+     
+<!--LIKE {{ like.length }}   {{ dislike.length }}   
+    <div class="like">
+          <button class="btnSave" @click="like()">
+            <div><i class="fas fa-thumbs-up like"></i></div>
+        
           </button>
 
-         <button class="btnDelete" @click="like">
-            <div><i class="fas fa-thumbs-down dislike"></i>{{ dislike }}</div>
+         <button class="btnDelete" @click="dislike">
+            <div><i class="fas fa-thumbs-down like"></i></div>
+         
           </button>
-<!--   -->
-      </div>
+    </div>
+    -->
+</article>
 <!-- DISPLAY COMMENT -->
                 <button v-if="displaycomments === false " v-on:click="show" @click="getPostComments()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
                 <table class = "header " v-if="displaycomments" >
@@ -69,8 +72,8 @@
                         <button v-if="modifyComment  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier commentaire</button>
                         <article v-if="modifyComment" class = "header " >
                                 <textarea v-model="content" placeholder="Modifier commentaire..." cols="60" rows="5" aria-label="Modification du commentaire"></textarea>
-                                <div class=btnComment>                          <!--v-if="post.userId === id || role === 0" -->
-                                    <button @click="modifyComment(index)"  class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
+                                <div class=btnComment>                          
+                                    <button @click="modifyComment(index)" v-if="post.userId === id || role === 0" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
                                     <button v-on:click="hide3" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
                                  </div>
                         </article>
@@ -113,8 +116,8 @@ export default {
     data () {
         return {
              id_param: this.$route.params.id,
-            //like: this.post.like,
-           // dislike: this.post.dislike,
+          // like: this.post.like,
+            //dislike: this.post.dislike,
             props: ['post'],
             posts: [],
             users: [],
@@ -149,10 +152,11 @@ export default {
         }
     },
      computed: {
-        likeIncrement(){
-            return this.like + 1 ;
+    /*    likeInc(){
+            return this.likes + 1 ;
+            return this.dislikes - 1 ;
             // console.log(this.like);
-        }
+        } */
     },
     methods : {
        show: function () {
@@ -207,7 +211,7 @@ export default {
                 this.post.updatedAt = res.data.updatedAt;
                this.post.user.nom = res.data.nom          
             })
-            .catch(err => this.posts = [{title : "Impossible de récupérer les posts !"}]);
+            .catch(() => console.log('Impossible de récupérer les posts!'))
         },
 // DISPLAY ALL COMMENTS OF POST
         getPostComments() {
@@ -252,11 +256,11 @@ export default {
         },
 // LIKE POST
         like(){
-            console.log(this.post);
+            //console.log(this.post);
                         const token = localStorage.getItem('token');
                         
-                                                            //router.post('/:id/like', auth, postCtrl.like);
-             axios.post(`http://localhost:3000/api/posts/${this.id_param}/${this.likeInc}` , {
+                                                            //router.post('/:id/like', auth, postCtrl.like);${this.likeInc}
+             axios.post(`http://localhost:3000/api/posts/${this.id_param}/like` , {
                  headers: {
                         'authorization': `Bearer ${token}`,
                         //'Content-Type: multipart/form-data; boundary=like',
@@ -276,7 +280,7 @@ export default {
                 alert("impossible de faire like")
                 console.log('problem like')
             //    this.$router.push("/allposts");
-            //alert("Vous disposer pas des doit de supprimer ce message, c'est que le auter ou administrateur");
+            //alert("Vous avez déja fait like/dislike");
      } )
         },
       
@@ -334,7 +338,7 @@ export default {
                    
                     headers: {
                     'authorization': `Bearer ${token}`,
-                   // 'Content-Type': 'multipart/form-data',   
+                    'Content-Type': 'multipart/form-data',   
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     
@@ -476,6 +480,16 @@ textarea {
 
 .info {
     font-size: 13px;
+}
+.likeNbr{
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
+.like{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modif {

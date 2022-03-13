@@ -29,6 +29,8 @@ exports.createPost = (req, res, next) => {
                 image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`, // || ""
                 like: 0,
                 dislike: 0,
+
+
                 UserId: user.id,
                 
             }).then( res.status(201).json({"message": "Nouveau post créé avec succès !"})
@@ -43,6 +45,8 @@ exports.createPost = (req, res, next) => {
                 content: content,
                 like: 0,
                 dislike: 0,
+                usersLiked: 0,
+                usersDisliked: 0,
                 UserId: user.id,
                 
             }).then( res.status(201).json({"message": "Nouveau post créé avec succès !"})
@@ -272,10 +276,9 @@ exports.deletePost = (req, res, next) => {
 
 
 /////////// LIKE/DISLIKE
-//LIKE 
+//LIKE     //router.post('/:id/like', auth, postCtrl.like);
 exports.like = (req, res, next) => {
     console.log("msg like   "+ req.body);
-    const postId = req.params.id;
     switch (req.body.like) {
     case 0:    // default = 0  
     
@@ -284,16 +287,16 @@ exports.like = (req, res, next) => {
           .then((post) => {
             //LIKE
             if (post.usersLiked.find(user => user === req.body.userId)) {   
-              models.Post.updateOne({id: postId }, {
+              models.Post.update({where: { id: req.params.id } }, {
                 $likeInc: { likes: -1 },           
                 $likePull: { usersLiked: req.body.userId },     // if user LIKE, the body make update and user can't make another LIKE 
-               id: postId
+                 id: req.params.id 
               })
                 .then(() => { res.status(201).json({ message: 'Ton like a été pris en compte! Merci.' }); })
                 .catch((error) => { res.status(400).json({ error: error }); });
              //DISLIKE
             } if (post.usersDisliked.find(user => user === req.body.userId)) {      
-                models.Post.updateOne({id: postId }, {
+                models.Post.updateOne({id: req.params.id }, {
                 $likeInc: { dislikes: -1 },
                 $likePull: { usersDisliked: req.body.userId },      
                id: postId
@@ -329,3 +332,22 @@ exports.like = (req, res, next) => {
         default:
     }
   };
+  
+ /*
+exports.like = (req, res, next) => {
+    const headerAuth = req.headers['authorization'];
+    const userId = jwtUtils.getUserId(headerAuth);
+    const postId = req.params.id;
+    console.log('body: ' + req.body.like);
+
+    models.Post.findOne({ where: { id: postId } })
+        .then(post => {
+            console.log(post.dataValues);
+            post.update({
+                like: req.body.like
+            })
+                .then(() => res.status(200).json({ message: 'Données mises à jour !' }))
+                .catch((err) => res.status(500).json({ err }))
+        })
+        .catch(() => res.status(404).json({ error: 'Post introuvable !' }));
+};*/

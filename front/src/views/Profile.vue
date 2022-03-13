@@ -3,22 +3,7 @@
         <HeaderProfile />
         <div>
             <h1>Mon profil</h1>
-          <!--DISPLAY ALL POSTS  - ONE USER
-            pridat afficher les post, modifier, dlete post
-         --> 
-
-         <button v-if="displayPostsUser === false" v-on:click="show2" class="btnSave" aria-label="afficher toutes mes publications">Afficher toutes mes publications</button>
-         <tr class = "card" v-bind:key="index" v-for="(post, index) in posts">
-                <article v-if="displayPostsUser" class="createcomment">
-                        <td><input type="text" v-model="post.title" required aria-label="Titre" disabled></td>
-                        <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled></textarea></td>
-                        <td><img v-if="post.image" :src="post.image" alt="Image"></td>
-                    <div class=btnComment>
-                        <button @click="getPostsUser()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
-                        <button v-on:click="hide2" class="btnIconeDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
-                    </div>
-                </article>
-        </tr>        
+         
                    
         <!--user info nom, prenom, email -->
             <form>
@@ -137,26 +122,7 @@ export default {
       }).catch(err => console.log("erreur get user " +err))
     },
 
-    // DISPLAY ALL POSTS ONE USER
-    getPostsUser() {
-            const token = localStorage.getItem("token")
-//router.get('/:userId/posts',auth, postCtrl.getPostsUser)
-            axios.get('http://localhost:3000/api/ +${this.Id} posts/', {
-                
-             headers: {
-                    'authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',
-                    },
-                   
-                })    
-             .then((res) => {
-                console.log(res.data);
-                this.posts = res.data
-            })
-                
-            .catch(() => console.log('Impossible de récupérer les posts !'))
-        },
-    //MODIFY USER
+      //MODIFY USER
         modifyUser() {
              const token = localStorage.getItem('token');
             const Id = localStorage.getItem("userId")
@@ -236,7 +202,7 @@ export default {
                 const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
 
-                axios.deleteUser(`http://localhost:3000/api/auth/profile/${Id}`, {
+                axios.delete(`http://localhost:3000/api/auth/profile/${Id}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`,
@@ -252,7 +218,7 @@ export default {
 
                     for ( let i = 0 ; i < pub.length ; i++) {
                         if (pub[i].image) {
-                        axios.deletePost(`http://localhost:3000/api/posts/${pub[i].id}`, {
+                        axios.delete(`http://localhost:3000/api/posts/${pub[i].id}`, {
                            
                             headers: {
                                 'authorization': `Bearer ${token}`,
@@ -270,7 +236,7 @@ export default {
                 })
                 .then(() => {
                    
-                    axios.deleteUser(`http://localhost:3000/api/auth/profile/${Id}`, {
+                    axios.delete(`http://localhost:3000/api/auth/profile/${Id}`, {
                        
                         headers: {
                         'Accept': 'application/json',
@@ -337,10 +303,14 @@ export default {
                     },
                     body: data
 				})
-                .then(() => {
+                .then((res) => {
+                    console.log(res.data);
+                this.users = res.data
+                    this.oldPassword = res.data,
+                    this.newPassword = res.data
                     alert("Le nouveau mot de passe enregistrer")
                 console.log("Le nouveau mot de passe enregistrer");
-                 this.$router.push("/profile");
+               //  this.$router.push("/profile");
                 
             })
                 
