@@ -14,12 +14,11 @@ module.exports = (sequelize, DataTypes) => {
       models.Post.belongsTo(models.User, {
         foreignKey:{
           allowNull: false
-        },
-        onDelete: 'CASCADE'
+        }
       });
 
       models.Post.hasMany(models.Comment);
-     
+      models.Post.hasMany(models.Like);
     }
   };
   Post.init({
@@ -28,10 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
     content: DataTypes.STRING,
     image: DataTypes.STRING,
-    like: DataTypes.INTEGER,
-    dislike: DataTypes.INTEGER,
-    usersLiked: DataTypes.INTEGER,
-    usersDisliked: DataTypes.INTEGER,
+    likes: DataTypes.INTEGER
 
     
   }, {

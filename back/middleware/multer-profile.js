@@ -12,6 +12,7 @@ const storage = multer.diskStorage({
         callback(null, 'images/profiles')
     },
     filename: (req, file, callback) => {
+        console.log("consol log multer file : " + file)
         const name = file.originalname.split(' ').join('_');  //  modify name of file, delete space and replese by "_".
         const extension = MIME_TYPES[file.mimetype];  
         callback(null, name + Date.now() + '.' + extension);   

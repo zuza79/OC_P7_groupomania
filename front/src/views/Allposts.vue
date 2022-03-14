@@ -33,7 +33,7 @@
                         <td class="info">
                             <p>
                                 Posté par 
-                                <b>{{ post.nom }}</b>
+                                <b>{{ post.User.nom }}</b>
                                 le <b>{{ dateFormat(post.createdAt) }}</b>
                                 à <b>{{ hourFormat(post.createdAt) }}</b><br>
                             </p>

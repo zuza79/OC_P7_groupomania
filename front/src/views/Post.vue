@@ -38,19 +38,14 @@
                     </p>
                 </div> 
      
-<!--LIKE {{ like.length }}   {{ dislike.length }}   
-    <div class="like">
-          <button class="btnSave" @click="like()">
-            <div><i class="fas fa-thumbs-up like"></i></div>
+<!--LIKE   -->
+<div class="like">
+        <i class="fas fa-thumbs-up like btnSave" id="likeIcon" @click="createLike" aria-label="Bouton like"></i>
+         <p>{{ likes }}</p>
         
-          </button>
-
-         <button class="btnDelete" @click="dislike">
-            <div><i class="fas fa-thumbs-down like"></i></div>
-         
-          </button>
-    </div>
-    -->
+        <div class="btnDelete">{{ errorMessage }}</div>
+  </div>
+   
 </article>
 <!-- DISPLAY COMMENT -->
                 <button v-if="displaycomments === false " v-on:click="show" @click="getPostComments()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
@@ -69,8 +64,8 @@
                 <!-- MODIFY/DELETE COMMENT -->  
                 <div class="content displayComment">
                     <div class="modif">                                                                   <!-- v-if="post.userId === id"-->
-                        <button v-if="modifyComment  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier commentaire</button>
-                        <article v-if="modifyComment" class = "header " >
+                        <button v-if="modifyComment()  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier commentaire</button>
+                        <article v-if="modifyComment()" class = "header " >
                                 <textarea v-model="content" placeholder="Modifier commentaire..." cols="60" rows="5" aria-label="Modification du commentaire"></textarea>
                                 <div class=btnComment>                          
                                     <button @click="modifyComment(index)" v-if="post.userId === id || role === 0" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
@@ -116,8 +111,9 @@ export default {
     data () {
         return {
              id_param: this.$route.params.id,
-          // like: this.post.like,
-            //dislike: this.post.dislike,
+            postId: this.$route.params.id,
+         //  like: this.post.like,
+        //  dislike: this.post.dislike,
             props: ['post'],
             posts: [],
             users: [],
@@ -144,6 +140,8 @@ export default {
              userId:'',
              postId:'',
              
+             likes: [],
+            errorMessage: "",
 
             displaycomments: false,
             displayCreateComment: false,
@@ -152,7 +150,7 @@ export default {
         }
     },
      computed: {
-    /*    likeInc(){
+     /*   likeInc(){
             return this.likes + 1 ;
             return this.dislikes - 1 ;
             // console.log(this.like);
@@ -255,34 +253,49 @@ export default {
             return hour.toLocaleTimeString('fr-FR', options);
         },
 // LIKE POST
-        like(){
-            //console.log(this.post);
-                        const token = localStorage.getItem('token');
-                        
-                                                            //router.post('/:id/like', auth, postCtrl.like);${this.likeInc}
-             axios.post(`http://localhost:3000/api/posts/${this.id_param}/like` , {
-                 headers: {
+    /*  mounted() {
+          const postId = this.$route.params.id; 
+ 
+    axios.get(`http://localhost:3000/api/posts/${postId}`,{
+        headers: {
                         'authorization': `Bearer ${token}`,
-                        //'Content-Type: multipart/form-data; boundary=like',
-                       // 'Content-Type': 'multipart/form-data',
-                       //'Content-Type': boundary=like,
+                        'Content-Type': 'multipart/form-data',
                     }
-                })
-                .then(() => {
-                    alert("Merci")
-                    console.log("like");
-                //   this.$router.push("/allposts");
-                
-              // this.posts = res.data
+       })             
+      .then((res) => {
+        this.likes = res.data.likes;
+      })
+      .catch((error) => {
+        this.errorMessage = error.res.data.error;
+      });
+  },*/
+ 
+    createLike() {
+      const postId = this.$route.params.id;
+      const token = localStorage.getItem("token")
+      
+      axios.post(`http://localhost:3000/api/posts/${postId}/vote/like`, {
+          headers: {
+                        'authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
+                    }
             })
-                
-            .catch(() =>{ 
-                alert("impossible de faire like")
-                console.log('problem like')
-            //    this.$router.push("/allposts");
-            //alert("Vous avez déja fait like/dislike");
-     } )
-        },
+        .then((res) => {
+          if (res.data.post == "Post liked !") {
+            this.likes++;
+          } else if (
+            res.data.post == "I no longer like this post !"
+          ) {
+            this.likes--;
+          }
+        })
+        .catch((error) => {
+          this.errorMessage = error.res.data.error;
+          alert("unable to like message !");
+        });
+    },
+
+   
       
 //DELETE POST
         deletePost () {
@@ -300,7 +313,7 @@ export default {
                 alert ("Publication supprimer")
                 console.log(res.data);
                // this.posts = res.data;
-                this.$router.push("/allposts");
+              //  this.$router.push("/allposts");
             })
                 
             .catch(() =>{ 
@@ -409,8 +422,8 @@ modifyComment(index) {
     mounted(){
         
         this.getOnePost ()
-       this.getOneUser()
-       this.getComments ()
+       //this.getOneUser()
+       //this.getComments ()
     }
 }
 </script>
@@ -486,12 +499,20 @@ textarea {
     padding: 0;
     outline: none;
 }
+p {
+    padding-left: 0.5em;
+  }
+ #likeIcon:hover {
+    cursor: pointer;
+    
+  }
 .like{
+    height: auto;
     display: flex;
-    align-items: center;
+    flex-direction: row;
     justify-content: center;
-}
-
+ }
+/*align-items: center;*/
 .modif {
     margin: 0;
     
