@@ -123,84 +123,7 @@ exports.login = (req, res, next) => {
 
 
 /////////////// DELETE USER
-exports.deleteUser = (req, res, next) => {
-    console.log("console login delete user" + JSON.stringify(req.body));
-    // Récupération de l'ID de l'utilisateur dans le token
-    const headerAuth = req.headers['authorization'];
-    const userId = jwtUtils.getUserId(headerAuth);
 
-    User.findOne({ where: { id: userId } })
-        .then(user => {
-
-            // Suppression de la photo de l'utilisateur
-            let imageProfile = user.image.split('/images/profiles/')[1];
-            fs.unlink(`images/profiles/${imageProfile}`, (error) => {
-                if(error){
-                    console.log("Echec de suppression de l'image : " + error);
-                } else {
-                    console.log("Image supprimée avec succès !");
-                };
-            });
-
-            Post.findAll({
-                attributes: ['image'],
-                where: { userId: user.id }
-            })
-                .then((posts) => {
-
-                    // Suppression des images des posts de l'utilisateur
-                    for(i = 0; i < posts.length; i++){
-                        if(posts[i].dataValues.image){
-                            console.log(posts[i].dataValues.image.split('images/posts/')[1]);
-                            fs.unlink(`images/posts/${posts[i].dataValues.image.split('images/posts/')[1]}`, (error) => {
-                                if(error){
-                                    console.log("Echec de suppression de l'image : " + error);
-                                } else {
-                                    console.log("Image supprimée avec succès !");
-                                };
-                            })
-                        }
-                    }
-                    
-                    // Suppression des posts de l'utilisateur
-                    Post.destroy({ where: {userId: userId} })
-                        .then(() => {
-
-                            // Suppression de l'utilisateur de la BDD
-                            User.destroy({ where: { id: userId } })
-                                .then(() => res.status(200).json({ message: 'Utilisateur supprimé avec succès' }))
-                                .catch(() => res.status(500).json({ message: "L'utilisateur n'a pas pu être supprimé !" }))
-                        })
-                        .catch(() => res.status(500).json({ error: "Les publications n'ont pas pu être supprimées ! " }))
-                })
-                .catch(() => res.status(500).json({ message: "Les posts n'ont pas pu être supprimés !"}))
-
-        })
-        
-        .
-     
-            // DELETE COMMENTS
-            Comment.findAll({ where: { userId: user.id } })
-            then((comments) => {
-                for(i = 0; i < comments.length; i++)
-            Comment.destroy({ where: {userId: userId} })
-                .then(() => {
-
-                    
-                    User.destroy({ where: { id: userId } })
-                        .then(() => res.status(200).json({ message: 'Utilisateur supprimé avec succès' }))
-                        .catch(() => res.status(500).json({ message: "L'utilisateur n'a pas pu être supprimé !" }))
-                    Post.destroy({ where: { id: userId } })
-                        .then(() => res.status(200).json({ message: 'Publication supprimé avec succès' }))
-                        .catch(() => res.status(500).json({ message: "Publication n'a pas pu être supprimé !" }))
-                })
-                .catch(() => res.status(500).json({ error: "Les publications n'ont pas pu être supprimées ! " }))
-        })
-        .catch(() => res.status(500).json({ message: "Les posts n'ont pas pu être supprimés !"}))
-
-
-}
-/*
 exports.deleteUser = (req, res, next) => {
     const headerAuth = req.headers['authorization'];
     const userId = jwtUtils.getUserId(headerAuth);
@@ -235,48 +158,9 @@ exports.deleteUser = (req, res, next) => {
     } else {
         res.status(403).json({ message: 'Action non autorisé !' });
     }
-    Post.findAll({
-        
-        where: {id: req.params.id }
-    })
-        .then((posts) => {
+    };
 
-            // Suppression des images des posts de l'utilisateur
-            for(i = 0; i < posts.length; i++){
-                if(posts[i].dataValues.image){
-                    console.log(posts[i].dataValues.image.split('images/posts')[1]);
-                    fs.unlink(`images/posts/${posts[i].dataValues.image.split('images/posts')[1]}`, (error) => {
-                        if(error){
-                            console.log("Echec de suppression de l'image : " + error);
-                        } else {
-                            console.log("Image supprimée avec succès !");
-                        };
-                    })
-                }
-            }
-            // DELETE POST USER
-            Post.destroy({ where: {id: req.params.id} })
-            .then(() => {
 
-                // DELETE POST USER
-                User.destroy({ where: { id: req.params.id } })
-                    .then(() => res.status(200).json({ message: 'Utilisateur supprimé avec succès' }))
-                    .catch(() => res.status(500).json({ message: "L'utilisateur n'a pas pu être supprimé !" }))
-            })
-            .catch(() => res.status(500).json({ error: "Les publications n'ont pas pu être supprimées ! " }))
-            // DELETE COMMENT USER
-            Post.destroy({ where: {id: req.params.id} })
-            .then(() => {
-
-                // DELETE COMMENT USER
-                User.destroy({ where: { id: req.params.id } })
-                    .then(() => res.status(200).json({ message: 'Utilisateur supprimé avec succès' }))
-                    .catch(() => res.status(500).json({ message: "L'utilisateur n'a pas pu être supprimé !" }))
-            })
-            .catch(() => res.status(500).json({ error: "Les publications n'ont pas pu être supprimées ! " }))
-})};
-
-*/
 ////// DISPLAY ONE USER
 
 exports.getOneUser = (req, res, next) => {

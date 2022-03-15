@@ -38,13 +38,13 @@
                     </p>
                 </div> 
      
-<!--LIKE   -->
+<!--LIKE   
 <div class="like">
         <i class="fas fa-thumbs-up like btnSave" id="likeIcon" @click="createLike" aria-label="Bouton like"></i>
          <p>{{ likes }}</p>
         
         <div class="btnDelete">{{ errorMessage }}</div>
-  </div>
+  </div>-->
    
 </article>
 <!-- DISPLAY COMMENT -->
@@ -53,9 +53,9 @@
                     
                     
                     <h2>Les commentaires:</h2>
-                         <article v-if="comment in comments">
+                    <!--     <article v-if="comment in comments">
                         <p>Oups! Pour instant pas de commentaire!</p>
-                    </article>
+                    </article>  -->
                     <tr class = "card displayComment" v-bind:key="index" v-for="(comment, index) in comments" >
                         <td><input type="text" v-model="comment.User.nom" required aria-label="Auteur de commentaire" disabled></td>
                         <td>le <b>{{ dateFormat(comment.createdAt) }}</b>
@@ -64,8 +64,8 @@
                 <!-- MODIFY/DELETE COMMENT -->  
                 <div class="content displayComment">
                     <div class="modif">                                                                   <!-- v-if="post.userId === id"-->
-                        <button v-if="modifyComment()  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier commentaire</button>
-                        <article v-if="modifyComment()" class = "header " >
+                        <button v-if="modifyComment  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier commentaire</button>
+                        <article v-if="modifyComment" class = "header " >
                                 <textarea v-model="content" placeholder="Modifier commentaire..." cols="60" rows="5" aria-label="Modification du commentaire"></textarea>
                                 <div class=btnComment>                          
                                     <button @click="modifyComment(index)" v-if="post.userId === id || role === 0" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
@@ -214,7 +214,7 @@ export default {
 // DISPLAY ALL COMMENTS OF POST
         getPostComments() {
             const token = localStorage.getItem("token")
-             const Id = JSON.parse(localStorage.getItem("userId"))
+             const Id = localStorage.getItem("userId")
             let data = {
                     content: this.content,
                     postId: this.id_param,

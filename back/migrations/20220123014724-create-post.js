@@ -20,10 +20,10 @@ module.exports = {
         userId: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: {
+       /* references: {
           model: 'Users',
           key: 'id'
-        },
+        },*/
         onDelete: 'cascade' 
       },
       

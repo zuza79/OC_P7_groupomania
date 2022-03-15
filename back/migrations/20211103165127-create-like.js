@@ -11,19 +11,19 @@ module.exports = {
      postId: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Post',
+      /*  references: {
+          model: 'Posts',
           key: 'id'
-        },
+        },*/
         onDelete: 'cascade'
       },
       userId: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: {
+       /* references: {
           model: 'Users',
           key: 'id'
-        },
+        },*/
         onDelete: 'cascade'
       },
       createdAt: {
