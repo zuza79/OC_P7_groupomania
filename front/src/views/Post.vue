@@ -38,13 +38,13 @@
                     </p>
                 </div> 
      
-<!--LIKE   
+<!--LIKE   -->
 <div class="like">
         <i class="fas fa-thumbs-up like btnSave" id="likeIcon" @click="createLike" aria-label="Bouton like"></i>
          <p>{{ likes }}</p>
         
         <div class="btnDelete">{{ errorMessage }}</div>
-  </div>-->
+  </div>
    
 </article>
 <!-- DISPLAY COMMENT -->
@@ -226,6 +226,7 @@ export default {
                     headers: {
                         'authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data',
+                        
                     }
             })
             
@@ -253,13 +254,14 @@ export default {
             return hour.toLocaleTimeString('fr-FR', options);
         },
 // LIKE POST
-    /*  mounted() {
+      mounted() {
           const postId = this.$route.params.id; 
  
-    axios.get(`http://localhost:3000/api/posts/${postId}`,{
+    axios.get(`http://localhost:3000/api/posts/${this.postId}`,{
         headers: {
                         'authorization': `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data',
+                        "Content-Type": "application/json",
+                        //'Content-Type': 'multipart/form-data',
                     }
        })             
       .then((res) => {
@@ -268,16 +270,17 @@ export default {
       .catch((error) => {
         this.errorMessage = error.res.data.error;
       });
-  },*/
+  },
  
     createLike() {
       const postId = this.$route.params.id;
       const token = localStorage.getItem("token")
       
-      axios.post(`http://localhost:3000/api/posts/${postId}/vote/like`, {
+      axios.post(`http://localhost:3000/api/posts/${this.postId}/vote/like`, {
           headers: {
                         'authorization': `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data',
+                        //'Content-Type': 'multipart/form-data',
+                        "Content-Type": "application/json",
                     }
             })
         .then((res) => {
@@ -289,9 +292,11 @@ export default {
             this.likes--;
           }
         })
-        .catch((error) => {
-          this.errorMessage = error.res.data.error;
-          alert("unable to like message !");
+        .catch(() =>{ 
+                alert("Vous pouvez pas faire like!!")
+                console.log('err like')
+        //  this.errorMessage = error.res.data.error;
+          
         });
     },
 
@@ -451,6 +456,9 @@ h2{
     display: flex;
     flex-direction: row;
     margin-top: 15px;
+}
+table{
+   margin-top: 15px; 
 }
 input{
     width: 60%;
