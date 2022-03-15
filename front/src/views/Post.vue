@@ -39,12 +39,9 @@
                 </div> 
      
 <!--LIKE   -->
-<div class="like">
-        <i class="fas fa-thumbs-up like btnSave" id="likeIcon" @click="createLike" aria-label="Bouton like"></i>
-         <p>{{ likes }}</p>
-        
-        <div class="btnDelete">{{ errorMessage }}</div>
-  </div>
+<div>
+    <Like/>
+</div>
    
 </article>
 <!-- DISPLAY COMMENT -->
@@ -99,6 +96,7 @@
 <script>
 import axios from 'axios'
 import HeaderProfile from "../components/HeaderProfile";
+import Like from "../components/Like";
 import Footer from "../components/Footer";
 
 export default {
@@ -106,14 +104,13 @@ export default {
     props: [''],
     components: {
         HeaderProfile,
+        Like,
         Footer
     },
     data () {
         return {
              id_param: this.$route.params.id,
             postId: this.$route.params.id,
-         //  like: this.post.like,
-        //  dislike: this.post.dislike,
             props: ['post'],
             posts: [],
             users: [],
@@ -150,11 +147,7 @@ export default {
         }
     },
      computed: {
-     /*   likeInc(){
-            return this.likes + 1 ;
-            return this.dislikes - 1 ;
-            // console.log(this.like);
-        } */
+     
     },
     methods : {
        show: function () {
@@ -253,55 +246,7 @@ export default {
             const options = { hour: 'numeric', minute:'numeric', second:'numeric'};
             return hour.toLocaleTimeString('fr-FR', options);
         },
-// LIKE POST
-      mounted() {
-          const postId = this.$route.params.id; 
- 
-    axios.get(`http://localhost:3000/api/posts/${this.postId}`,{
-        headers: {
-                        'authorization': `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                        //'Content-Type': 'multipart/form-data',
-                    }
-       })             
-      .then((res) => {
-        this.likes = res.data.likes;
-      })
-      .catch((error) => {
-        this.errorMessage = error.res.data.error;
-      });
-  },
- 
-    createLike() {
-      const postId = this.$route.params.id;
-      const token = localStorage.getItem("token")
-      
-      axios.post(`http://localhost:3000/api/posts/${this.postId}/vote/like`, {
-          headers: {
-                        'authorization': `Bearer ${token}`,
-                        //'Content-Type': 'multipart/form-data',
-                        "Content-Type": "application/json",
-                    }
-            })
-        .then((res) => {
-          if (res.data.post == "Post liked !") {
-            this.likes++;
-          } else if (
-            res.data.post == "I no longer like this post !"
-          ) {
-            this.likes--;
-          }
-        })
-        .catch(() =>{ 
-                alert("Vous pouvez pas faire like!!")
-                console.log('err like')
-        //  this.errorMessage = error.res.data.error;
-          
-        });
-    },
-
-   
-      
+  
 //DELETE POST
         deletePost () {
             const token = localStorage.getItem("token")
