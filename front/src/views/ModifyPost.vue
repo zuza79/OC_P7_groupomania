@@ -182,7 +182,7 @@ export default {
             return hour.toLocaleTimeString('fr-FR', options);
         },
     //UPLOAD POST
-        uploadFile(e) {
+      /*  uploadFile(e) {
             if (e.target.files) {
                 let reader = new FileReader()
                 reader.onload = (event) => {
@@ -194,7 +194,7 @@ export default {
         },
         deletefile() {
             this.post.image = null;
-        }
+        }  */
     },
     mounted () {
         this.getOnePost()

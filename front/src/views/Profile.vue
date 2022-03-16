@@ -104,7 +104,7 @@ export default {
         //GET ONE USER
         getOneUser() {
             const Id = JSON.parse(localStorage.getItem("userId"))
-            const userId = this.$route.params.id;
+          // const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
           
            axios.get(`http://localhost:3000/api/auth/profile/${Id}`, {
@@ -119,14 +119,15 @@ export default {
         this.user.prenom = res.data.prenom;
         this.user.email = res.data.email;
         this.user.image = res.data.image;
-      }).catch(err => console.log("erreur get user " +err))
+      })
+      .catch((err) => console.log(err))
     },
 
       //MODIFY USER
         modifyUser() {
              const token = localStorage.getItem('token');
             const Id = localStorage.getItem("userId")
-            const userId = this.$route.params.id;
+            //const userId = this.$route.params.id;
            
             const fileField = document.querySelector('input[type="file"]');
 
@@ -154,18 +155,18 @@ export default {
                    
                         headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json',
+                        
                         'authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data',
                         },
-                        body: data
+                       
                 })
                 .then((res) => {
                    this.user = res.data;
                    alert("Votre modification est bien prise en compte")
                     this.$router.push("/profile");
                 })
-               .catch(() => console.log(' Impossible de modifier'))
+               .catch((err) => console.log(err))
         
             } else if ((regexText.test(this.user.nom) === true) && regexText.test(this.user.prenom) === true && regexEmail.test(this.user.email) === true && this.user.image != null) {
                 let data = new FormData()
@@ -199,7 +200,7 @@ export default {
         deleteUser() {
             const Id = localStorage.getItem("userId")
             if (confirm("Voulez-vous vraiment supprimer le compte?") == true) {
-                const userId = this.$route.params.id;
+               // const userId = this.$route.params.id;
       const token = localStorage.getItem('token');
 
                 axios.delete(`http://localhost:3000/api/auth/profile/${Id}`, {
@@ -240,7 +241,6 @@ export default {
                        
                         headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json',
                         'authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data',
                         }
@@ -314,7 +314,7 @@ export default {
                 
             })
                 
-            .catch(() => console.log('Impossible de récupérer les informations !'))
+            .catch((err) => console.log(err))
      
 			} else {
 				alert("Le nouveau mot de passe enregistrer")

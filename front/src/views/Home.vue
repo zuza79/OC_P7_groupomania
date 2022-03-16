@@ -6,15 +6,13 @@
     <h2>Réseau social de notre entreprise</h2> 
    
     <nav class="routerLink">
-    <router-link to="/signup" class="link" aria-label="Inscription">Inscription</router-link>
-    <router-link to="/login" class="link" aria-label="Connection">Connection</router-link>
+    <router-view to="/signup" class="link" aria-label="Inscription">Inscription</router-view>
+    <router-view to="/login" class="link" aria-label="Connection">Connection</router-view>
     </nav>
    
-
-    
     </body>     
     <Footer />
-  
+
   </div>
 </template>
 

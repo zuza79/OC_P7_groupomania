@@ -97,7 +97,7 @@ export default {
                     
                 })
                 
-                .catch((err) => console.log(err))
+                
             } else if (this.title != '' && this.content != '') {
 
                 var fileName = document.getElementById("file").value
@@ -137,7 +137,7 @@ export default {
                 }
             }
         },
-        uploadFile(e) {
+       /* uploadFile(e) {
             if (e.target.files) {
                 let reader = new FileReader()
                 reader.onload = (event) => {
@@ -149,7 +149,7 @@ export default {
         },
         deletefile() {
             this.image = '';
-        }
+        }   */
     },
     
      mounted(){

@@ -129,14 +129,14 @@ export default {
       //DISPLAY POST 
         getOnePost() {
             
-            
+             const token = localStorage.getItem("token")
             axios.get (`http://localhost:3000/api/posts/${this.id_param}`, { 
            
                
                 headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
-                    'Content-Type': 'application/json',
+                    
                     //'Accept': 'application/json',
                 }
                 } ).then((res) => {
@@ -148,19 +148,21 @@ export default {
                 
             })
                 
-            .catch(err => this.posts = [{title : "Impossible de récupérer les posts !"}]);
+            .catch(error => console.log(error))
         },
      // DISPLAY COMMENTS   
         
-           getPostComments() {    //route :post_id'
+           getPostComments() {  
+                const token = localStorage.getItem("token")
+               //route :post_id'
             axios.get (`http://localhost:3000/api/comments/${this.postId}`, { 
                 
                  headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
-                    'Content-Type': 'application/json',
+                   
                   
-                comment : data
+                
                 }
                  } ).then((res) => {
 
@@ -172,7 +174,7 @@ export default {
                               
             })
                 
-            .catch(err => this.posts = [{comments : "Impossible afficher les commentaires"}]);
+            .catch(error => console.log(error))
         },   
             
        
@@ -232,14 +234,14 @@ export default {
 
                deleteComment (index) {
             
-
+const token = localStorage.getItem('token');
             if (confirm("Voulez-vous vraiment supprimer ce commentaire") === true) {
 
                 axios.delete(`http://localhost:3000/api/comments/${this.comments[index].id}`, {
                 headers: {
                         'authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data',
-                        data:post 
+                      
                     }
                 })
                 .then((res) => {

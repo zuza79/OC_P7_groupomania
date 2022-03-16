@@ -1,4 +1,4 @@
-//import Vue from 'vue'
+import Vue from 'vue'
 import Vuex from 'vuex'
 
 import axios from 'axios'
@@ -20,7 +20,7 @@ export default new Vuex.Store({
     async getUser(state){
       const userId = localStorage.getItem('userId');
       const token = localStorage.getItem('token');
-      const role = localStorage.getItem('role');
+     // const role = localStorage.getItem('role');
       await axios.get(`http://localhost:3000/api/auth/profile/${userId}`, {
         headers: {
           'authorization': `Bearer ${token}`

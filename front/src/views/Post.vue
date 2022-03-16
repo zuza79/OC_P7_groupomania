@@ -123,9 +123,7 @@ export default {
                 id:'',
                 image:'',
                 user: { },
-                user : {
-                        nom: '',
-                        },
+               
                 userId:''
             },
             user : {
@@ -135,7 +133,7 @@ export default {
              id:'',
              content: '',
              userId:'',
-             postId:'',
+            
              
              likes: [],
             errorMessage: "",
@@ -178,7 +176,7 @@ export default {
        // DISPLAY ONE POST
         getOnePost() {
             const token = localStorage.getItem("token")
-            const Id = localStorage.getItem("userId")
+        //    const Id = localStorage.getItem("userId")
 
             axios.get (`http://localhost:3000/api/posts/${this.id_param}` ,  {
               
@@ -303,7 +301,7 @@ export default {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',   
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json',
+                    
                     
                     },
                     body: data                })
@@ -318,32 +316,6 @@ export default {
         },
         //MODIFY COMMENT
         
-modifyComment(index) {
-            const token = localStorage.getItem("token")
-            const Id = localStorage.getItem("userId")
-
-            if (confirm("Voulez-vous vraiment modifier commentaire") === true) {
-               
-               let data = { content: this.content}
-                
-    axios.put(`http://localhost:3000/api/comments/${this.comments[index].Id}`,data, {
-                    
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        'authorization': `Bearer ${token}`
-                    },
-                    body: data 
-                })
-                 .then(() => {
-                                alert("commentaire modifié")
-                                console.log("modify OK")
-                            })
-                
-            .catch(() =>{
-                 alert("Vous n'avez pas autorisation de modifier commentaire!!")
-             console.log(' Impossible de publier commentaire!')
-       } )}
-        },
 
 //DELETE COMMENT
         deleteComment (index) {

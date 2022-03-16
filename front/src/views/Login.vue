@@ -3,7 +3,7 @@
     <Header />
     <div class="login">
       <h1>Connection</h1>
-      <p>Veuillez saisir votre email de chez Groupomania et votre mot de pass.
+      <p>Veuillez saisir votre email de chez Groupomania et votre mot de pass.</p>
       <form>
         <ul>
           <li>
