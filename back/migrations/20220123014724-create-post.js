@@ -24,8 +24,7 @@ module.exports = {
           model: 'Users',
           key: 'id'
         },
-        onDelete: 'cascade' 
-      },
+        },
       
       image: {
         allowNull: true,
@@ -40,10 +39,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      likes: {
-        allowNull: false,
-        type: Sequelize.INTEGER
-      },
+      
     });
   },
   down: async (queryInterface, Sequelize) => {

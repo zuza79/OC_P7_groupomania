@@ -1,6 +1,6 @@
 // controllers post
 // create, modify, delete, display one/all post
-// display all post by user, modify post by admin
+// display all post by user, modify post LIKE/DISLIKE
 const jwtUtils = require('../utils/jwt.utils.js');
 const fs = require('fs');
 const models = require('../models');
@@ -267,81 +267,58 @@ exports.deletePost = (req, res, next) => {
         })
         .catch( error =>{console.log(error); res.status(400).json({message :error.message}); });
 }
+//////// LIKE/DISLIKE POST
+//LIKE POST
+exports.likePost = async (req, res, next) => {
+	try {
+        const headerAuth = req.headers['authorization'];
+		const userId = jwtUtils.getUserId(headerAuth);
+		const postId = req.params.id;
+		const user = await models.Like.findOne({
+			where: { UserId: userId, PostId: postId }
+		});
+		if (user) {
+			await models.Like.destroy(
+				{ where: { UserId: userId, PostId: postId } },
+				{ truncate: true, restartIdentity: true }
+			);
+			res.status(200).send({ messageRetour: "Neutre" });
+		} else {
+			await models.Like.create({
+				UserId: userId,
+				PostId: postId
+			});
+			res.status(201).json({ messageRetour: 'LIKE POST :)' });
+		}
+	} catch (error) {
+		return res.status(500).send({ error: 'Erreur du serveur' });
+	}
+};
 
+//DISLIKE POST
+exports.dislikePost = async (req, res, next) => {
+	try {
+		const headerAuth = req.headers['authorization'];
+		const userId = jwtUtils.getUserId(headerAuth);
+		const postId = req.params.id;
+		const user = await models.Dislike.findOne({
+			where: { UserId: userId, PostId: postId }
+		});
+		if (user) {
+			await models.Dislike.destroy(
+				{ where: { UserId: userId, PostId: postId } },
+				{ truncate: true, restartIdentity: true }
+			);
+			res.status(200).send({ messageRetour: "Neutre" });
+		} else {
+			await models.Dislike.create({
+				UserId: userId,
+				PostId: postId
+			});
+			res.status(201).json({ messageRetour: 'DISLIKE POST :(' });
+		}
+	} catch (error) {
+		return res.status(500).send({ error: 'Erreur du serveur' });
+	}
+};
 
-/////////// LIKE/DISLIKE
-//LIKE     //router.post('/:id/like', auth, postCtrl.like);
-exports.like = (req, res, next) => {
-    console.log("msg like   "+ req.body);
-    switch (req.body.like) {
-    case 0:    // default = 0  
-    
-    models.Post.findOne({ 
-        where: { id: req.params.id }})  
-          .then((post) => {
-            //LIKE
-            if (post.usersLiked.find(user => user === req.body.userId)) {   
-              models.Post.update({where: { id: req.params.id } }, {
-                $likeInc: { likes: -1 },           
-                $likePull: { usersLiked: req.body.userId },     // if user LIKE, the body make update and user can't make another LIKE 
-                 id: req.params.id 
-              })
-                .then(() => { res.status(201).json({ message: 'Ton like a été pris en compte! Merci.' }); })
-                .catch((error) => { res.status(400).json({ error: error }); });
-             //DISLIKE
-            } if (post.usersDisliked.find(user => user === req.body.userId)) {      
-                models.Post.updateOne({id: req.params.id }, {
-                $likeInc: { dislikes: -1 },
-                $likePull: { usersDisliked: req.body.userId },      
-               id: postId
-              })
-                .then(() => { res.status(201).json({ message: 'Ton dislike a été pris en compte! Merci.' }); })
-                .catch((error) => { res.status(400).json({ error: error }); }); 
-            }
-          })
-          .catch((error) => { res.status(404).json({ error: error }); });
-        break;
-  
-        //update LIKE
-      case 1:
-        models.Post.updateOne({id: postId }, {
-          $likeInc: { likes: 1 },
-          $likePull: { usersLiked: req.body.userId },
-         id: postId
-        })
-          .then(() => { res.status(201).json({ message: 'Ton like a été pris en compte! Merci.' }); })
-          .catch((error) => { res.status(400).json({ error: error }); });
-        break;
-  
-        // update DISLIKE
-      case -1:
-        models.Post.updateOne({id: postId }, {
-          $likeInc: { dislikes: +1 },
-          $likePull: { usersDisliked: req.body.userId },
-         id: postId
-        })
-          .then(() => { res.status(201).json({ message: 'Ton dislike a été pris en compte!' }); })
-          .catch((error) => { res.status(400).json({ error: error }); });
-        break;
-        default:
-    }
-  };
-  
- /*
-exports.like = (req, res, next) => {
-    const headerAuth = req.headers['authorization'];
-    const userId = jwtUtils.getUserId(headerAuth);
-    const postId = req.params.id;
-    console.log('body: ' + req.body.like);
-
-    models.Post.findOne({ where: { id: postId } })
-        .then(post => {
-            console.log(post.dataValues);
-            post.update({
-                like: req.body.like
-            })
-                .then(() => res.status(200).json({ message: 'Données mises à jour !' }))
-                .catch((err) => res.status(500).json({ err }))
-        })
-        .catch(() => res.status(404).json({ error: 'Post introuvable !' }));
-};*/

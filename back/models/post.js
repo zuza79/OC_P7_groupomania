@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Post extends Model {
     /**
@@ -18,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE'
       });
       models.Post.hasMany(models.Like);
+      models.Post.hasMany(models.Dislike);
       models.Post.hasMany(models.Comment);
       
     }
@@ -28,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
     content: DataTypes.STRING,
     image: DataTypes.STRING,
-    likes: DataTypes.INTEGER
+    
 
     
   }, {

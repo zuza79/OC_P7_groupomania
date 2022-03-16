@@ -7,7 +7,7 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
-        onDelete: 'cascade'
+        
       },
       nom: {
         type: Sequelize.STRING,
@@ -32,7 +32,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       role: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BOOLEAN,
         defaultValue: 1   // 1 = user; 0 = administrateur
       },
       createdAt: {
