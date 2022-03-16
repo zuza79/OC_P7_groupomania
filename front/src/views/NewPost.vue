@@ -58,10 +58,10 @@ export default {
         }
     },
     methods: {
-        // FILE UPLOAD
+        /* FILE UPLOAD
         uploadFile(event) {
             this.image = event.target.files[0]
-        },
+        },*/
         //CREATE POST
    createPost() {
          
@@ -107,7 +107,7 @@ export default {
                 if (extFile === "jpg" || extFile === "jpeg" || extFile === "png" || extFile === "webp" ||extFile === "gif"){
                     let data = new FormData()
                     data.append('filename', fileName)
-                     data.append('image', this.image);
+                    // data.append('image', this.image);
                      data.append('image', fileField.files[0])
                      //formData.append('image', this.post.image, this.post.image.name);
                    data.append('title', this.title);
@@ -137,7 +137,7 @@ export default {
                 }
             }
         },
-       /* uploadFile(e) {
+        uploadFile(e) {
             if (e.target.files) {
                 let reader = new FileReader()
                 reader.onload = (event) => {
@@ -149,7 +149,7 @@ export default {
         },
         deletefile() {
             this.image = '';
-        }   */
+        }   
     },
     
      mounted(){

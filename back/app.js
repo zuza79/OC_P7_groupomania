@@ -5,7 +5,7 @@ const path = require("path");
 const sequelize = require('./config/config');
 
 //security
-const helmet = require("helmet");
+//const helmet = require("helmet");
 const dotenv = require ('dotenv');
 const resul = dotenv.config();
 
@@ -27,7 +27,7 @@ connect();
 */
 
 
-app.use(helmet());
+//app.use(helmet());
 
 
 

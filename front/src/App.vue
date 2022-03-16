@@ -5,8 +5,13 @@
 </template>
 
 <style>
+html{
+   background-color: rgba(207, 203, 203, 0.877);
+}
+
 body{
   margin: 0px;
+  text-align: center;
   background-color: rgba(207, 203, 203, 0.877);
 }
 section{

@@ -6,8 +6,8 @@
     <h2>Réseau social de notre entreprise</h2> 
    
     <nav class="routerLink">
-    <router-view to="/signup" class="link" aria-label="Inscription">Inscription</router-view>
-    <router-view to="/login" class="link" aria-label="Connection">Connection</router-view>
+    <router-link to="/signup" class="link" aria-label="Inscription">Inscription</router-link>
+    <router-link to="/login" class="link" aria-label="Connection">Connection</router-link>
     </nav>
    
     </body>     
