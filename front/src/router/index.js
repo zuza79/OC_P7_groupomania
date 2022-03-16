@@ -1,5 +1,7 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+//rempl par createApp import Vue from 'vue'
+//import { createApp } from 'vue'
+//import VueRouter from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 import Home from '../views/Home.vue'
 import Signup from '../views/Signup.vue'
@@ -17,7 +19,7 @@ import ModifyComment from '../views/ModifyComment.vue'
 //import AdminPosts from '../views/AdminPosts.vue'
 //import AdminUsers from '../views/AdminUsers.vue'
 
-Vue.use(VueRouter)
+//Vue.use(VueRouter)  idem ligne45 main.js
 const routes = [
   {
     path: '/',
@@ -96,8 +98,12 @@ const routes = [
 
 ]
 
-const router = new VueRouter({
+/*const router = new VueRouter({
   routes
 })
-
+*/
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
 export default router
