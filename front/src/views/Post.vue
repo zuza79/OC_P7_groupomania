@@ -38,10 +38,16 @@
                     </p>
                 </div> 
      
-<!--LIKE   -->
-<div>
-    <Like/>
-</div>
+<!--LIKE   <Like/>-->  
+<div class="like">
+        <i class="fas fa-thumbs-up like btnSave" id="likeIcon" @click="createLike" aria-label="Bouton like">
+        <p>{{likes}}</p>
+        </i>
+        <i class="fas fa-thumbs-down like btnDelete" id="likeIcon" @click="createDislike" aria-label="Bouton dislike">
+        <p>{{dislikes}}</p>  
+        </i>
+        
+</div> 
    
 </article>
 <!-- DISPLAY COMMENT -->
@@ -96,25 +102,31 @@
 <script>
 import axios from 'axios'
 import HeaderProfile from "../components/HeaderProfile";
-import Like from "../components/Like";
+//import Like from "../components/Like";
 import Footer from "../components/Footer";
-
 export default {
     name: 'Post',
-    props: [''],
+    props: ['post.id'],
     components: {
         HeaderProfile,
-        Like,
+       // Like,
         Footer
     },
     data () {
         return {
              id_param: this.$route.params.id,
-            postId: this.$route.params.id,
-            props: ['post'],
-            posts: [],
+           // postId: this.$route.params.id,
             users: [],
-            
+           props: ['post'],
+            posts: [],
+            comments: [],
+            likes: [],
+            dislikes: [],
+           // like: this.post.like,
+     // dislike: this.post.dislike,
+           
+             
+              preview: null,
             post: {
                 title:'',
                 content:'',
@@ -129,15 +141,14 @@ export default {
             user : {
                 nom: '',
             },
-            comments: [],
+           
              id:'',
              content: '',
              userId:'',
             
              
-             likes: [],
-            errorMessage: "",
-
+           
+           // errorMessage: "",
             displaycomments: false,
             displayCreateComment: false,
             modifyComment: false,
@@ -169,15 +180,12 @@ export default {
         User() {
             this.id = localStorage.getItem("Id")
             this.role = localStorage.getItem("role")
-
         },
-
       
        // DISPLAY ONE POST
         getOnePost() {
             const token = localStorage.getItem("token")
         //    const Id = localStorage.getItem("userId")
-
             axios.get (`http://localhost:3000/api/posts/${this.id_param}` ,  {
               
                 headers: {
@@ -188,11 +196,9 @@ export default {
                     //'Accept': 'application/json',
                 }
                 } ).then((res) => {
-
                 console.log(res.data);
                 this.posts = res.data;
                 this.users = res.data;
-
                 this.post.title = res.data.title;
                this.post.content = res.data.content;
                 this.post.image = res.data.image;
@@ -211,7 +217,6 @@ export default {
                     postId: this.id_param,
                     userId: Id
                 }                  
-
             axios.get(`http://localhost:3000/api/comments/${this.postId}`,data,  {
                    
                     headers: {
@@ -225,7 +230,6 @@ export default {
                 console.log(res.data);
                 this.comments = res.data
                 this.users = res.data
-
                 this.comment.content = res.data.content;
                 this.comment.date = res.data.date;
               //  this.comment.User.nom = res.data.nom;
@@ -248,9 +252,7 @@ export default {
 //DELETE POST
         deletePost () {
             const token = localStorage.getItem("token")
-
             if (confirm("Voulez-vous vraiment supprimer le post") === true) {
-
                 axios.delete(`http://localhost:3000/api/posts/${this.id_param}`, {
                    
                     headers: {
@@ -274,16 +276,15 @@ export default {
         modifyPost () {
             this.$router.push(`/postmodify/${this.id_param}`)
         },
-
       
 //CREATE COMMENT
         createComment () {
+             const token = localStorage.getItem("token")
+            const Id = localStorage.getItem("userId")
             if( this.content === ""){
                 alert('Veuillez remplir votre commentaire')
-
             } else {
-                const Id = localStorage.getItem("userId")
-                const token = localStorage.getItem("token")
+               
                 
                /* let data = new FormData()
                     data.append('content',this.content)
@@ -295,12 +296,12 @@ export default {
                     postId: this.id_param,
                     userId: Id
                 }                                        // 
-                axios.post("http://localhost:3000/api/comments", data, {
+                axios.post("http://localhost:3000/api/comments",  {
                    
                     headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',   
-                    'Accept': 'application/json',
+                    //'Accept': 'application/json',
                     
                     
                     },
@@ -316,13 +317,10 @@ export default {
         },
         //MODIFY COMMENT
         
-
 //DELETE COMMENT
         deleteComment (index) {
             const token = localStorage.getItem("token")
-
             if (confirm("Voulez-vous vraiment supprimer ce commentaire") === true) {
-
                 axios.delete(`http://localhost:3000/api/comments/${this.comments[index].id}`, {
                    
                     headers: {
@@ -340,17 +338,63 @@ export default {
                 console.log('Impossible de récupérer les posts !')})
        }
         },
+
+         // LIKE POST
+createLike() {
+          const token = localStorage.getItem("token")
+          const userId = localStorage.getItem("userId")
+          const postId = this.$route.params.id; 
+         
+         let data = {
+                    postId: postId,
+                    userId: userId,
+                    
+                }
+ axios.post(`http://localhost:3000/api/posts/${this.id_param}/vote/like`,data, {
+  //  axios.post(`http://localhost:3000/api/posts/${postId.like}/vote/like`,data, {
+        headers: {
+                        'authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    body: data 
+       })             
+     .then((res)=> { console.log(res)})
+     .catch((error) => {console.log(error) });
+  },
+//DISLIKE
+createDislike() {
+          const token = localStorage.getItem("token")
+          const userId = localStorage.getItem("userId")
+          const postId = this.$route.params.id; 
+         
+         let data = {
+                    postId: postId,
+                    userId: userId
+                }
+ //axios.post(`http://localhost:3000/api/posts/${dislike.postId}/vote/dislike`,data, {
+    axios.post(`http://localhost:3000/api/posts/${this.id_param}/vote/dislike`,data, {
+        headers: {
+                        'authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    body: data 
+       })             
+     .then((res)=> { console.log(res)})
+     .catch((error) => {console.log(error) });
+  },
+
     },
+
+
+    
     mounted(){
         
-        this.getOnePost ()
-       //this.getOneUser()
-       //this.getComments ()
+       this.getOnePost ()
+      // this.getOneUser()
+     //  this.getComments ()
     }
 }
 </script>
-
-
 
 
 <style scoped>
@@ -469,7 +513,25 @@ p {
     justify-content: space-evenly;
     
 }
-
+.likeNbr{
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
+p {
+    padding-left: 0.5em;
+  }
+ #likeIcon:hover {
+    cursor: pointer;
+    
+  }
+.like{
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+ align-items: center;
+}
 .button-comment {
     margin: 10px 0 0 0;
     padding: 5px 5px ;

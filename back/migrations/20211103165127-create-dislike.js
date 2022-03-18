@@ -11,19 +11,19 @@ module.exports = {
      PostId: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: {
+       /* references: {
           model: 'Posts',
           key: 'id'
-        },
+        },*/
       
       },
       UserId: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: {
+       /* references: {
           model: 'Users',
           key: 'id'
-        },
+        },*/
       },
       createdAt: {
         allowNull: false,

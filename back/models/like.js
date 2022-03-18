@@ -12,23 +12,22 @@ module.exports = (sequelize, DataTypes) => {
   
       models.Like.belongsTo(models.User, {
         foreignKey: {
-          allowNull: false
-        },
-        onDelete: 'CASCADE'
-    });
-  
-      models.Like.belongsTo(models.Post, {
-        foreignKey: {
-          allowNull: false
-        },
-        onDelete: 'CASCADE'});
-    };
+					allowNull: false
+				},
+				onDelete: 'CASCADE'
+			}),
+				models.Like.belongsTo(models.Post, {
+					foreignKey: {
+						allowNull: false
+					},
+					onDelete: 'CASCADE'
+				});
+		}
   };
   Like.init({
-    UserId:  DataTypes.INTEGER,
-    PostId:  DataTypes.INTEGER,
-    },
-  {
+    UserId: DataTypes.INTEGER,
+    PostId: DataTypes.INTEGER
+  }, {
     sequelize,
     modelName: 'Like',
   });

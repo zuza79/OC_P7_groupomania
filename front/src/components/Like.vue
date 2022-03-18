@@ -1,11 +1,9 @@
 <template>
 
 <div class="like">
-        <i class="fas fa-thumbs-up like btnSave" id="likeIcon" @click="createLike" aria-label="Bouton like">
-         <p>{{ likes }}</p>
-        </i>
-        <!-- <div class="btnDelete">{{ errorMessage }}</div>
-        -->
+        <i class="fas fa-thumbs-up like btnSave" id="likeIcon" @click="createLike" aria-label="Bouton like">{{likes}}</i>
+        <i class="fas fa-thumbs-down like btnDelete" id="likeIcon" @click="createDislike" aria-label="Bouton dislike">{{dislikes}}</i>
+        
 </div>
 
 </template>
@@ -16,62 +14,84 @@ export default {
   name: "Like",
   data() {
     return {
-      likes: [],
-      errorMessage: "",
+      posts: [],
+    Likes:[],
+Dislikes:[],
+      id_param: this.$route.params.id,
+    
     };
   },
-
-
-  // LIKE POST
-      mounted() {
+computed: {
+             //Calcule le total de like du post 
+            /*totalLike() {
+            return this.likes.length
+            },
+            Calcule de total du dislike
+            totalDislike() {
+            return this.dislikes.length
+            },*/
+}
+,
+ // LIKE POST
+createLike() {
           const token = localStorage.getItem("token")
+          const userId = localStorage.getItem("userId")
           const postId = this.$route.params.id; 
+         
+         let data = {
+                    postId: postId,
+                    userId: userId,
+                    
+                }
+ axios.post(`http://localhost:3000/api/posts/${this.id_param}/vote/like`,data, {
  
-    axios.get(`http://localhost:3000/api/posts/${postId}`,{
         headers: {
                         'authorization': `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                        //'Content-Type': 'multipart/form-data',
-                    }
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    body: data 
        })             
-      .then((res) => {
-        this.likes = res.data.likes;
-      })
-      .catch((error) => {
-        this.errorMessage = error.res.data.error;
-      });
-  },
- methods: {
-    createLike() {
-        const token = localStorage.getItem("token")
-      const postId = this.$route.params.id;
-      
-      
-      axios.post(`http://localhost:3000/api/posts/${postId}/vote/like`, {
-          headers: {
-                        'authorization': `Bearer ${token}`,
-                        //'Content-Type': 'multipart/form-data',
-                        "Content-Type": "application/json",
-                    }
-            })
-        .then((res) => {
-          if (res.data.post == "Post liked !") {
-            this.likes++;
-          } else if (
-            res.data.post == "I no longer like this post !"
-          ) {
-            this.likes--;
-          }
+     .then((res)=> {
+        console.log(res.data);
+                this.posts = res.data;
+                this.likes = res.data;
+                this.dislikes = res.data;
         })
-        .catch(() =>{ 
-                alert("Vous pouvez pas faire like!!")
-                console.log('err like')
-        //  this.errorMessage = error.res.data.error;
-          
-        });
-    },
-},
-};
+     .catch((error) => {console.log(error) });
+  },
+//DISLIKE
+createDislike() {
+          const token = localStorage.getItem("token")
+          const userId = localStorage.getItem("userId")
+          const postId = this.$route.params.id; 
+         
+         let data = {
+                    postId: postId,
+                    userId: userId
+                }
+ //axios.post(`http://localhost:3000/api/posts/${dislike.postId}/vote/dislike`,data, {
+    axios.post(`http://localhost:3000/api/posts/${this.id_param}/vote/dislike`,data, {
+        headers: {
+                        'authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    body: data 
+       })             
+     .then((res)=> { 
+        console.log(res.data);
+                this.posts = res.data;
+                this.likes = res.data;
+                this.dislikes = res.data;
+       })
+     .catch((error) => {console.log(error) });
+  },
+
+    
+ mounted(){
+        
+        
+    }
+}
     </script>
 
 <style scoped>

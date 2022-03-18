@@ -93,7 +93,7 @@ export default {
                 .then(() => {
                      alert("Message  sans image publier")
                       this.$router.push("/allposts");
-                            console.log('ok')
+                            console.log('message publier')
                     
                 })
                 
@@ -153,7 +153,7 @@ export default {
     },
     
      mounted(){
-        this.getAllPosts()
+       // this.getAllPosts()
     }
 }
 </script>

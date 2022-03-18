@@ -270,6 +270,7 @@ exports.deletePost = (req, res, next) => {
 //////// LIKE/DISLIKE POST
 //LIKE POST
 exports.likePost = async (req, res, next) => {
+    console.log("console LIKE  " +(req.body));
 	try {
         const headerAuth = req.headers['authorization'];
 		const userId = jwtUtils.getUserId(headerAuth);

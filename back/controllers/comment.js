@@ -7,22 +7,22 @@ const jwtUtils = require('../utils/jwt.utils.js');
 
 // CREATE COMMENT
 exports.createComment = (req, res, next) => {
-  console.log("console log create comment  " + JSON.stringify (req.body));
+  console.log("console log create comment  " +(req.body));
   
-  console.log("console log userId  " +req.body.userId)
-  console.log("console log id  " +req.body.id)
-  console.log("console log postId  " +req.body.postId)
-  console.log("console log content  " +req.body.content)
-   
+  
 
   models.Comment.create({
         
             id: req.body.id,
             content: req.body.content,
-            UserId: req.body.userId,
-            PostId: req.body.postId
+            userId: req.body.userId,
+            postId: req.body.postId
         })
-        
+   /* console.log("console log userId  " +req.body.userId)
+  console.log("console log id  " +req.body.id)
+  console.log("console log postId  " +req.body.postId)
+  console.log("console log content  " +req.body.content)
+ */      
         
         .then(() => res.status(201).json({message: 'Commentaire créé !'}))
         .catch( error => res.status(400).json({error}));
@@ -53,30 +53,35 @@ exports.deleteComment = (req, res, next) => {
     })
     .catch( error => res.status(400).json({error}));
 };
-// DISPLAY ALL COMMENTS OF POST
-exports.getPostComments = (req, res, next) => {
-    console.log("console log getPostComment  " + JSON.stringify (req.body));
-    models.Comment.findOne({ 
-        where: { id: req.params.id }})
-        console.log("findOneComm   " +id )
+// DISPLAY ONE COMMENT
+exports.getOneComment = (req, res, next) => {
+   console.log("console log getOneComment  " +(req.body));
+    models.Comment.findOne({
         
+        where: { id : req.params.postId },
+       include: [{  model : models.User}],
+      //  order: [["createdAt", "ASC"]]//
+    })
+   // console.log("console log id  " +req.params.id)
+ //console.log("console log id  " +req.params.id)
+    .then(comment => res.status(200).json(comment))
+    .catch( error => res.status(400).json({error}))
+};
+// DISPLAY ONE POST ALL COMMENTS
+exports.getPostAllComments = (req, res, next) => {
+    console.log("console log getPostAllComments  " +(req.body));
     models.Comment.findAll({
         where: {
         postId : req.params.postId
     },
         include: [{
-        model : models.User,
+        model : User,
     }],
-    
         order: [["createdAt", "ASC"]]})
-        
-console.log("findallComm   " +postId )
-    .then( res.status(201).json({"message": "Commentaires afficher"}))
-    .catch( error => {
-        console.log(error);
-        res.status(400).json({"message": "Erreur affichager des commentaires "});
-});
-}
+
+    .then( comments => res.status(200).json(comments))
+    .catch( error => res.status(400).json({error}))
+};
 // DISPLAY ALL COMMENTS 
 exports.getAllComments = (req, res, next) => {
     console.log("console log getAllComment  " +(req.body));
