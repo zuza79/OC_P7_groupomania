@@ -27,7 +27,7 @@ exports.createPost = (req, res, next) => {
                 title : title,
                 content: content,
                 image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`, // || ""
-                likes: 0,
+               // likes: 0,
                 UserId: user.id,
                 
             }).then( res.status(201).json({"message": "Nouveau post créé avec succès !"})
