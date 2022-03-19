@@ -2,7 +2,7 @@
     <div>
         <HeaderProfile />
             <section>
-                <h1>Modification de message</h1>
+                <h1>Modification de votre publication</h1>
                 <p>Vous pouvez modifier le text et image de votre message</p>
                 <form>
                     <ul>
@@ -11,7 +11,7 @@
                             <input class="title" type="text" v-model="post.title" required aria-label="Titre" disabled size="50" >
                         </li>
                         <li>
-                            <label for="message" aria-label="Message">Message</label>
+                            <label for="content" aria-label="Publication">Publication</label>
                             <textarea v-model="post.content" placeholder="Vous pouvez modifier la publication..." rows="10" cols="60" required aria-label="Message du post"></textarea>
                         </li>
                         

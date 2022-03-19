@@ -120,7 +120,11 @@ export default {
         this.user.email = res.data.email;
         this.user.image = res.data.image;
       })
-      .catch((err) => console.log(err))
+      .catch(() =>{ 
+                alert("Vous n'avez pas autorisation de supprimer ce message!!")
+                console.log('Vous n avez pas autorisation de supprimer ce message!!')
+        
+          } )
     },
 
       //MODIFY USER

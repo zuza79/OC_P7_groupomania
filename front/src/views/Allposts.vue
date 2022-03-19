@@ -240,6 +240,12 @@ input {
     border: 2px solid black;
     border-radius: 30px;
 }
+img {
+    width: 80%;
+    height: 80%;
+
+    border-radius: 30px;
+}
 .icone{
     display: flex;
     justify-content: space-between;
