@@ -6,8 +6,8 @@
 <!-- DISPLAY POST --> 
                     <div class = "card info" >
                         <p>Posté par:
-                            <b>{{ post.User.nom }}</b>
-                            <b>{{ post.User.prenom }} </b>     
+                            <b>{{ post.user.nom }}</b>
+                            <b>{{ post.user.prenom }} </b>     
                             le <b>{{ dateFormat(post.createdAt) }}</b>
                             à <b>{{ hourFormat(post.createdAt) }}</b><br>
                         </p>
@@ -16,7 +16,7 @@
                             le <b>{{ dateFormat(post.updatedAt) }}</b>
                             à <b>{{ hourFormat(post.updatedAt) }}</b>
                         </p>
-                        <input type="text" v-model="post.title" required aria-label="Titre" disabled size="50" >  <!--rows="10" cols="25" -->
+                        <input class="inputTitle" type="text" v-model="post.title" required aria-label="Titre" disabled size="50" >  <!--rows="10" cols="25" -->
                         <textarea type="text" v-model="post.content" required aria-label="Message" disabled ></textarea>
                         <img v-if="post.image" :src="post.image" alt="Image du post">
                     </div>
@@ -28,14 +28,14 @@
 <!--LIKE   -->  
                     <div class="like">
                         <i class="fas fa-thumbs-up like btnSave likeIcon"  @click="createLike()" aria-label="Bouton like">
-                        {{post.Likes.length}}</i>
+                        {{likes}}</i>
                         <i class="fas fa-thumbs-down like btnDelete likeIcon" @click="createDislike()" aria-label="Bouton dislike">
-                        {{dislikes.length}}</i>
+                        {{dislikes}}</i>
                     </div> 
                 </article>
 
 <!-- DISPLAY COMMENT -->
-                <button v-if="displaycomments === false " v-on:click="show" @click="getOneComment()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
+                <button v-if="displaycomments === false " v-on:click="show" @click="getOneComment()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{  }} commentaires </button>
                     <table class = "header " v-if="displaycomments" >
                         <h2>Les commentaires:</h2>
                         <div v-if="comments.length ==0">
@@ -169,8 +169,8 @@ export default {
               
                 headers: {
                     'authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',
-                    //'Content-Type': 'application/json',
+                   // 'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'application/json',
                     //'Cross-Origin-Resource-Policy': 'same-site',
                     //'Accept': 'application/json',
                 },
@@ -419,6 +419,13 @@ input{
     text-align: center ;
     font-size: 20px;
     font-weight: bolder;
+}
+.inputTitle{
+    
+    width: 70%;
+    font-size: 1.2rem;
+    text-align: center;
+
 }
 h1 {
     font-size: 1.5rem;

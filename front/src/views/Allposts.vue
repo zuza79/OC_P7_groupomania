@@ -25,7 +25,7 @@
                         <td><img v-if="post.image" :src="post.image" alt="Image"></td>
                   
                         <td class="icone">
-                            <router-link :to="`/post/${post.id}`" :href="$router.resolve({name: 'Post', params: { id: post.id}}).href" aria-label="Afficher le message">
+                            <router-link  :to="`/post/${post.id}`" :href="$router.resolve({name: 'Post', params: { id: post.id}}).href" aria-label="Afficher le message">
                             <button class="btnIconeSave" ><i class="far fa-edit"></i></button>
                             </router-link>
                             <button @click="deletePost(index)" class="btnIconeDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
@@ -272,22 +272,44 @@ img {
 table {
     width: 100%;
 }
+img {
+    width: 50%;
+    height: 50%;
+
+    border-radius: 30px;
+}
 textarea{
     width: 90%
 }
+.btnIconeDelete, .btnIconeSave{
+    width: 200px;
+}
 .icone{
-    justify-content: space-evenly;
+    display: flex;
+  
+    justify-content: center;
 }
 }
 @media screen and (max-width:768px){
 table {
     width: 100%;
 }
+.btnIconeDelete, .btnIconeSave{
+    width: 200px;
+}
 textarea{
     width: 90%
 }
+img {
+    width: 50%;
+    height: 50%;
+
+    border-radius: 30px;
+}
 .icone{
-    justify-content: space-evenly;
+    display: flex;
+    
+    justify-content: centre;
 }
 }
 
