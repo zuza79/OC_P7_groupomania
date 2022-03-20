@@ -1,111 +1,96 @@
 <template>
     <div>
         <HeaderProfile />
-               <section>
-     <article class="header">
-       <!-- DISPLAY POST --> 
-                    <tr class = "card" >
-                        <td><input type="text" v-model="post.title" required aria-label="Titre" disabled size="50" ></td>  <!--rows="10" cols="25" -->
-                        <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled ></textarea></td>
-                        <td><img v-if="post.image" :src="post.image" alt="Image du post"></td>
-                        <td class="info">
-                            <p>Posté par:
-                                <b>{{ post.user.nom }}</b>
-                                <b>{{ post.prenom }} </b>     
-                             <!--    <img class="photo-profil" v-if="post.user.image" :src="post.User.image" alt="photo de profil">
-                              <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
--->                               
-                                le <b>{{ dateFormat(post.createdAt) }}</b>
-                                à <b>{{ hourFormat(post.createdAt) }}</b><br>
-                            </p>
-                            <p v-if="post.createdAt != post.updatedAt">
-                                Modifié 
-                                le <b>{{ dateFormat(post.updatedAt) }}</b>
-                                à <b>{{ hourFormat(post.updatedAt) }}</b>
-                            </p>
-                        </td>
-                    </tr>
-                    
-      
-  <!-- MODIFY/DELETE POST -->  
-                <div class="content">
-                    <p class="modif">
+            <section>
+                <article class="header">
+<!-- DISPLAY POST --> 
+                    <div class = "card info" >
+                        <p>Posté par:
+                            <b>{{ post.User.nom }}</b>
+                            <b>{{ post.User.prenom }} </b>     
+                            le <b>{{ dateFormat(post.createdAt) }}</b>
+                            à <b>{{ hourFormat(post.createdAt) }}</b><br>
+                        </p>
+                        <p v-if="post.createdAt != post.updatedAt">
+                            Modifié 
+                            le <b>{{ dateFormat(post.updatedAt) }}</b>
+                            à <b>{{ hourFormat(post.updatedAt) }}</b>
+                        </p>
+                        <input type="text" v-model="post.title" required aria-label="Titre" disabled size="50" >  <!--rows="10" cols="25" -->
+                        <textarea type="text" v-model="post.content" required aria-label="Message" disabled ></textarea>
+                        <img v-if="post.image" :src="post.image" alt="Image du post">
+                    </div>
+<!-- MODIFY/DELETE POST -->  
+                    <div class="content modif">
                         <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
                         <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
-                    </p>
-                </div> 
-     
-<!--LIKE   <Like/>-->  
-<div class="like">
-        <i class="fas fa-thumbs-up like btnSave" id="likeIcon" @click="createLike()" aria-label="Bouton like">
-        {{likes.length}}
-        </i>
-        <i class="fas fa-thumbs-down like btnDelete" id="likeIcon" @click="createDislike()" aria-label="Bouton dislike">
-        {{dislikes.length}}  
-        </i>
-        
-</div> 
-   
-</article>
+                    </div> 
+<!--LIKE   -->  
+                    <div class="like">
+                        <i class="fas fa-thumbs-up like btnSave likeIcon"  @click="createLike()" aria-label="Bouton like">
+                        {{post.Likes.length}}</i>
+                        <i class="fas fa-thumbs-down like btnDelete likeIcon" @click="createDislike()" aria-label="Bouton dislike">
+                        {{dislikes.length}}</i>
+                    </div> 
+                </article>
+
 <!-- DISPLAY COMMENT -->
-           
                 <button v-if="displaycomments === false " v-on:click="show" @click="getOneComment()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
-                   <table class = "header " v-if="displaycomments" >
-                               <h2>Les commentaires:</h2>
-                         <article v-if="comments.length ==0">
-                        <p>Oups! Pour instant pas de commentaire!</p>
-                    </article>  
-                   <tr class = "card displayComment" v-bind:key="index" v-for="(comment, index) in comments" >
+                    <table class = "header " v-if="displaycomments" >
+                        <h2>Les commentaires:</h2>
+                        <div v-if="comments.length ==0">
+                            <p>Oups! Pour instant pas de commentaire!</p>
+                        </div>  
+                    <tr class = "card displayComment" v-bind:key="index" v-for="(comment, index) in comments" >
                         <p class="info">Posté par:</p>
                         <td><input type="text" v-model="comment.User.nom" required aria-label="Auteur de commentaire" disabled></td>
                         <td>le <b>{{ dateFormat(comment.createdAt) }}</b>
                              à <b>{{ hourFormat(comment.createdAt) }}</b></td>
                         <td><textarea type="text" v-model="comment.content" required aria-label="Commentaire" disabled></textarea></td>
-                
-             
-                <!-- MODIFY/DELETE COMMENT -->  
-                <div class="content displayComment">
-                    <div class="modif">                                                                   <!-- v-if="post.userId === id"-->
-                        <button v-if="modifyComment  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier commentaire</button>
-                        <article v-if="modifyComment" class = "header " >
-                                <textarea v-model="content" placeholder="Modifier commentaire..." cols="60" rows="5" aria-label="Modification du commentaire"></textarea>
-                                <div class=btnComment>                          
-                                    <button @click="modifyComment(index)" v-if="post.userId === id || role === 0" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
-                                    <button v-on:click="hide3" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
-                                 </div>
-                        </article>
-                                
-                        <button @click="deleteComment(index)" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i> Supprimer commentaire</button>
-                        <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentairs">Masquer les commentaires</button>
-                    </div>
-                </div>  
+<!-- MODIFY/DELETE COMMENT -->  
+                        <div class="content displayComment">
+                            <div class="modif">                                                                   <!-- v-if="post.userId === id"-->
+                                <button v-if="modifyComment  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier commentaire</button>
+                                <article v-if="modifyComment" class = "header " >
+                                    <textarea v-model="content" placeholder="Modifier commentaire..." cols="60" rows="5" aria-label="Modification du commentaire"></textarea>
+                                    <div class=btnComment>                          
+                                        <button @click="modifyComment(index)" v-if="post.userId === id || role === 0" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
+                                        <button v-on:click="hide3" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
+                                    </div>
+                                </article>
+                                <button @click="deleteComment(index)" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i> Supprimer commentaire</button>
+                                <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentairs">Masquer les commentaires</button>
+                            </div>
+                        </div>  
                     </tr>    
-         </table>  
-                       
+                    </table>  
+
 <!-- CREATE COMMENT -->
                 <button v-if="displayCreateComment === false" v-on:click="show2" class="btnSave" aria-label="Ecrire un commentaire"><i class="far fa-edit"></i>Commenter</button>
                 <article v-if="displayCreateComment" class="createcomment">
                     <textarea v-model="content" placeholder="Faire ton commentaire..." cols="60" rows="5" aria-label="Message du commentaire"></textarea>
                     <div class=btnComment>
-                    <button @click="createComment()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
-                    <button v-on:click="hide2" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
+                        <button @click="createComment()" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
+                        <button v-on:click="hide2" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
                     </div>
                 </article>
 
-            </section>
-            <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
+        </section>
+        <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
         <Footer />
     </div>
 </template>
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
 import HeaderProfile from "../components/HeaderProfile";
 //import Like from "../components/Like";
 import Footer from "../components/Footer";
 export default {
     name: 'Post',
-   // props: ['post.id'],
+    props: {likes : Number,
+            dislikes : Number,
+            comments : Number},
     components: {
         HeaderProfile,
        // Like,
@@ -118,9 +103,7 @@ export default {
             users: [],
            props: ['post'],
             posts: [],
-           
-            likes: [],
-            dislikes: [],
+          
            // like: this.post.like,
      // dislike: this.post.dislike,
            
@@ -142,7 +125,7 @@ export default {
                 nom: '',
             },
             userId:'',
-           comments: [],
+         
             displaycomments: false,
             displayCreateComment: false,
             modifyComment: false,
@@ -182,7 +165,7 @@ export default {
         getOnePost() {
             const token = localStorage.getItem("token")
         //    const Id = localStorage.getItem("userId")                     //data,
-            axios.get (`http://localhost:3000/api/posts/${this.id_param}` ,   {
+            axios.get (`http://localhost:3000/api/posts/${this.postId}` ,   {
               
                 headers: {
                     'authorization': `Bearer ${token}`,
@@ -194,7 +177,7 @@ export default {
                 //body: data 
                 } )
                 .then((res) => {
-                console.log(res.data);
+                console.log("getOne"+res.data);
                 this.posts = res.data;
                 this.users = res.data;
                 this.post.title = res.data.title;
@@ -229,14 +212,14 @@ export default {
             
             .then((res) => {
                 console.log(res.data);
-                this.posts = res.data;
+              /*  this.posts = res.data;
                 this.users = res.data;
                 this.comments = res.data;
                 this.user.nom = res.data.nom;
                 this.comments.content = res.data.content;
                 this.comments.createdAt = res.data.createdAt;
                 this.comments.updatedAt = res.data.updatedAt;
-
+*/
             })
                 
             .catch(() => console.log('Impossible de récupérer les commentaires!'))
@@ -292,8 +275,8 @@ export default {
                 
                 let data = new FormData()
                     data.append('content',this.content)
-                    data.append('postId',this.id_param)
-                    data.append('userId', userId)
+                    data.append('PostId',this.id_param)
+                    data.append('UserId', userId)
                  
                 /* let data = {
                     content: this.content,
@@ -304,7 +287,8 @@ export default {
                    
                     headers: {
                     'authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',   
+                    // modifier json'Content-Type': 'multipart/form-data',   
+                    'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     
                     
@@ -477,7 +461,7 @@ textarea {
 p {
     padding-left: 0.5em;
   }
- #likeIcon:hover {
+ .likeIcon:hover {
     cursor: pointer;
     
   }
@@ -527,7 +511,7 @@ p {
 p {
     padding-left: 0.5em;
   }
- #likeIcon:hover {
+ .likeIcon:hover {
     cursor: pointer;
     
   }
