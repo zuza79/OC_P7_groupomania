@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey:{
           allowNull: false
         },
-       // onDelete: 'CASCADE'
+        onDelete: 'CASCADE'
       });
       models.Post.hasMany(models.Like);
       models.Post.hasMany(models.Dislike);

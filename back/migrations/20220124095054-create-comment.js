@@ -1,29 +1,30 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Comments', {
+    await queryInterface.createTable('comments', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userId: {
+      UserId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Users',
           key: 'id'
         },
-      
+        onDelete: 'cascade'
       },
-      postId: {
+      PostId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Posts',
           key: 'id'
         },
+        onDelete: 'cascade'
        },
       content: {
         allowNull: false,

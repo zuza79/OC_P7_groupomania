@@ -132,11 +132,11 @@ exports.deleteUser = (req, res, next) => {
 
     if (userId == req.params.id || role == 0) {
 
-        User.findOne({ where: { id: req.params.id } })
-
+       // User.findOne({ where: { id: req.params.id } })
+        User.findOne({ where: { id:  req.params.id } })
             .then(user => {
-                console.log("user FindOne    " + user.id)
-                if(user){
+               // console.log("user FindOne    " + user.id)
+                if(user!= null){
 
                     if (user.image != null) {
                         const filename = user.image.split('/images/profiles/')[1];
@@ -146,6 +146,7 @@ exports.deleteUser = (req, res, next) => {
                     } 
 
                     User.destroy({ where: { id: req.params.id } })
+                   // User.destroy({ where: { id: user.id } })
                     .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
                     .catch(error =>{ console.log(error); res.status(400).json({ message : error.message })});
             

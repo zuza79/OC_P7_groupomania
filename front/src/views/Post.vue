@@ -8,15 +8,12 @@
                         <td><input type="text" v-model="post.title" required aria-label="Titre" disabled size="50" ></td>  <!--rows="10" cols="25" -->
                         <td><textarea type="text" v-model="post.content" required aria-label="Message" disabled ></textarea></td>
                         <td><img v-if="post.image" :src="post.image" alt="Image du post"></td>
-                                   
-                       
-                       <td class="info">
-                            <p>
-                               Posté par 
-                                 <b>{{ post.user.nom }}</b>
-                                  <b>{{ post.user.prenom }} </b>     
-                                <img class="photo-profil" v-if="post.user.image" :src="post.User.image" alt="photo de profil">
-                             <!--  <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
+                        <td class="info">
+                            <p>Posté par:
+                                <b>{{ post.user.nom }}</b>
+                                <b>{{ post.prenom }} </b>     
+                             <!--    <img class="photo-profil" v-if="post.user.image" :src="post.User.image" alt="photo de profil">
+                              <img class="photo-profil" v-else src="../assets/images/photo-profil.jpg" alt="photo de profil"><br>
 -->                               
                                 le <b>{{ dateFormat(post.createdAt) }}</b>
                                 à <b>{{ hourFormat(post.createdAt) }}</b><br>
@@ -53,12 +50,8 @@
 <!-- DISPLAY COMMENT -->
            
                 <button v-if="displaycomments === false " v-on:click="show" @click="getOneComment()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
-               
-               
-               <table class = "header " v-if="displaycomments" >
-                    
-                    
-                    <h2>Les commentaires:</h2>
+                   <table class = "header " v-if="displaycomments" >
+                               <h2>Les commentaires:</h2>
                          <article v-if="comments.length ==0">
                         <p>Oups! Pour instant pas de commentaire!</p>
                     </article>  
@@ -69,9 +62,7 @@
                              à <b>{{ hourFormat(comment.createdAt) }}</b></td>
                         <td><textarea type="text" v-model="comment.content" required aria-label="Commentaire" disabled></textarea></td>
                 
-                
-                
-                
+             
                 <!-- MODIFY/DELETE COMMENT -->  
                 <div class="content displayComment">
                     <div class="modif">                                                                   <!-- v-if="post.userId === id"-->
@@ -114,7 +105,7 @@ import HeaderProfile from "../components/HeaderProfile";
 import Footer from "../components/Footer";
 export default {
     name: 'Post',
-    props: ['post.id'],
+   // props: ['post.id'],
     components: {
         HeaderProfile,
        // Like,
@@ -143,22 +134,19 @@ export default {
                 id:'',
                 image:'',
                 user: { },
-               
-                userId:''
+                userId:'',
+                UserId:'',
+                PostId:'',
             },
             user : {
                 nom: '',
             },
-           
-            
-             userId:'',
-            
-             
-           
-            comments: [],
+            userId:'',
+           comments: [],
             displaycomments: false,
             displayCreateComment: false,
             modifyComment: false,
+            
              id:'',
              content: '',
             role: ''
@@ -193,8 +181,8 @@ export default {
        // DISPLAY ONE POST
         getOnePost() {
             const token = localStorage.getItem("token")
-        //    const Id = localStorage.getItem("userId")
-            axios.get (`http://localhost:3000/api/posts/${this.id_param}` ,  {
+        //    const Id = localStorage.getItem("userId")                     //data,
+            axios.get (`http://localhost:3000/api/posts/${this.id_param}` ,   {
               
                 headers: {
                     'authorization': `Bearer ${token}`,
@@ -202,8 +190,10 @@ export default {
                     //'Content-Type': 'application/json',
                     //'Cross-Origin-Resource-Policy': 'same-site',
                     //'Accept': 'application/json',
-                }
-                } ).then((res) => {
+                },
+                //body: data 
+                } )
+                .then((res) => {
                 console.log(res.data);
                 this.posts = res.data;
                 this.users = res.data;
@@ -212,7 +202,9 @@ export default {
                 this.post.image = res.data.image;
                 this.post.createdAt = res.data.createdAt;
                 this.post.updatedAt = res.data.updatedAt;
-               //this.user.nom = res.data.nom          
+               this.user.nom = res.data.nom ;
+               this.user.prenom = res.data.prenom 
+
             })
             .catch(() => console.log('Impossible de récupérer les posts!'))
         },
@@ -292,33 +284,35 @@ export default {
 //CREATE COMMENT
         createComment () {
              const token = localStorage.getItem("token")
-            const Id = localStorage.getItem("userId")
+            const userId = localStorage.getItem("userId")
             if( this.content === ""){
                 alert('Veuillez remplir votre commentaire')
             } else {
                
                 
-               /* let data = new FormData()
+                let data = new FormData()
                     data.append('content',this.content)
                     data.append('postId',this.id_param)
-                    data.append('userId', Id)
-               */  
-                 let data = {
+                    data.append('userId', userId)
+                 
+                /* let data = {
                     content: this.content,
-                    postId: this.id_param,
-                    userId: Id
-                }                                        // 
-                axios.post("http://localhost:3000/api/comments",  {
+                    PostId: this.id_param,
+                    UserId: Id
+                } */                                       // 
+                axios.post("http://localhost:3000/api/comments", data, {
                    
                     headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',   
-                    //'Accept': 'application/json',
+                    'Accept': 'application/json',
                     
                     
                     },
-                    body: data                })
-                .then(() => {
+                    body: data   
+                     })
+                .then((res) => {
+                    console.log(res.data);
                                 alert("commentaire publié")
                                 console.log("commentaire OK")
                                 this.$router.push("/allposts");

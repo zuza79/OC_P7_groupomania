@@ -40,7 +40,7 @@ exports.createPost = (req, res, next) => {
             models.Post.create({
                 title : title,
                 content: content,
-                likes: 0,
+                //likes: 0,
                 UserId: user.id,
                 
             }).then( res.status(201).json({"message": "Nouveau post créé avec succès !"})

@@ -14,14 +14,14 @@ exports.createComment = (req, res, next) => {
 
   models.Comment.create({
         
-           // id: req.body.id,
+            id: req.body.id,
             content: req.body.content,
-            userId: req.body.userId,
-            postId: req.params.id
+            UserId: userId,
+            PostId: req.body.postId
         })
- //   console.log("console log userId  " +req.body.userId)
+   // console.log("console log userId  " +req.body.userId)
  // console.log("console log id  " +req.body.id)
-//  console.log("console log postId  " +req.body.postId)
+ // console.log("console log postId  " +req.body.postId)
  // console.log("console log content  " +req.body.content)
      
         
@@ -40,8 +40,8 @@ exports.deleteComment = (req, res, next) => {
 
    
 
-    .then(comment => {
-        if (userId === comment.UserId || role === 0) 
+    .then(Comment => {
+        if (userId === Comment.UserId || role === 0) 
         {
              models.Comment.destroy({ where: { id: req.params.id } })
             res.status(200).json({message : 'Commentaire supprimé !'})
@@ -61,14 +61,14 @@ exports.getPostComments = (req, res, next) => {
         
         where: { postId : req.params.postId },
        include: [{  model : models.User}],
-      //  order: [["createdAt", "ASC"]]//
+        order: [["createdAt", "DESC"]]//
     })
    // console.log("console log id  " +req.params.id)
  //console.log("console log id  " +req.params.id)
     .then(comments => res.status(200).json(comments))
     .catch( error => res.status(400).json({error}))
 };
-// DISPLAY ONE POST ALL COMMENTS
+// DISPLAY ALL COMMENTS
 exports.getAllComments = (req, res, next) => {
     console.log("console log getPostAllComments  " +(req.body));
     models.Comment.findAll({
@@ -78,7 +78,7 @@ exports.getAllComments = (req, res, next) => {
         include: [
             { model : models.User},
             { model : models.Post}],
-        order: [["createdAt", "ASC"]]})
+        order: [["createdAt", "DESC"]]})
 
     .then( comments => res.status(200).json(comments))
     .catch( error => res.status(400).json({error}))

@@ -4,10 +4,12 @@
             <section>
                 <h1>Modification de votre publication</h1>
                 <p>Vous pouvez modifier le text et image de votre message</p>
-                <form>
+                
+       <!-- MODIFY POST  -->
+        <form>
                     <ul>
                         <li>
-                            <label for="title"  aria-label="Titre">Titre</label>
+                            <label for="titre" aria-label="Titre">Titre</label>
                             <input class="title" type="text" v-model="post.title" required aria-label="Titre" disabled size="50" >
                         </li>
                         <li>
@@ -19,7 +21,7 @@
                             <img :src="post.image" alt="Image du post" class="file" width="200px" height="200px">
                         </li>
                         <li> 
-                            <label v-if="!post.image " for="file" class="button" aria-label="Choisir une photo pour ce post">Modifier image</label>
+                            <label v-if="post.image " for="file" class="button" aria-label="Choisir une photo pour ce post">Modifier image</label>
                             <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer cette photo du post"> Supprimer image</button>    
                             <input type="file" accept=".jpeg, .jpg, .png, .webp, .gif" v-on:change="uploadFile" id="file" class="input-file" aria-label="Image du post">
                        </li>
@@ -52,7 +54,9 @@ export default {
     data () {
         return {
             id_param: this.$route.params.id,
+           
             post: [],
+         
             createdAt: '',
             updatedAt:'',
             preview: null,
@@ -83,7 +87,7 @@ export default {
                     headers: {
                         'authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data',
-                        'Cross-Origin-Resource-Policy': 'same-site',
+                        //'Cross-Origin-Resource-Policy': 'same-site',
                     }
             })
              .then((res) => {
@@ -161,7 +165,7 @@ export default {
                         alert("Modification de message avec image réusi")
                 console.log("modification ok");
                 this.posts = res.data
-                //this.$router.push(`/post/${this.id_param}`);
+                this.$router.push("/allposts");
                 })
                    
                 .catch(() =>{ 
@@ -210,13 +214,12 @@ label {
     color:rgb(5, 5, 100);
 }
 .title{
-    
-    width: 60%;
+  width: 60%;
     height: 30px;
-    text-align: center ;
+    text-align: center;
+    margin: 0 auto 0 auto;
     font-size: 20px;
     font-weight: bolder;
-
 }
 form{
    width: 80% ; 
@@ -236,12 +239,14 @@ li {
   margin-bottom: 30px;
 }
 
-input {
-    
+.title{
+    width: 60%;
     height: 30px;
-    font-size: 1.5rem;
-    text-align: center;
-    margin: 0 auto 0 auto;
+    margin-top: 10px;
+    color: #000000;
+    text-align: center ;
+    font-size: 20px;
+    font-weight: bolder;
 }
 
 textarea {
