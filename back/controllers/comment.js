@@ -8,24 +8,21 @@ const jwtUtils = require('../utils/jwt.utils.js');
 // CREATE COMMENT
 exports.createComment = (req, res, next) => {
   console.log("console log create comment  " +(req.body));
+
   const headerAuth = req.headers['authorization'];
   const userId = jwtUtils.getUserId(headerAuth);
   
-
+  /*console.log("console log content  " +req.body.content);
+  console.log("console log content  " +userId);
+  console.log("console log content  " +req.body.postId);
+  */
   models.Comment.create({
         
-            id: req.body.id,
             content: req.body.content,
-            userId: req.body.userId,
-            postId: req.body.postId
-          /*  UserId: userId,
-            PostId: req.params.id */
+            UserId: userId,
+            PostId: req.body.postId
         })
-   /* console.log("console log userId  " +req.body.userId)
-  console.log("console log id  " +req.body.id)
-  console.log("console log postId  " +req.body.postId)
-  console.log("console log content  " +req.body.content)
-   */  
+    
         
         .then(() => res.status(201).json({message: 'Commentaire créé !'}))
         .catch( error => res.status(400).json({error}));

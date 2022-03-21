@@ -155,7 +155,8 @@ exports.modifyPost = (req, res, next) => {
                 fs.unlink(`images/posts/${filename}`, () => {
                     const modifyPost = {
                         content: req.body.content,
-                        createdAt: Date.now(),
+                        updatedAt: Date.now(),
+
                         image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`
                     };
         
@@ -166,7 +167,7 @@ exports.modifyPost = (req, res, next) => {
                 })} else {
                     const modifyPost = {
                         content: req.body.content,
-                        createdAt: Date.now(),
+                        updatedAt: Date.now(),
                         image: `${req.protocol}://${req.get('host')}/images/posts/${req.file.filename}`
                     };
             

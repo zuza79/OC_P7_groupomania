@@ -20,8 +20,8 @@
                     </div>
 <!-- MODIFY/DELETE POST -->  
                     <div class="content modif">
-                        <button @click="modifyPost()" v-if="post.userId === id || role === 0" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
-                        <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
+                        <button @click="modifyPost()"  class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
+                        <button @click="deletePost()"  class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
                     </div> 
 <!--LIKE    
                     <div class="like">
@@ -40,24 +40,25 @@
                             <p>Oups! Pour instant pas de commentaire!</p>
                         </div>  -->
                     <tr class = "card displayComment" v-bind:key="index" v-for="(comment, index) in comments" >
-                        <p class="info">Posté par:</p>
-                        <td><input type="text" v-model="comment.User.nom" required aria-label="Auteur de commentaire" disabled></td>
+                       <!-- <td>Posté par:<input type="text" v-model="comment.User.nom" required aria-label="Auteur de commentaire" disabled></td>-->
+                        <td>Commenté par:<p class="userComment">{{comment.User.nom}}</p></td>
                         <td>le <b>{{ dateFormat(comment.createdAt) }}</b>
                              à <b>{{ hourFormat(comment.createdAt) }}</b></td>
                         <td><textarea type="text" v-model="comment.content" required aria-label="Commentaire" disabled></textarea></td>
 <!-- MODIFY/DELETE COMMENT -->  
                         <div class="content displayComment">
                             <div class="modif">                                                                   <!-- v-if="post.userId === id"-->
-                                <button v-if="modifyComment  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier commentaire</button>
+                              <!--  <button v-if="modifyComment  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier commentaire</button>
                                 <article v-if="modifyComment" class = "header " >
                                     <textarea v-model="content" placeholder="Modifier commentaire..." cols="60" rows="5" aria-label="Modification du commentaire"></textarea>
                                     <div class=btnComment>                          
-                                        <button @click="modifyComment(index)" v-if="post.userId === id || role === 0" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
+                                        <button @click="modifyComment(index)" v-if="post.userId === id" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
                                         <button v-on:click="hide3" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
                                     </div>
                                 </article>
-                                <button @click="deleteComment(index)" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i> Supprimer commentaire</button>
-                                <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentairs">Masquer les commentaires</button>
+                                -->
+                                <button @click="deleteComment(index)"  class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i> Supprimer commentaire</button>
+                                <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentaires">Masquer</button>
                             </div>
                         </div>  
                     </tr>    
@@ -115,20 +116,18 @@ export default {
                 userId:'',
                 
             },
-            UserId:'',
-            PostId:'',
-            user : {
+                user : {
                 nom: '',
             },
             userId:'',
-         comments: [],
+            comments: [],
+                   
+             id:'',
+             content: '',
+            role: '',
             displaycomments: false,
             displayCreateComment: false,
             modifyComment: false,
-            
-             id:'',
-             content: '',
-            role: ''
         }
     },
         
@@ -152,7 +151,7 @@ export default {
             return this.modifyComment = false;
         },
         User() {
-            this.id = localStorage.getItem("Id")
+            this.id = localStorage.getItem("userId")
             this.role = localStorage.getItem("role")
         },
       
@@ -261,42 +260,40 @@ export default {
       
 //CREATE COMMENT
         createComment () {
-             const token = JSON.parse(localStorage.getItem("token"))
-            const Id = JSON.parse(localStorage.getItem("userId"));
-            if( this.content === ""){
+             const token = localStorage.getItem("token")
+               const userId = localStorage.getItem("userId")
+               const postId = this.$route.params.id;
+          
+          if( this.commentaire === ""){
                 alert('Veuillez remplir votre commentaire')
+
             } else {
-               
+              
                 
-               /*  let data = new FormData()
-                    data.append('content',this.content)
-                    data.append('PostId',this.id_param)
-                    data.append('UserId', userId)
-                */ 
                 let data = {
                     content: this.content,
-                    postId: this.id_param,
-                    userId: Id
-                }                                       // 
-                axios.post("http://localhost:3000/api/comments", {
+                    postId: postId,
+                    userId: userId,
+                }                                      // 
+                axios.post("http://localhost:3000/api/comments/" ,data, {
                    
                     headers: {
                     'authorization': `Bearer ${token}`,
-                    // modifier json'Content-Type': 'multipart/form-data',   
+                   // 'Content-Type': 'multipart/form-data',   
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                    },
                     body: data
                      })
-                .then((res) => {
-                    console.log(res.data);
+                .then(() => {
+                    console.log();
                                 
                                 alert("commentaire publié")
                                 console.log("commentaire OK")
                                 this.$router.push("/allposts");
                             })
                 
-            .catch(() => console.log(' Impossible de publier commentaire!'))
+            .catch(() => console.log(' err comments'))
        }
         },
         //MODIFY COMMENT
@@ -372,7 +369,7 @@ createDislike() {
 
     
     mounted(){
-        
+        this.User()
        this.getOnePost ()
       // this.getOneUser()
     //this.getComments ()
@@ -433,7 +430,10 @@ textarea {
     font-size: 1.2rem;
     margin: 10px auto 10px auto;
 }
-
+.userComment{
+    font-size: 20px;
+    font-weight: bolder;
+}
 .header,
 .content {
     width: 60%;
