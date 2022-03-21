@@ -5,9 +5,9 @@
                 <article class="header">
 <!-- DISPLAY POST --> 
                     <div class = "card info" >
-                        <p>Posté par:
-                            <b>{{ post.user.nom }}</b>
-                            <b>{{ post.user.prenom }} </b>     
+                        <input class="inputTitle" type="text" v-model="post.title" required aria-label="Titre" disabled size="50" >  <!--rows="10" cols="25" -->
+                        <textarea type="text" v-model="post.content" required aria-label="Message" disabled ></textarea>
+                        <p>Posté par <b>{{ post.user.nom }}</b> <b>{{ post.user.prenom }} </b>     
                             le <b>{{ dateFormat(post.createdAt) }}</b>
                             à <b>{{ hourFormat(post.createdAt) }}</b><br>
                         </p>
@@ -16,31 +16,29 @@
                             le <b>{{ dateFormat(post.updatedAt) }}</b>
                             à <b>{{ hourFormat(post.updatedAt) }}</b>
                         </p>
-                        <input class="inputTitle" type="text" v-model="post.title" required aria-label="Titre" disabled size="50" >  <!--rows="10" cols="25" -->
-                        <textarea type="text" v-model="post.content" required aria-label="Message" disabled ></textarea>
                         <img v-if="post.image" :src="post.image" alt="Image du post">
                     </div>
 <!-- MODIFY/DELETE POST -->  
                     <div class="content modif">
-                        <button @click="modifyPost()" v-if="post.userId === id" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
+                        <button @click="modifyPost()" v-if="post.userId === id || role === 0" class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
                         <button @click="deletePost()" v-if="post.userId === id || role === 0" class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
                     </div> 
-<!--LIKE   -->  
+<!--LIKE    
                     <div class="like">
                         <i class="fas fa-thumbs-up like btnSave likeIcon"  @click="createLike()" aria-label="Bouton like">
                         {{likes}}</i>
                         <i class="fas fa-thumbs-down like btnDelete likeIcon" @click="createDislike()" aria-label="Bouton dislike">
                         {{dislikes}}</i>
-                    </div> 
+                    </div> --> 
                 </article>
 
 <!-- DISPLAY COMMENT -->
                 <button v-if="displaycomments === false " v-on:click="show" @click="getOneComment()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{  }} commentaires </button>
                     <table class = "header " v-if="displaycomments" >
                         <h2>Les commentaires:</h2>
-                        <div v-if="comments.length ==0">
+                       <!-- <div v-if="comments.length ==0">
                             <p>Oups! Pour instant pas de commentaire!</p>
-                        </div>  
+                        </div>  -->
                     <tr class = "card displayComment" v-bind:key="index" v-for="(comment, index) in comments" >
                         <p class="info">Posté par:</p>
                         <td><input type="text" v-model="comment.User.nom" required aria-label="Auteur de commentaire" disabled></td>
@@ -84,17 +82,14 @@
 <script>
 import axios from 'axios';
 import HeaderProfile from "../components/HeaderProfile";
-//import Like from "../components/Like";
 import Footer from "../components/Footer";
+//import Like from "../components/Like";
 export default {
     name: 'Post',
-    props: {likes : Number,
-            dislikes : Number,
-            comments : Number},
     components: {
         HeaderProfile,
-       // Like,
         Footer
+         // Like,
     },
     data () {
         return {
@@ -118,14 +113,15 @@ export default {
                 image:'',
                 user: { },
                 userId:'',
-                UserId:'',
-                PostId:'',
+                
             },
+            UserId:'',
+            PostId:'',
             user : {
                 nom: '',
             },
             userId:'',
-         
+         comments: [],
             displaycomments: false,
             displayCreateComment: false,
             modifyComment: false,
@@ -135,8 +131,7 @@ export default {
             role: ''
         }
     },
-     computed: {     }, 
-     
+        
      methods : {
        show: function () {
             return this.displaycomments = true;
@@ -211,15 +206,15 @@ export default {
             })
             
             .then((res) => {
-                console.log(res.data);
-              /*  this.posts = res.data;
+               // console.log(res.data);
+                this.posts = res.data;
                 this.users = res.data;
                 this.comments = res.data;
                 this.user.nom = res.data.nom;
                 this.comments.content = res.data.content;
                 this.comments.createdAt = res.data.createdAt;
                 this.comments.updatedAt = res.data.updatedAt;
-*/
+
             })
                 
             .catch(() => console.log('Impossible de récupérer les commentaires!'))
@@ -266,37 +261,36 @@ export default {
       
 //CREATE COMMENT
         createComment () {
-             const token = localStorage.getItem("token")
-            const userId = localStorage.getItem("userId")
+             const token = JSON.parse(localStorage.getItem("token"))
+            const Id = JSON.parse(localStorage.getItem("userId"));
             if( this.content === ""){
                 alert('Veuillez remplir votre commentaire')
             } else {
                
                 
-                let data = new FormData()
+               /*  let data = new FormData()
                     data.append('content',this.content)
                     data.append('PostId',this.id_param)
                     data.append('UserId', userId)
-                 
-                /* let data = {
+                */ 
+                let data = {
                     content: this.content,
-                    PostId: this.id_param,
-                    UserId: Id
-                } */                                       // 
-                axios.post("http://localhost:3000/api/comments", data, {
+                    postId: this.id_param,
+                    userId: Id
+                }                                       // 
+                axios.post("http://localhost:3000/api/comments", {
                    
                     headers: {
                     'authorization': `Bearer ${token}`,
                     // modifier json'Content-Type': 'multipart/form-data',   
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    
-                    
-                    },
-                    body: data   
+                   },
+                    body: data
                      })
                 .then((res) => {
                     console.log(res.data);
+                                
                                 alert("commentaire publié")
                                 console.log("commentaire OK")
                                 this.$router.push("/allposts");
@@ -381,7 +375,8 @@ createDislike() {
         
        this.getOnePost ()
       // this.getOneUser()
-     //  this.getComments ()
+    //this.getComments ()
+    
     }
 }
 </script>
@@ -421,7 +416,7 @@ input{
     font-weight: bolder;
 }
 .inputTitle{
-    
+    margin: 10px auto 10px auto ;
     width: 70%;
     font-size: 1.2rem;
     text-align: center;
@@ -567,6 +562,7 @@ p {
 
 img {
     width: 70%;
+    margin: auto;
     border-radius: 30px;
 }
 

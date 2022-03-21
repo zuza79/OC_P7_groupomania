@@ -1,24 +1,22 @@
 <template>
-
-<div class="like">
+  <div class="like">
         <i class="fas fa-thumbs-up like btnSave" id="likeIcon" @click="createLike" aria-label="Bouton like">{{likes}}</i>
         <i class="fas fa-thumbs-down like btnDelete" id="likeIcon" @click="createDislike" aria-label="Bouton dislike">{{dislikes}}</i>
-        
-</div>
-
+  </div>
 </template>
 
 <script>
 import axios from "axios";
+
 export default {
   name: "Like",
+  
   data() {
     return {
       posts: [],
-    Likes:[],
-Dislikes:[],
+      Likes:[],
+      Dislikes:[],
       id_param: this.$route.params.id,
-    
     };
   },
 computed: {
@@ -30,8 +28,7 @@ computed: {
             totalDislike() {
             return this.dislikes.length
             },*/
-}
-,
+},
  // LIKE POST
 createLike() {
           const token = localStorage.getItem("token")
@@ -41,14 +38,13 @@ createLike() {
          let data = {
                     postId: postId,
                     userId: userId,
-                    
                 }
- axios.post(`http://localhost:3000/api/posts/${this.id_param}/vote/like`,data, {
+    axios.post(`http://localhost:3000/api/posts/${this.id_param}/vote/like`,data, {
  
         headers: {
                         'authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data',
-                    },
+                  },
                     body: data 
        })             
      .then((res)=> {
@@ -69,7 +65,6 @@ createDislike() {
                     postId: postId,
                     userId: userId
                 }
- //axios.post(`http://localhost:3000/api/posts/${dislike.postId}/vote/dislike`,data, {
     axios.post(`http://localhost:3000/api/posts/${this.id_param}/vote/dislike`,data, {
         headers: {
                         'authorization': `Bearer ${token}`,
@@ -86,16 +81,12 @@ createDislike() {
      .catch((error) => {console.log(error) });
   },
 
-    
  mounted(){
-        
-        
-    }
+     }
 }
-    </script>
+</script>
 
 <style scoped>
- 
 .likeNbr{
     margin: 0;
     padding: 0;
@@ -106,7 +97,6 @@ p {
   }
  #likeIcon:hover {
     cursor: pointer;
-    
   }
 .like{
     height: auto;

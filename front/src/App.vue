@@ -35,7 +35,10 @@ h1 {
 h2{
   font-size: 20px;
    margin: 0 auto 20px auto;
-  color: rgb(5, 5, 100);
+  color: white
+}
+textarea{
+  color: black
 }
 .button {
     margin: 20px 0 10px 0;

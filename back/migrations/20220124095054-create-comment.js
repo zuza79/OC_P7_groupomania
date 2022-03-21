@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      UserId: {
+      userId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
@@ -17,7 +17,7 @@ module.exports = {
         },
         onDelete: 'cascade'
       },
-      PostId: {
+      postId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {

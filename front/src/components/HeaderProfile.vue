@@ -5,7 +5,7 @@
             <!--:href="$router.resolve({name: 'Profile', params: { id: userId}}).href" -->
             <router-link class="link" to="/profile"  aria-label="Profil">Mon profil</router-link>
             <router-link class="link" to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
-            <router-link class="link" to="/" @click="disconnectUser()">Déconexion</router-link>
+            <router-link class="link" to="/" @click="disconnectUser()">Déconnexion</router-link>
         </nav>
 
     </header>

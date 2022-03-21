@@ -12,13 +12,6 @@ import Post from '../views/Post.vue'
 import NewPost from '../views/NewPost.vue'
 import ModifyPost from '../views/ModifyPost.vue'
 
-//import CommentPost from '../views/CommentPost.vue'
-//import ModifyComment from '../views/ModifyComment.vue'
-//import AdminDisplay from '../views/AdminDisplay.vue'
-//import AdminComments from '../views/AdminComments.vue'/
-//import AdminPosts from '../views/AdminPosts.vue'
-//import AdminUsers from '../views/AdminUsers.vue'
-
 //Vue.use(VueRouter)  idem ligne45 main.js
 const routes = [
   {
@@ -47,28 +40,7 @@ const routes = [
     name: 'Post',
     component: Post
   },
-  /*
-  {
-    path: '/admin',
-    name: 'AdminDisplay',
-    component: AdminDisplay
-  },
-  {
-  path: '/admin/users',
-  name: 'AdminUsers',
-  component: AdminUsers
-},
-{
-  path: '/admin/posts',
-  name: 'AdminPosts',
-  component: AdminPosts
-},
-{
-  path: '/admin/comments',
-  name: 'AdminComments',
-  component: AdminComments
-},
-*/
+  
  {
     path: '/profile',
     name: 'Profile',
@@ -79,24 +51,13 @@ const routes = [
     name: 'NewPost',
     component: NewPost
   },
-  /*{
-    path: '/postcomment',
-    name: 'CommentPost',
-    component: CommentPost
-  },*/
+  
   {
     path: '/postmodify/:id',
     name: 'ModifyPost',
     component: ModifyPost
   }, 
-  /*{
-    path: '/commentmodify/:id',
-    name: 'ModifyComment',
-    component: ModifyComment
-  },*/
-
-
-]
+  ]
 
 /*const router = new VueRouter({
   routes

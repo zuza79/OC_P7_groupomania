@@ -1,7 +1,5 @@
-<!-- à faire @media -->
 <template>
   <footer>
-    
       <div class="contact">
         <i class="far fa-envelope"></i>
         <a href="contact: administrateur@groupomania.com" aria-label="Envoyer mail à l'administrateur" > Aide et contact</a>

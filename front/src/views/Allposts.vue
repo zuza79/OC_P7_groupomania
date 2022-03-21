@@ -4,7 +4,7 @@
         <h1>Le Flash Actu Groupomania</h1>   
          <!--actualization -->
          <div class="getAllPosts">
-        <button @click="getAllPosts()" class="btnSave" ><i class="fas fa-redo"></i></button>
+        <button @click="getAllPosts()" class="btnSave" aria-label="Bouton d'actualisation de la page" ><i class="fas fa-redo"></i></button>
         
          </div>
         <article v-if="post in posts">
@@ -22,11 +22,9 @@
                         
                         <td><input type="text" v-model="post.title" required aria-label="Titre" disabled></td>
                         <td><textarea class="tdHeight" type="text" v-model="post.content" required aria-label="Message" disabled></textarea></td>
-                        <td><img v-if="post.image" :src="post.image" alt="Image"></td>
-                  
-                        <td class="icone">
+                       <td class="icone">
                             <router-link  :to="`/post/${post.id}`" :href="$router.resolve({name: 'Post', params: { id: post.id}}).href" aria-label="Afficher le message">
-                            <button class="btnIconeSave" ><i class="far fa-edit"></i></button>
+                            <button class="btnIconeSave" aria-label="Icone afficher les messages" ><i class="far fa-edit"></i></button>
                             </router-link>
                             <button @click="deletePost(index)" class="btnIconeDelete" aria-label="Supprimer ce message"><i class="far fa-trash-alt"></i></button>
                         </td>
@@ -43,6 +41,9 @@
                                 à <b>{{ hourFormat(post.updatedAt) }}</b>
                             </p>
                         </td>
+                        <td><img v-if="post.image" :src="post.image" alt="Image"></td>
+                  
+                        
                     
                     </tr>
                 </table>
@@ -233,6 +234,9 @@ input {
     font-size: 1.2rem;
     text-align: center;
 }
+textarea{
+    width: 90%
+}
 
 .imgProfile {
     width: 50px;
@@ -242,13 +246,14 @@ input {
 }
 img {
     width: 80%;
-    height: 80%;
-
+    height: 60%;
+    margin : auto;
     border-radius: 30px;
 }
 .icone{
     display: flex;
-    justify-content: space-between;
+    justify-content: centre;
+    margin: 15px auto 15px auto;
 }
 .btnIconeSave, .btnIconeDelete, .btnSave{
     width: 30px ;
@@ -268,14 +273,13 @@ img {
 .text {
     font-size: 14px;
 }
-@media screen and (max-width:1024px){
+/*@media screen and (max-width:1024px){
 table {
     width: 100%;
 }
 img {
     width: 50%;
     height: 50%;
-
     border-radius: 30px;
 }
 textarea{
@@ -286,11 +290,10 @@ textarea{
 }
 .icone{
     display: flex;
-  
     justify-content: center;
 }
-}
-@media screen and (max-width:768px){
+}*/
+@media screen and (min-width:768px){
 table {
     width: 100%;
 }
@@ -303,12 +306,10 @@ textarea{
 img {
     width: 50%;
     height: 50%;
-
     border-radius: 30px;
 }
 .icone{
     display: flex;
-    
     justify-content: centre;
 }
 }

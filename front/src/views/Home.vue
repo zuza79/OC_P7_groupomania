@@ -2,13 +2,13 @@
   <div>
     <Header />
     <body>
-    <h1><p>Bienvenue chez </p>GROUPOMAN</h1>
-    <h2>Réseau social de notre entreprise</h2> 
+      <h1><p>Bienvenue chez </p>GROUPOMAN</h1>
+      <h2>Réseau social de notre entreprise</h2> 
    
-    <nav class="routerLink">
-    <router-link to="/signup" class="link" aria-label="Inscription">Inscription</router-link>
-    <router-link to="/login" class="link" aria-label="Connection">Connection</router-link>
-    </nav>
+      <nav class="routerLink">
+        <router-link to="/signup" class="link" aria-label="Inscription">Inscription</router-link>
+        <router-link to="/login" class="link" aria-label="Connexion ">Connexion</router-link>
+      </nav>
    
     </body>     
     <Footer />
@@ -23,20 +23,18 @@ import Footer from "../components/Footer";
 export default {
   name: 'Home',
   components: {
-    Header,
-    Footer
-  }
-                
+            Header,
+            Footer
+            }
 }
-
 </script>
 
 <style scoped>
 body{
-  margin-bottom: 100px;
+     margin-bottom: 100px;
 }
 p{
-  font-size: 30px;
+     font-size: 30px;
 }
 h2 {
   width: 70%;
@@ -46,13 +44,13 @@ h2 {
   margin:0 auto 50px auto;
   }
 .tab{
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 .routerLink{
-   width: 70%;
-   margin: auto;
-  padding-top: 50px;
+    width: 70%;
+    margin: auto;
+    padding-top: 50px;
 }
 .link, .linkAdmin {
   height: 20px;
@@ -63,33 +61,26 @@ h2 {
   font-size: 1.2rem;
   text-decoration: none;
   background: gray;
-    border: 1px solid black;
-    border-radius: 20px;
+  border: 1px solid black;
+  border-radius: 20px;
 }
 .linkAdmin{
-margin-top: 60px;
+  margin-top: 60px;
 }
-
 .link:hover {
   color: black;
-
 }
 nav {
-   width: 70%;
+  width: 70%;
   padding: 20px 5vw;
   font-size: 1vw;
   margin-bottom: 60px;
 }
-
 .nav a {
   font-weight: bold;
   color: #000000;
 }
-
 .nav a.router-link-exact-active {
   color: black;
 }
-
-
-
 </style>

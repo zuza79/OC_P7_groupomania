@@ -16,14 +16,16 @@ exports.createComment = (req, res, next) => {
         
             id: req.body.id,
             content: req.body.content,
-            UserId: userId,
-            PostId: req.body.postId
+            userId: req.body.userId,
+            postId: req.body.postId
+          /*  UserId: userId,
+            PostId: req.params.id */
         })
-   // console.log("console log userId  " +req.body.userId)
- // console.log("console log id  " +req.body.id)
- // console.log("console log postId  " +req.body.postId)
- // console.log("console log content  " +req.body.content)
-     
+   /* console.log("console log userId  " +req.body.userId)
+  console.log("console log id  " +req.body.id)
+  console.log("console log postId  " +req.body.postId)
+  console.log("console log content  " +req.body.content)
+   */  
         
         .then(() => res.status(201).json({message: 'Commentaire créé !'}))
         .catch( error => res.status(400).json({error}));
@@ -41,7 +43,7 @@ exports.deleteComment = (req, res, next) => {
    
 
     .then(Comment => {
-        if (userId === Comment.UserId || role === 0) 
+        if (userId === Comment.userId || role === 0) 
         {
              models.Comment.destroy({ where: { id: req.params.id } })
             res.status(200).json({message : 'Commentaire supprimé !'})
