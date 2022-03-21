@@ -4,7 +4,7 @@ Social network dedicated to sharing posts and commenting between coworkers of Gr
 # PREREQUISITES #
 You will need to have SQL, Node and `npm` installed locally on your machine.
 
-Build with `npm v8.2.0` and `vue-cli v4.5.15 / vue v2.6.14 ` and database `MySQL v8.0.27`.
+Build with `npm v8.2` and `vue-cli v4.5 / vue v3.0 ` and database `MySQL v8.0`.
 # BACKEND #
 server run with: `nodemon server`, port `3000`
 # FRONTEND #
