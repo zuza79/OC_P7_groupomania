@@ -3,9 +3,8 @@
         <HeaderProfile />
         <div>
             <h1>Mon profil</h1>
-         
-                   
-        <!--user info nom, prenom, email -->
+              
+        <!--USER INFO - NOM, PRENOM, EMAIL -->
             <form>
                 <ul>
                     <li>
@@ -19,18 +18,15 @@
                     </li>
                     </ul>
             </form>
-
             <nav class="modify" >
-
-                <!--modify image --><!-- -->
-                    <div class="modifyImage btnModifyImg" >   
-                        <img v-if="user.image" :src="user.image" alt="Photo de profil" class="file" width="150px" height="150px" border-radius="15px">
-                        <label v-if="!user.image" for="file" class="label-file btnModifyImg" aria-label="Inserer votre photo de profil" ><i class="fas fa-upload"></i><br>Inserer <br>votre photo de profil</label>
-                        <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer la photo de profil"> <i class="far fa-trash-alt"></i></button>
-                        <input type="file" accept="image/jpeg, image/jpg, image/png, image/webp" v-on:change="uploadFile" id="file" class="input-file" aria-label="Photo de profil">
-                    </div>
-                <!--modify password -->
-                
+<!--IMAGE -->
+    <div class="button modifyImage btnModifyImg" >   
+        <img v-if="user.image" :src="user.image" alt="Photo de profil" class="file" width="150px" height="150px" border-radius="15px">
+        <label v-if="!user.image" for="file" class="label-file btnModifyImg" aria-label="Inserer votre photo de profil" ><i class="fas fa-upload"></i><br>Inserer <br>votre photo de profil</label>
+        <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer la photo de profil"> <i class="far fa-trash-alt"></i></button>
+        <input type="file" accept="image/jpeg, image/jpg, image/png, image/webp" v-on:change="uploadFile" id="file" class="input-file" aria-label="Photo de profil">
+    </div>
+      <!--MODIFY PASSWORD 
                     <div class="modifyPassword">
                         <button v-on:click="show" class="button">Modifier<br> mot de passe</button>
                         <li v-if="button">
@@ -40,7 +36,7 @@
                             <button @click.prevent="modifyPassword()" class="btnSave"><i class="fas fa-edit"></i>Enregistrer nouveau mot de passe</button>
                         </li>
                     </div>
-                
+                -->
             </nav>
 
                 <div class="submit">
@@ -67,7 +63,7 @@ export default {
     },
     data() {
         return {
-             displayPostsUser: false,
+            posts: [],
             user: {
                 id: '',
                 nom: '',
@@ -76,10 +72,10 @@ export default {
                 image:''
             },
             preview: null,
-            posts: [],
-            oldPassword:'',
-            newPassword:'',
-            confirmNewPassword:'',
+            
+           // oldPassword:'',
+           // newPassword:'',
+           // confirmNewPassword:'',
             button : false
         }
     },
@@ -101,18 +97,16 @@ export default {
             this.role = localStorage.getItem("role")
 
         },
-        //GET ONE USER
+    //GET ONE USER
         getOneUser() {
             const Id = JSON.parse(localStorage.getItem("userId"))
-          // const userId = this.$route.params.id;
-      const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
           
            axios.get(`http://localhost:3000/api/auth/profile/${Id}`, {
-        headers: {
-          'authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-          //'Cross-Origin-Resource-Policy': 'same-site',
-        }
+                 headers: {
+                    'authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                  }
             }).then(res => {
         this.user.id = res.data.id;
         this.user.nom = res.data.nom;
@@ -127,12 +121,11 @@ export default {
           } )
     },
 
-      //MODIFY USER
+//MODIFY USER
         modifyUser() {
-             const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
             const Id = localStorage.getItem("userId")
-            //const userId = this.$route.params.id;
-           
+                       
             const fileField = document.querySelector('input[type="file"]');
 
             const regexText = /^[a-zA-Z-\s]+$/;
@@ -158,12 +151,10 @@ export default {
                 axios.put(`http://localhost:3000/api/auth/profile/${Id}`, { 
                    
                         headers: {
-                        'Accept': 'application/json',
-                        
-                        'authorization': `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data',
+                           'authorization': `Bearer ${token}`,
+                           'Accept': 'application/json',               
+                           'Content-Type': 'multipart/form-data',
                         },
-                       
                 })
                 .then((res) => {
                    this.user = res.data;
@@ -180,32 +171,26 @@ export default {
                 data.append('image', this.image)
                 data.append('image', fileField.files[0])
 
-
                 axios.put(`http://localhost:3000/api/auth/profile/${Id}`, data,{
                    
                         headers: {
                             'authorization': `Bearer ${token}`,
                             'Content-Type': 'multipart/form-data',
-             
                         },
                         body: data
                 })
                  .then(() => {
                     alert("Profil modifier")
-                console.log("profil modifier");
-                 this.$router.push("/profile");
-                
+                    console.log("profil modifier");
+                    this.$router.push("/profile");
             })
-                
            .catch(error => console.log(error))
-            }
-        },
-        //DELETE USER
+            }},
+    //DELETE USER
         deleteUser() {
             const Id = localStorage.getItem("userId")
             if (confirm("Voulez-vous vraiment supprimer le compte?") == true) {
-               // const userId = this.$route.params.id;
-      const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
 
                 axios.delete(`http://localhost:3000/api/auth/profile/${Id}`, {
                    
@@ -274,7 +259,7 @@ export default {
         },
         
         //MODIFY PASSWORD
-        modifyPassword() {
+      /*  modifyPassword() {
             const Id = localStorage.getItem("userId")
             const token = localStorage.getItem('token');
             const regexPassword = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{3,50}$/;
@@ -323,25 +308,19 @@ export default {
 			} else {
 				alert("Le nouveau mot de passe enregistrer")
 			}
-            
-        },
+        },*/
         
     mounted() {
         this.getOneUser()
-    }
-}
-
+    }}
 }
 </script>
 
 <style scoped>
-
-
 form{
     width: 100%;
     margin: auto;
 }
-
 ul {
     display: flex;
     flex-direction: column;
@@ -349,13 +328,10 @@ ul {
     list-style: none;
     margin: 0;
     padding: 0;
-
 }
-
 label {
     font-size: 15px;
 }
-
 li {
     display: flex;
     margin-top: 7px;
@@ -363,7 +339,6 @@ li {
     align-items: center;
     width: 100%;
 }
-
 input {
     width: 70%;
     font-size: 1.2rem;
@@ -380,15 +355,13 @@ input {
 .file {
     width: 200px;
     height: 200px;
-    margin-top: 10px;
     border: 2px solid black;
     border-radius: 100px;
+    margin: auto;
 }
-
 .input-file {
     display: none;
 }
-
 .button,#modifyImage {
     margin: 20px 0 0 0;
     padding: 5px 30px ;
@@ -396,27 +369,20 @@ input {
     border-radius: 10px;
     text-decoration: none;
     color: #000000;
-      width: 40%;
-    margin: 15px auto 15px auto;
+    min-width: 220px;
+    width: 40%;
+    margin: 30px auto 15px auto;
     background: gray;
     font-size: 15px;
     cursor: pointer;
 }
-
 .espacement {
     margin-left: 10px;
 }
-
 .submit {
     margin-bottom: 30px;
 }
-
 .password {
     margin-top: 5px;
 }
-
-
-
-    
-
 </style>

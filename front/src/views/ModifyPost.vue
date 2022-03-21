@@ -54,9 +54,7 @@ export default {
     data () {
         return {
             id_param: this.$route.params.id,
-           
             post: [],
-         
             createdAt: '',
             updatedAt:'',
             preview: null,
