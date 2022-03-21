@@ -273,26 +273,7 @@ img {
 .text {
     font-size: 14px;
 }
-/*@media screen and (max-width:1024px){
-table {
-    width: 100%;
-}
-img {
-    width: 50%;
-    height: 50%;
-    border-radius: 30px;
-}
-textarea{
-    width: 90%
-}
-.btnIconeDelete, .btnIconeSave{
-    width: 200px;
-}
-.icone{
-    display: flex;
-    justify-content: center;
-}
-}*/
+
 @media screen and (min-width:768px){
 table {
     width: 100%;
@@ -304,9 +285,9 @@ textarea{
     width: 90%
 }
 img {
-    width: 50%;
-    height: 50%;
-    border-radius: 30px;
+    width: 20%;
+    height: 30%;
+    border-radius: 10px;
 }
 .icone{
     display: flex;

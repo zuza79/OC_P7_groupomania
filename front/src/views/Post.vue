@@ -1,10 +1,11 @@
 <template>
     <div>
         <HeaderProfile />
-            <section>
+            <section >
                 <article class="header">
 <!-- DISPLAY POST --> 
-                    <div class = "card info" >
+                    <div class = "card info blockRespo" >
+                        <nav class = "blockRespoText">
                         <input class="inputTitle" type="text" v-model="post.title" required aria-label="Titre" disabled size="50" >  <!--rows="10" cols="25" -->
                         <textarea type="text" v-model="post.content" required aria-label="Message" disabled ></textarea>
                         <p>Posté par <b>{{ post.user.nom }}</b> <b>{{ post.user.prenom }} </b>     
@@ -16,13 +17,14 @@
                             le <b>{{ dateFormat(post.updatedAt) }}</b>
                             à <b>{{ hourFormat(post.updatedAt) }}</b>
                         </p>
-                        <img v-if="post.image" :src="post.image" alt="Image du post">
-                    </div>
-<!-- MODIFY/DELETE POST -->  
+            <!-- MODIFY/DELETE POST -->  
                     <div class="content modif">
                         <button @click="modifyPost()"  class="btnSave" aria-label="Modifier ce post"><i class="fas fa-edit"></i> Modifier publication</button>
                         <button @click="deletePost()"  class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
                     </div> 
+                    </nav>
+                    <img v-if="post.image" :src="post.image" alt="Image du post">
+                    </div>
 <!--LIKE    
                     <div class="like">
                         <i class="fas fa-thumbs-up like btnSave likeIcon"  @click="createLike()" aria-label="Bouton like">
@@ -33,7 +35,7 @@
                 </article>
 
 <!-- DISPLAY COMMENT -->
-                <button v-if="displaycomments === false " v-on:click="show" @click="getOneComment()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{  }} commentaires </button>
+                <button  v-on:click="show" @click="getOneComment()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
                     <table class = "header " v-if="displaycomments" >
                         <h2>Les commentaires:</h2>
                        <!-- <div v-if="comments.length ==0">
@@ -436,7 +438,7 @@ textarea {
 }
 .header,
 .content {
-    width: 60%;
+    width: 95%;
     background:gray;
     border-radius: 20px ;
     }
@@ -486,7 +488,7 @@ p {
      width: 30%;
 }
 .content {
-    margin-bottom: 30px;
+    margin: auto;
 }
 
 .createcomment {
@@ -577,41 +579,41 @@ img {
     border: 2px solid #fd2d01;
     border-radius: 30px;
 }
-
-
-@media screen and (max-width:1024px) {
-
-    
-    .header,
-    .content {
-        width: 90%;
-    }
-section{
-    width: 95%;
-}
+/*--------------------*/
+@media screen and (min-width:768px) {
+.blockRespo{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 
 }
+.blockRespoText{
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
 
-@media screen and (max-width:768px) {
-
-    
     .header,
     .content {
         width: 98%;
     }
 section{
     width: 95%;
-    
 }
-    .modif{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-      .button {
-        width: 50%;
-    }
+.modif{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+ }
+.button {
+    width: 50%;
+}
+img {
+    width: 20%;
+    height: 30%;
+    margin: 20px;
+    border-radius: 30px;
+}
 
     .createcomment {
         width: 100%;

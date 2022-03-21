@@ -10,7 +10,7 @@
             <input type="email" v-model="email" placeholder="jean.dupont@groupomania.com" size="50" required aria-label="Email de connection">
           </li>
           <li>
-            <input type="current-password" v-model="password" placeholder="Pass2word" size="50" required aria-label="Mot de passe de connection">
+            <input type="password" v-model="password" placeholder="Pass2word" size="50" required aria-label="Mot de passe de connection">
           </li>
         </ul>  
       </form>
