@@ -20,6 +20,10 @@ Local: `http://localhost:8080`
     - posts messages with image or non, comments 
     - display messages and comments, delete or modify
     - delete your account
+
+# USER FOR TEST # 
+test@groupomania.com  / Test123
+
     
 
 
