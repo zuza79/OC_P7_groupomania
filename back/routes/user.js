@@ -5,13 +5,12 @@ const userCtrl = require('../controllers/user');
 const multerProfile = require('../middleware/multer-profile')
 const auth = require('../middleware/auth')
 
-router.post('/signup', userCtrl.signup);  //ok
-router.post('/login', userCtrl.login);    //ok
-router.delete('/profile/:id', auth, multerProfile, userCtrl.deleteUser); // ok postman 
-router.get('/profile/:id', auth, userCtrl.getOneUser);  //ok postman localhost:3000/api/auth/profile/20
-router.put('/profile/:id',auth, multerProfile, userCtrl.modifyUser); //erreur 
-//router.put('/admin/:id', auth, userCtrl.AdminModifyUser); // erreur ligne 257 user.update ...
-router.get('/', auth, userCtrl.getAllUsers); // ok postman localhost:3000/api/auth
-router.put('/profile/:id', auth, userCtrl.modifyPassword); //erreur 401
+router.post('/signup', userCtrl.signup);  
+router.post('/login', userCtrl.login);    
+router.delete('/profile/:id', auth, multerProfile, userCtrl.deleteUser);  
+router.get('/profile/:id', auth, userCtrl.getOneUser);  
+router.put('/profile/:id',auth, multerProfile, userCtrl.modifyUser);  
+router.get('/', auth, userCtrl.getAllUsers); 
+router.put('/profile/:id', auth, userCtrl.modifyPassword); 
 
 module.exports = router;

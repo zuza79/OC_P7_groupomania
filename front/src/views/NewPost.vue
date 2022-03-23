@@ -58,10 +58,7 @@ export default {
         }
     },
     methods: {
-        /* FILE UPLOAD
-        uploadFile(event) {
-            this.image = event.target.files[0]
-        },*/
+  
         //CREATE POST
    createPost() {
          
@@ -107,10 +104,8 @@ export default {
                 if (extFile === "jpg" || extFile === "jpeg" || extFile === "png" || extFile === "webp" ||extFile === "gif"){
                     let data = new FormData()
                     data.append('filename', fileName)
-                    // data.append('image', this.image);
-                     data.append('image', fileField.files[0])
-                     //formData.append('image', this.post.image, this.post.image.name);
-                   data.append('title', this.title);
+                    data.append('image', fileField.files[0])
+                    data.append('title', this.title);
                     data.append('content', this.content);
                     data.append('userId',Id);
      
@@ -153,7 +148,7 @@ export default {
     },
     
      mounted(){
-       // this.getAllPosts()
+     
     }
 }
 </script>

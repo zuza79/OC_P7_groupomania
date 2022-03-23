@@ -73,8 +73,6 @@ textarea{
     color: #000000;
     cursor: pointer;
 }
-/* icone home - return to="/allposts" */
-/*   <router-link to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>  */
 .fa-home
 {
     width: 50px;

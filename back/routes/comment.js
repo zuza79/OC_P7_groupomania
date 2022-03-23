@@ -4,12 +4,10 @@ const router = express.Router();
 const commentCtrl = require('../controllers/comment');
 const auth = require('../middleware/auth')
 
-//auth,
-router.post('/', commentCtrl.createComment);      //localhost:3000/api/comments
-router.put('/:id', auth, commentCtrl.modifyComment);  //localhost:3000/api/comments/3
+router.post('/', commentCtrl.createComment);      
+router.put('/:id', auth, commentCtrl.modifyComment);  
 router.delete('/:id', auth, commentCtrl.deleteComment)
-router.get('/:postId', commentCtrl.getPostComments)  //GET ONE COMMENT
-//router.get('/:postId', auth, commentCtrl.getPostAllComments) // GET POST ALL COMMENTS
-router.get('/', auth, commentCtrl.getAllComments)       // GET ALL COMMENTS
+router.get('/:postId', commentCtrl.getPostComments)  
+router.get('/', auth, commentCtrl.getAllComments)       
 
 module.exports = router;

@@ -26,18 +26,7 @@
         <button v-else @click="deletefile()" class="label-file btnDelete" aria-label="Supprimer la photo de profil"> <i class="far fa-trash-alt"></i></button>
         <input type="file" accept="image/jpeg, image/jpg, image/png, image/webp" v-on:change="uploadFile" id="file" class="input-file" aria-label="Photo de profil">
     </div>
-      <!--MODIFY PASSWORD 
-                    <div class="modifyPassword">
-                        <button v-on:click="show" class="button">Modifier<br> mot de passe</button>
-                        <li v-if="button">
-                            <input v-model="oldPassword" type="text" placeholder="Ancien mot de passe" size="30" class="password">
-                            <input v-model="newPassword" type="text" placeholder="Nouveau mot de passe" size="30" class="password">
-                            <input v-model="confirmNewPassword" type="text" placeholder="Confirmer le mot de passe" size="30" class="password">
-                            <button @click.prevent="modifyPassword()" class="btnSave"><i class="fas fa-edit"></i>Enregistrer nouveau mot de passe</button>
-                        </li>
-                    </div>
-                -->
-            </nav>
+              </nav>
 
                 <div class="submit">
                     <button @click="modifyUser()" class="btnSave" aria-label="Modifier le compte de cet utilisateur"><i class="fas fa-edit"></i> Enregistrer</button>
@@ -72,10 +61,7 @@ export default {
                 image:''
             },
             preview: null,
-            
-           // oldPassword:'',
-           // newPassword:'',
-           // confirmNewPassword:'',
+
             button : false
         }
     },
@@ -258,58 +244,7 @@ export default {
             this.user.image = '';
         },
         
-        //MODIFY PASSWORD
-      /*  modifyPassword() {
-            const Id = localStorage.getItem("userId")
-            const token = localStorage.getItem('token');
-            const regexPassword = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{3,50}$/;
-
-
-            if (this.oldPassword === '')
-                alert("Veuillez remplir votre ancien mot de passe")
-            
-            if (this.newPassword === '')
-                alert("Veuillez remplir votre nouveau mot de passe")
-
-            if (this.confirmNewPassword === '')
-                alert("Veuillez remplir votre confirmation de mot de passe")
-
-            if (regexPassword.test(this.newPassword) === false){
-                alert("Le nouveau mot de passe doit avoir une longueur de 3 à 50 caractères avec au moins un chiffre, une minuscule, une majuscule !!!")
-            } else if (this.confirmNewPassword === this.newPassword) {
-
-				let data = {
-                    oldPassword: this.oldPassword,
-					password : this.newPassword
-				}
-
-				axios.put(`http://localhost:3000/api/auth/profile/${Id}`, data, {
-                   
-                    headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'authorization': `Bearer ${token}`
-                    },
-                    body: data
-				})
-                .then((res) => {
-                    console.log(res.data);
-                this.users = res.data
-                    this.oldPassword = res.data,
-                    this.newPassword = res.data
-                    alert("Le nouveau mot de passe enregistrer")
-                console.log("Le nouveau mot de passe enregistrer");
-               //  this.$router.push("/profile");
-                
-            })
-                
-            .catch((err) => console.log(err))
-     
-			} else {
-				alert("Le nouveau mot de passe enregistrer")
-			}
-        },*/
-        
+       
     mounted() {
         this.getOneUser()
     }}

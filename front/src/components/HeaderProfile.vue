@@ -1,8 +1,7 @@
 <template>
     <header class="nav">
-        <img id="logo" src="../assets/images/logoMono.png" alt="Logo Groupomania" />
+        <a href="/"><img class="imgLogo" src="../assets/images/logoMono.png" alt="Logo Groupomania" /></a>
         <nav>
-            <!--:href="$router.resolve({name: 'Profile', params: { id: userId}}).href" -->
             <router-link class="link" to="/profile"  aria-label="Profil">Mon profil</router-link>
             <router-link class="link" to="/allposts" aria-label="Retour ver Le Flash Actu Groupomania"><i class="fas fa-home home"></i></router-link>
             <router-link class="link" to="/" @click="disconnectUser()">Déconnexion</router-link>
@@ -31,6 +30,7 @@ methods: {
 		this.role = JSON.parse(localStorage.getItem("role"))
 	}
 },
+
 mounted(){
     this.roleUser()
 }
@@ -60,14 +60,14 @@ nav{
      border-radius: 50%;
  }
 
-img {
-  height: 100px;
-}
-#logo{
+.imgLogo {
   width: 60%;
   display: block;
  padding-top: 10px;
- margin: auto;
+ margin-left: auto;
+ margin-right: auto;
+  object-fit: cover;
+  background-size: cover;
 }
 
 .link {
@@ -115,40 +115,4 @@ i {
     margin: auto;
     align-items: center;
     }
-@media screen and (max-width:1024px) {
- /*
- header {
-    flex-direction: column;
-    align-items: center;
-  justify-content: space-between;
-  }
-
-  img {
-    margin-bottom: 30px;
-  }
-
-  .link {
-    padding: 0 30px;
-    font-size: 20px;
-  }
-}
-
-@media screen and (max-width:768px) {
-
-  header {
-    flex-direction: column;
-  }
-
-  img {
-    margin-bottom: 4vw;
-    height: 60px;
-  }
-
-  .link {
-    padding: 0 20px;
-    font-size: 15px;
-  }
- */ 
-}
-
 </style>

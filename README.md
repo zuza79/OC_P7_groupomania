@@ -2,7 +2,7 @@
 Social network dedicated to sharing posts and commenting between coworkers of Groupomania.
 
 # PAGE DESING #
-MOBIL FIRST
+MOBILE FIRST
 
 # PREREQUISITES #
 You will need to have SQL, Node and `npm` installed locally on your machine.

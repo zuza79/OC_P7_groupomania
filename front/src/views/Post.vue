@@ -23,42 +23,25 @@
                         <button @click="deletePost()"  class="btnDelete" aria-label="Supprimer ce post"><i class="far fa-trash-alt"></i> Supprimer publication</button>
                     </div> 
                     </nav>
-                    <img v-if="post.image" :src="post.image" alt="Image du post">
+                    <img class="imgPost" v-if="post.image" :src="post.image" alt="Image du post">
                     </div>
-<!--LIKE    
-                    <div class="like">
-                        <i class="fas fa-thumbs-up like btnSave likeIcon"  @click="createLike()" aria-label="Bouton like">
-                        {{likes}}</i>
-                        <i class="fas fa-thumbs-down like btnDelete likeIcon" @click="createDislike()" aria-label="Bouton dislike">
-                        {{dislikes}}</i>
-                    </div> --> 
+
                 </article>
 
 <!-- DISPLAY COMMENT -->
                 <button  v-on:click="show" @click="getOneComment()" class="btnSave" aria-label="Voir les commentaires">Afficher: {{ comments.length }} commentaires </button>
                     <table class = "header " v-if="displaycomments" >
                         <h2>Les commentaires:</h2>
-                       <!-- <div v-if="comments.length ==0">
-                            <p>Oups! Pour instant pas de commentaire!</p>
-                        </div>  -->
+
                     <tr class = "card displayComment" v-bind:key="index" v-for="(comment, index) in comments" >
-                       <!-- <td>Posté par:<input type="text" v-model="comment.User.nom" required aria-label="Auteur de commentaire" disabled></td>-->
+                       
                         <td>Commenté par:<p class="userComment">{{comment.User.nom}}</p></td>
                         <td>le <b>{{ dateFormat(comment.createdAt) }}</b>
                              à <b>{{ hourFormat(comment.createdAt) }}</b></td>
                         <td><textarea type="text" v-model="comment.content" required aria-label="Commentaire" disabled></textarea></td>
 <!-- MODIFY/DELETE COMMENT -->  
                         <div class="content displayComment">
-                            <div class="modif">                                                                   <!-- v-if="post.userId === id"-->
-                              <!--  <button v-if="modifyComment  ===  false " v-on:click ="show3" @click="modifyComment()"  class="btnSave" aria-label="Modifier ce commentaire"><i class="fas fa-edit"></i> Modifier commentaire</button>
-                                <article v-if="modifyComment" class = "header " >
-                                    <textarea v-model="content" placeholder="Modifier commentaire..." cols="60" rows="5" aria-label="Modification du commentaire"></textarea>
-                                    <div class=btnComment>                          
-                                        <button @click="modifyComment(index)" v-if="post.userId === id" class="btnSave" aria-label="Envoyer le commentaire">Envoyer</button>
-                                        <button v-on:click="hide3" class="btnDelete" aria-label="Annuler le commentaire">Annuler</button>
-                                    </div>
-                                </article>
-                                -->
+                            <div class="modif">                                                                   
                                 <button @click="deleteComment(index)"  class="btnDelete" aria-label="Supprimer ce commentaire"><i class="far fa-trash-alt"></i> Supprimer commentaire</button>
                                 <button v-on:click="hide" class="btnDelete" aria-label="Masquer les commentaires">Masquer</button>
                             </div>
@@ -86,13 +69,13 @@
 import axios from 'axios';
 import HeaderProfile from "../components/HeaderProfile";
 import Footer from "../components/Footer";
-//import Like from "../components/Like";
+
 export default {
     name: 'Post',
     components: {
         HeaderProfile,
         Footer
-         // Like,
+
     },
     data () {
         return {
@@ -101,10 +84,6 @@ export default {
             users: [],
            props: ['post'],
             posts: [],
-          
-           // like: this.post.like,
-     // dislike: this.post.dislike,
-           
              
               preview: null,
             post: {
@@ -160,17 +139,15 @@ export default {
        // DISPLAY ONE POST
         getOnePost() {
             const token = localStorage.getItem("token")
-        //    const Id = localStorage.getItem("userId")                     //data,
+
             axios.get (`http://localhost:3000/api/posts/${this.postId}` ,   {
               
                 headers: {
                     'authorization': `Bearer ${token}`,
-                   // 'Content-Type': 'multipart/form-data',
                     'Content-Type': 'application/json',
-                    //'Cross-Origin-Resource-Policy': 'same-site',
-                    //'Accept': 'application/json',
+
                 },
-                //body: data 
+
                 } )
                 .then((res) => {
                 console.log("getOne"+res.data);
@@ -207,7 +184,7 @@ export default {
             })
             
             .then((res) => {
-               // console.log(res.data);
+
                 this.posts = res.data;
                 this.users = res.data;
                 this.comments = res.data;
@@ -245,8 +222,7 @@ export default {
                 .then((res) => {
                 alert ("Publication supprimer")
                 console.log(res.data);
-               // this.posts = res.data;
-              //  this.$router.push("/allposts");
+
             })
                 
             .catch(() =>{ 
@@ -276,12 +252,11 @@ export default {
                     content: this.content,
                     postId: postId,
                     userId: userId,
-                }                                      // 
+                }                                     
                 axios.post("http://localhost:3000/api/comments/" ,data, {
                    
                     headers: {
                     'authorization': `Bearer ${token}`,
-                   // 'Content-Type': 'multipart/form-data',   
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                    },
@@ -322,59 +297,11 @@ export default {
        }
         },
 
-         // LIKE POST
-createLike() {
-          const token = localStorage.getItem("token")
-          const userId = localStorage.getItem("userId")
-          const postId = this.$route.params.id; 
-         
-         let data = {
-                    postId: postId,
-                    userId: userId,
-                    
-                }
- axios.post(`http://localhost:3000/api/posts/${this.id_param}/vote/like`,data, {
-  //  axios.post(`http://localhost:3000/api/posts/${postId.like}/vote/like`,data, {
-        headers: {
-                        'authorization': `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data',
-                    },
-                    body: data 
-       })             
-     .then((res)=> { console.log(res)})
-     .catch((error) => {console.log(error) });
-  },
-//DISLIKE
-createDislike() {
-          const token = localStorage.getItem("token")
-          const userId = localStorage.getItem("userId")
-          const postId = this.$route.params.id; 
-         
-         let data = {
-                    postId: postId,
-                    userId: userId
-                }
- //axios.post(`http://localhost:3000/api/posts/${dislike.postId}/vote/dislike`,data, {
-    axios.post(`http://localhost:3000/api/posts/${this.id_param}/vote/dislike`,data, {
-        headers: {
-                        'authorization': `Bearer ${token}`,
-                        'Content-Type': 'multipart/form-data',
-                    },
-                    body: data 
-       })             
-     .then((res)=> { console.log(res)})
-     .catch((error) => {console.log(error) });
-  },
-
     },
 
-
-    
     mounted(){
         this.User()
        this.getOnePost ()
-      // this.getOneUser()
-    //this.getComments ()
     
     }
 }
@@ -562,13 +489,13 @@ p {
     padding: 0 30px 0 30px;
 }
 
-img {
+.imgPost {
     width: 70%;
     margin: auto;
     border-radius: 30px;
 }
 
-.content img {
+.content .imgPost {
     margin-top: 10px;
 
 }
@@ -608,7 +535,7 @@ section{
 .button {
     width: 50%;
 }
-img {
+.imgPost {
     width: 20%;
     height: 30%;
     margin: 20px;

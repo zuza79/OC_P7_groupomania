@@ -79,14 +79,13 @@ export default {
         getOnePost() {
             const token = localStorage.getItem("token")
             const fileField = document.querySelector('input[type="file"]');
-                                                // ${post.id}                  
+                                                                 
             axios.get (`http://localhost:3000/api/posts/${this.id_param}`, {
                    
                     headers: {
                         'authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data',
-                        //'Cross-Origin-Resource-Policy': 'same-site',
-                    }
+                     }
             })
              .then((res) => {
                 console.log(res.data);
@@ -129,7 +128,6 @@ export default {
                         alert("Modification de message sans image réusi")
                 console.log("modification ok");
                 this.posts = res.data
-                //this.$router.push("/post/${this.id_param}");
                 this.$router.push("/allposts");
                 })
                    
@@ -183,20 +181,7 @@ export default {
             const options = { hour: 'numeric', minute:'numeric', second:'numeric'};
             return hour.toLocaleTimeString('fr-FR', options);
         },
-    //UPLOAD POST
-      /*  uploadFile(e) {
-            if (e.target.files) {
-                let reader = new FileReader()
-                reader.onload = (event) => {
-                    this.preview = event.target.result
-                    this.post.image = event.target.result
-                }
-                reader.readAsDataURL(e.target.files[0])
-            }
-        },
-        deletefile() {
-            this.post.image = null;
-        }  */
+ 
     },
     mounted () {
         this.getOnePost()
@@ -272,39 +257,12 @@ img {
     margin-top:0;
     margin-bottom: 10px;
 }
-/*
-@media screen and (max-width:1024px) {
 
-    h1 {
-        font-size: 1.5rem;
-    }
-
-    input {
-        font-size: 1rem;
-    }
-
-    textarea {
-        font-size: 1rem;
-    }
+@media screen and (min-width:768px) {
+.btnDelete{
+    width: 20%;
+    margin: auto;
+}
 }
 
-@media screen and (max-width:768px) {
-
-    h1 {
-        font-size: 1.2rem;
-    }
-
-    input {
-        font-size: 0.8rem;
-    }
-
-    textarea {
-        font-size: 0.6rem;
-    }
-
-    img {
-    height: 200px;
-    }
-}
-*/
 </style>

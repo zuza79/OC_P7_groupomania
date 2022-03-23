@@ -45,17 +45,5 @@ img {
   padding-top: 0px;
   padding-bottom: 00px;
 }
-
-/*------------ desktop----------------
-@media screen and (min-width: 950px) {
-.contact{
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-.copyright{
-  padding-bottom: 0;
-}
-}
--*/
 </style>
 

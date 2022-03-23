@@ -35,16 +35,14 @@
                                 le <b>{{ dateFormat(post.createdAt) }}</b>
                                 à <b>{{ hourFormat(post.createdAt) }}</b><br>
                             </p>
-                           <!-- <p v-if="post.createdAt != post.updatedAt"> -->
+                         
                               <p>  Modifié 
                                 le <b>{{ dateFormat(post.updatedAt) }}</b>
                                 à <b>{{ hourFormat(post.updatedAt) }}</b>
                             </p>
                         </td>
-                        <td><img v-if="post.image" :src="post.image" alt="Image"></td>
-                  
-                        
-                    
+                        <td><img class="imgPost" v-if="post.image" :src="post.image" alt="Image"></td>
+  
                     </tr>
                 </table>
          <!--posts -->
@@ -74,8 +72,7 @@ export default {
             props: ['post.id'],
             posts: [],
             users: [],
-           // image : image,
-            
+         
         }
     },
     computed : {
@@ -95,7 +92,6 @@ export default {
              headers: {
                     'authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
-                    //'Access-Control-Allow-Origin': *,
                     },
                    
                 })    
@@ -134,18 +130,12 @@ export default {
                 .then(() => {
                     alert("Message supprimer")
                     console.log("message supprimer");
-                //   this.$router.push("/allposts");
-                
-              // this.posts = res.data
+
             })
                 
             .catch(() =>{ 
                 alert("Vous n'avez pas autorisation de supprimer ce message!!")
                 console.log('Vous n avez pas autorisation de supprimer ce message!!')
-            //    this.$router.push("/allposts");
-            //alert("Vous disposer pas des doit de supprimer ce message, c'est que le auter ou administrateur");
-
-
 
      } )}
         },
@@ -244,7 +234,7 @@ textarea{
     border: 2px solid black;
     border-radius: 30px;
 }
-img {
+.imgPost {
     width: 80%;
     height: 60%;
     margin : auto;
@@ -284,7 +274,7 @@ table {
 textarea{
     width: 90%
 }
-img {
+.imgPost {
     width: 20%;
     height: 30%;
     border-radius: 10px;

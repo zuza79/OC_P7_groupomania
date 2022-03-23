@@ -59,21 +59,7 @@ methods: {
                     console.log("erreur vuejs : " + err);
                     this.loginFailure = true;
                 })  
-        
-   /*   .then((value) => {
-        const token = JSON.stringify(value.token);
-        const userId = JSON.stringify(value.userId);
-        const role = JSON.stringify(value.role);
-        localStorage.setItem("token", token);
-        localStorage.setItem("userId", userId);
-        localStorage.setItem("role", role);
-        this.$router.push("/allposts");
-      })
-      .catch((err) => {
-                    console.log("erreur : " + err);
-                    this.loginFailure = true;
-                })
-       */          
+          
     }
   }
  

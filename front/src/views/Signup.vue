@@ -52,6 +52,27 @@ name: 'Signup',
   methods: {
     //SIGNUP
     signup() {
+      const regexText = /^[a-zA-Z-\s]+$/;
+      const regexEmail = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/; 
+      const regexPassword = /^(?=.*\d).{4,10}$/;
+
+      if (this.nom === "") {
+                alert("Veuillez remplir votre nom");
+            } else if (regexText.test(this.nom) === false) {
+                alert("Veuillez vérifier que l'écriture de votre nom soit uniquement en lettre");}
+
+            if (this.prenom === "") {
+                alert("Veuillez remplir votre prénom");
+            } else if (regexText.test(this.prenom) === false) {
+                alert("Veuillez vérifier que l'écriture de votre prénom soit uniquement en lettre");}
+
+            if (this.email === "") {
+                alert("Veuillez remplir votre adresse email ");
+            } else if (regexEmail.test(this.email) === false) {
+                alert("Veuillez écrire une adresse email valide xxxxx@groupomania.com");
+            } else if (regexPassword.test(this.password) === false) {
+                alert("Votre mot de passe doit contenir entre 4 et 10 caractères et au moins 1 letter majuscule, 1 chiffre")
+            }
       let data = {
           nom: this.nom,
           prenom: this.prenom,

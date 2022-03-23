@@ -5,7 +5,6 @@ const path = require("path");
 const sequelize = require('./config/config');
 
 //security
-//const helmet = require("helmet");
 const dotenv = require ('dotenv');
 const resul = dotenv.config();
 
@@ -14,27 +13,8 @@ const userRoutes = require("./routes/user");
 const postRoutes = require("./routes/post");
 const commentRoutes = require("./routes/comment");
 
-/*///connect to SEQUELIZE
-const connect = async function () {
-  try {
-    await sequelize.authenticate();
-    console.log('SQL connect');
-  } catch (error) {
-    console.error('Echeque de connection', error);
-  }
-};
-connect();
-*/
-
-
-//app.use(helmet());
-
-
-
 // Middlewares permettant l'analyse du corps de la requête
-//app.use(express.json());
 app.use(express.json()); 
-//app.use(bodyParser.json())
 app.use(express.urlencoded({ extended: true }));
  
 app.use((req, res, next) => {
